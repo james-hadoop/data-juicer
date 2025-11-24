@@ -18,6 +18,7 @@ from data_juicer.utils.nltk_utils import (
     ensure_nltk_resource,
     patch_nltk_pickle_security,
 )
+from data_juicer.utils.ray_utils import is_ray_mode
 from data_juicer.utils.resource_utils import cuda_device_count
 
 from .cache_utils import DATA_JUICER_EXTERNAL_MODELS_HOME as DJEMH
@@ -68,6 +69,9 @@ BACKUP_MODEL_LINKS = {
     "wilor_model_path": "https://huggingface.co/spaces/rolpotamias/WiLoR/resolve/main/pretrained_models/wilor_final.ckpt",
     "wilor_model_config": "https://raw.githubusercontent.com/rolpotamias/WiLoR/refs/heads/main/pretrained_models/model_config.yaml",
     "wilor_detector_model_path": "https://huggingface.co/spaces/rolpotamias/WiLoR/resolve/main/pretrained_models/detector.pt",
+    # DWPose
+    "dwpose_onnx_det_model": "https://huggingface.co/yzd-v/DWPose/resolve/main/yolox_l.onnx",
+    "dwpose_onnx_pose_model": "https://huggingface.co/yzd-v/DWPose/resolve/main/dw-ll_ucoco_384.onnx",
 }
 
 
@@ -399,6 +403,27 @@ def prepare_diffusion_model(pretrained_model_name_or_path, diffusion_type, **mod
         model = model.to(device)
 
     return model
+
+
+def prepare_dwpose_model(onnx_det_model, onnx_pose_model, **model_params):
+    from data_juicer.ops.common.dwpose_func import DWposeDetector
+
+    device = model_params.pop("device", "cpu")
+
+    def _get_model_path(model_path, default_filename, download_key):
+        if not os.path.exists(model_path):
+            if not os.path.exists(DJMC):
+                os.makedirs(DJMC)
+            model_path = os.path.join(DJMC, default_filename)
+            if not os.path.exists(model_path):
+                wget.download(BACKUP_MODEL_LINKS[download_key], DJMC)
+        return model_path
+
+    onnx_det_model = _get_model_path(onnx_det_model, "yolox_l.onnx", "dwpose_onnx_det_model")
+    onnx_pose_model = _get_model_path(onnx_pose_model, "dw-ll_ucoco_384.onnx", "dwpose_onnx_pose_model")
+
+    dwpose_model = DWposeDetector(onnx_det_model, onnx_pose_model, device)
+    return dwpose_model
 
 
 def prepare_fastsam_model(model_path, **model_params):
@@ -920,6 +945,12 @@ def prepare_vllm_model(pretrained_model_name_or_path, **model_params):
     if model_params.get("device", "").startswith("cuda:"):
         model_params["device"] = "cuda"
 
+    if is_ray_mode():
+        tensor_parallel_size = model_params.get("tensor_parallel_size", 1)
+    else:
+        tensor_parallel_size = model_params.get("tensor_parallel_size", torch.cuda.device_count())
+    logger.info(f"Set tensor_parallel_size to {tensor_parallel_size} for vllm.")
+
     model = vllm.LLM(model=check_model_home(pretrained_model_name_or_path), generation_config="auto", **model_params)
     tokenizer = model.get_tokenizer()
 
@@ -1118,6 +1149,7 @@ def update_sampling_params(sampling_params, pretrained_model_name_or_path, enabl
 MODEL_FUNCTION_MAPPING = {
     "api": prepare_api_model,
     "diffusion": prepare_diffusion_model,
+    "dwpose": prepare_dwpose_model,
     "fasttext": prepare_fasttext_model,
     "fastsam": prepare_fastsam_model,
     "huggingface": prepare_huggingface_model,

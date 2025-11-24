@@ -270,26 +270,29 @@ class VideoHandReconstructionMapper(Mapper):
             final_all_kpts.append(all_kpts)
 
             # Render front view
-            if len(all_verts) > 0:
-                misc_args = dict(
-                    mesh_base_color=(0.25098039, 0.274117647, 0.65882353),
-                    scene_bg_color=(1, 1, 1),
-                    focal_length=scaled_focal_length,
-                )
-                cam_view = renderer.render_rgba_multiple(
-                    all_verts, cam_t=all_cam_t, render_res=img_size[n], is_right=all_right, **misc_args
-                )
+            if self.if_save_visualization:
+                if len(all_verts) > 0:
+                    misc_args = dict(
+                        mesh_base_color=(0.25098039, 0.274117647, 0.65882353),
+                        scene_bg_color=(1, 1, 1),
+                        focal_length=scaled_focal_length,
+                    )
+                    cam_view = renderer.render_rgba_multiple(
+                        all_verts, cam_t=all_cam_t, render_res=img_size[n], is_right=all_right, **misc_args
+                    )
 
-                # Overlay image
-                input_img = img_cv2.astype(numpy.float32)[:, :, ::-1] / 255.0
-                input_img = numpy.concatenate(
-                    [input_img, numpy.ones_like(input_img[:, :, :1])], axis=2
-                )  # Add alpha channel
-                input_img_overlay = (
-                    input_img[:, :, :3] * (1 - cam_view[:, :, 3:]) + cam_view[:, :, :3] * cam_view[:, :, 3:]
-                )
+                    # Overlay image
+                    input_img = img_cv2.astype(numpy.float32)[:, :, ::-1] / 255.0
+                    input_img = numpy.concatenate(
+                        [input_img, numpy.ones_like(input_img[:, :, :1])], axis=2
+                    )  # Add alpha channel
+                    input_img_overlay = (
+                        input_img[:, :, :3] * (1 - cam_view[:, :, 3:]) + cam_view[:, :, :3] * cam_view[:, :, 3:]
+                    )
 
-                cv2.imwrite(os.path.join(visualization_frame_dir, f"{img_fn}.jpg"), 255 * input_img_overlay[:, :, ::-1])
+                    cv2.imwrite(
+                        os.path.join(visualization_frame_dir, f"{img_fn}.jpg"), 255 * input_img_overlay[:, :, ::-1]
+                    )
 
         sample[Fields.meta][self.tag_field_name] = {
             "vertices": final_all_verts,
