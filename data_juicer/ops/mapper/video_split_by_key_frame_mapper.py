@@ -3,13 +3,8 @@ import re
 
 from data_juicer.utils.constant import Fields
 from data_juicer.utils.file_utils import add_suffix_to_filename, transfer_filename
-from data_juicer.utils.mm_utils import (
-    SpecialTokens,
-    close_video,
-    cut_video_by_seconds,
-    get_key_frame_seconds,
-    load_video,
-)
+from data_juicer.utils.mm_utils import SpecialTokens
+from data_juicer.utils.video_utils import create_video_reader
 
 from ..base_op import OPERATORS, Mapper
 from ..op_fusion import LOADED_VIDEOS
@@ -63,19 +58,19 @@ class VideoSplitByKeyFrameMapper(Mapper):
         self.save_dir = save_dir
 
     def get_split_key_frame(self, video_key, container):
-        timestamps = get_key_frame_seconds(container)
+        timestamps = container.extract_keyframes().pts_time
 
         count = 0
         split_video_keys = []
         unique_video_key = transfer_filename(video_key, OP_NAME, self.save_dir, **self._init_parameters)
         for i in range(1, len(timestamps)):
             split_video_key = add_suffix_to_filename(unique_video_key, f"_{count}")
-            if cut_video_by_seconds(container, split_video_key, timestamps[i - 1], timestamps[i]):
+            if container.extract_clip(timestamps[i - 1], timestamps[i], split_video_key):
                 split_video_keys.append(split_video_key)
                 count += 1
 
         split_video_key = add_suffix_to_filename(unique_video_key, f"_{count}")
-        if cut_video_by_seconds(container, split_video_key, timestamps[-1]):
+        if container.extract_clip(timestamps[-1], None, split_video_key):
             split_video_keys.append(split_video_key)
         return split_video_keys
 
@@ -99,7 +94,7 @@ class VideoSplitByKeyFrameMapper(Mapper):
         for loaded_video_key in loaded_video_keys:
             if loaded_video_key not in videos:
                 # avoid loading the same videos
-                video = load_video(loaded_video_key)
+                video = create_video_reader(loaded_video_key)
                 videos[loaded_video_key] = video
 
         split_video_keys = []
@@ -115,7 +110,7 @@ class VideoSplitByKeyFrameMapper(Mapper):
                 for video_key in loaded_video_keys[offset : offset + video_count]:
                     video = videos[video_key]
                     new_video_keys = self.get_split_key_frame(video_key, video)
-                    close_video(video)
+                    video.close()
                     split_video_keys.extend(new_video_keys)
                     place_holders.append(SpecialTokens.video * len(new_video_keys))
                     split_sample[Fields.source_file].extend([video_key] * len(new_video_keys))

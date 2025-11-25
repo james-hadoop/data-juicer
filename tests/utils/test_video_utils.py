@@ -69,6 +69,8 @@ class TestVideoReader(DataJuicerTestCaseBase):
         test_video_path = self.vid_path1
         backends = self.get_backends()
         frame_results = {}
+        indices_results = {}
+        pts_time_results = {}
         readers = {}
         
         try:
@@ -76,7 +78,12 @@ class TestVideoReader(DataJuicerTestCaseBase):
                 reader = cls(test_video_path)
                 readers[name] = reader
                 if extract_keyframes:
-                    frames = list(reader.extract_keyframes(start_time, end_time))
+                    frame_obj = reader.extract_keyframes(start_time, end_time)
+                    frames = frame_obj.frames
+                    indices = frame_obj.indices
+                    pts_time = frame_obj.pts_time
+                    indices_results[name] = indices
+                    pts_time_results[name] = pts_time
                 else:
                     frames = list(reader.extract_frames(start_time, end_time))
                 frame_results[name] = frames
@@ -94,18 +101,32 @@ class TestVideoReader(DataJuicerTestCaseBase):
             for reader in readers.values():
                 reader.close()
 
+        return indices_results, pts_time_results
+
     def test_extract_frames_full_video(self):
         self._test_extract_frames(0, None, 282, extract_keyframes=False, check_np=True)
-    
+
     def test_extract_frames_time_range(self):
         self._test_extract_frames(1.0, 3.0, 48, extract_keyframes=False, check_np=True)
 
     def test_extract_keyframes(self):
-        self._test_extract_frames(0, None, 3, extract_keyframes=True, check_np=True)
-    
+        indices_results, pts_time_results = self._test_extract_frames(
+            0, None, 3, extract_keyframes=True, check_np=True)
+        
+        backends = self.get_backends()
+        for name, _ in backends.items():
+            self.assertEqual(indices_results[name], [0, 144, 237])
+            self.assertEqual(pts_time_results[name], [0.0, 6.0, 9.875])
+
     def test_extract_keyframes_time_range(self):
-        self._test_extract_frames(0, 2.0, 1, extract_keyframes=True, check_np=False)
-    
+        indices_results, pts_time_results = self._test_extract_frames(
+            0, 2.0, 1, extract_keyframes=True, check_np=False)
+
+        backends = self.get_backends()
+        for name, _ in backends.items():
+            self.assertEqual(indices_results[name], [0])
+            self.assertEqual(pts_time_results[name], [0.0])
+
     def test_extract_clip_numpy(self):
         test_video_path = self.vid_path1
         backends = self.get_backends()

@@ -2,9 +2,12 @@ import abc
 import json
 import math
 import os
+import re
 import subprocess
+import threading
 from dataclasses import dataclass
 from pathlib import Path
+from queue import Empty, Queue
 from typing import IO, Iterator, List, Optional, Union
 
 import attrs
@@ -13,9 +16,13 @@ import numpy as np
 import numpy.typing as npt
 
 from data_juicer.utils.lazy_loader import LazyLoader
-from data_juicer.utils.mm_utils import cut_video_by_seconds, close_video, extract_key_frames
- 
-# TODO: support cuda, return keyframes index
+from data_juicer.utils.mm_utils import (
+    close_video,
+    cut_video_by_seconds,
+    extract_key_frames,
+)
+
+# TODO: support cuda
 
 av = LazyLoader("av")
 decord = LazyLoader("decord")
@@ -47,6 +54,13 @@ class VideoMetadata:
     fps: float | None = None
     num_frames: int | None = None
     duration: float | None = None
+
+
+@attrs.define
+class Frames:
+    frames: List[npt.NDArray[np.uint8]]
+    indices: List[int] | None = None
+    pts_time: List[float] | None = None
 
 
 @attrs.define
@@ -254,13 +268,15 @@ class AVReader(VideoReader):
                 video_stream_index=self.video_stream_index,
             )
             cut_inp_container = av.open(buffer)
-            keyframes = extract_key_frames(cut_inp_container)
+            key_frames = extract_key_frames(cut_inp_container)
         else:
-            keyframes = extract_key_frames(self.container)
+            key_frames = extract_key_frames(self.container)
 
-        keyframes = [frame.reformat(format=self.frame_format).to_ndarray() for frame in keyframes]
+        pts_time = [float(f.pts * f.time_base) for f in key_frames]
+        frame_indices = [int(t * self.metadata.fps) for t in pts_time]
 
-        return keyframes
+        key_frames = [frame.reformat(format=self.frame_format).to_ndarray() for frame in key_frames]
+        return Frames(frames=key_frames, indices=frame_indices, pts_time=pts_time)
 
     def extract_clip(self, start_time, end_time, output_path: str = None, to_numpy: bool = True):
         """
@@ -463,7 +479,6 @@ class FFmpegReader(VideoReader):
         if start_time > 0 or end_time is not None:
             if not end_time:
                 end_time = self.metadata.duration
-
             cmd.extend(["-ss", str(start_time), "-to", str(end_time)])
 
         cmd.extend(
@@ -471,7 +486,7 @@ class FFmpegReader(VideoReader):
                 "-i",
                 self.video_source,
                 "-vf",
-                "select=eq(pict_type\,I)",  # noqa: W605
+                "showinfo,select=eq(pict_type\,I)",  # noqa: W605
                 "-vsync",
                 "vfr",
                 "-f",
@@ -482,22 +497,56 @@ class FFmpegReader(VideoReader):
             ]
         )
 
-        keyframes = []
         process = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, bufsize=10**8)
         h, w = self.metadata.height, self.metadata.width
-        frame_size = h * w * 3  # 3 bytes per pixel of RGB
+        frame_size = h * w * 3  # 3 bytes per pixel for RGB
+
+        key_frames, metadata = [], []
+        metadata_queue = Queue()
+
+        def read_stderr():
+            """
+            Parse metadata from stderr and put it into a queue
+            """
+            while True:
+                line = process.stderr.readline()
+                if not line:
+                    break
+                try:
+                    line = line.decode("utf-8")
+                    if "iskey:1" in line and "pts_time:" in line:
+                        match = re.search(r"n:\s*(\d+).*?pts_time:([\d.]+)", line)
+                        if match:
+                            n = int(match.group(1))  # frame index in the original video
+                            pts_time = float(match.group(2))
+                            metadata_queue.put((n, pts_time))
+                except (UnicodeDecodeError, ValueError, AttributeError):
+                    continue
+
+        # start the stderr thread
+        stderr_thread = threading.Thread(target=read_stderr, daemon=True)
+        stderr_thread.start()
 
         try:
+            # main thread reads stdout frame data
             while True:
                 raw_frame = process.stdout.read(frame_size)
                 if len(raw_frame) < frame_size:
                     break
+                try:
+                    n, pts_time = metadata_queue.get(timeout=1)
+                    metadata.append((n, pts_time))
+                except Empty:
+                    break
+
                 frame = np.frombuffer(raw_frame, dtype=np.uint8).reshape((h, w, 3))
-                keyframes.append(frame)
+                key_frames.append(frame)
         finally:
             self._kill_process(process)
+            stderr_thread.join()
 
-        return keyframes
+        frame_indices, pts_time = zip(*metadata)
+        return Frames(frames=key_frames, indices=list(frame_indices), pts_time=list(pts_time))
 
     def extract_clip(self, start_time, end_time, output_path: str = None, to_numpy=True):
         """
@@ -588,6 +637,7 @@ class FFmpegReader(VideoReader):
             process.kill()  # if it doesn't finish within 5 seconds, kill it
 
 
+# TODO: support audio for clip
 class DecordReader(VideoReader):
     """Video reader using Decord"""
 
@@ -686,9 +736,13 @@ class DecordReader(VideoReader):
             return []
 
         key_frames = vr.get_batch(filtered_key_indices)
+        key_times = []
+        for idx in filtered_key_indices:
+            start_pts, _ = vr.get_frame_timestamp(idx)
+            key_times.append(start_pts)
         key_frames = key_frames.asnumpy()
 
-        return key_frames
+        return Frames(frames=key_frames, indices=filtered_key_indices, pts_time=key_times)
 
     def extract_clip(self, start_time, end_time, output_path: str = None, to_numpy=True):
         """
@@ -762,7 +816,7 @@ class DecordReader(VideoReader):
 
 
 def create_video_reader(video_source: str, backend: str = "auto") -> VideoReader:
-    backends = {"av": AVReader, "ffmpeg": FFmpegReader, "decord": DecordReader}
+    backends = {"ffmpeg": FFmpegReader, "decord": DecordReader, "av": AVReader}
 
     if backend != "auto":
         cls = backends[backend]
