@@ -11,7 +11,6 @@ from queue import Empty, Queue
 from typing import IO, Iterator, List, Optional, Union
 
 import attrs
-import cv2
 import numpy as np
 import numpy.typing as npt
 
@@ -21,20 +20,8 @@ from data_juicer.utils.mm_utils import close_video, cut_video_by_seconds
 # TODO: support cuda
 
 av = LazyLoader("av")
+cv2 = LazyLoader("cv2")
 decord = LazyLoader("decord")
-
-AV_STREAM_THREAD_TYPE = "AUTO"
-"""
-    av stream thread type support "SLICE", "FRAME", "AUTO".
-
-        "SLICE": Decode more than one part of a single frame at once
-
-        "FRAME": Decode more than one frame at once
-
-        "AUTO": Using both "FRAME" and "SLICE"
-        AUTO is faster when there are no video latency.
-
-"""
 
 
 @dataclass
@@ -190,9 +177,6 @@ class AVReader(VideoReader):
             raise IndexError(f"index {self.video_stream_index} is out of range, valid range: 0-{len(video_streams)-1}")
 
         self.video_stream = self.container.streams.video[video_stream_index]
-
-        # use "AUTO" thread_type for faster decode
-        # self.video_stream.thread_type = AV_STREAM_THREAD_TYPE
 
     def get_metadata(self) -> VideoMetadata:
         stream = self.video_stream
@@ -595,7 +579,11 @@ class FFmpegReader(VideoReader):
                 "-c",
                 "copy",  # Stream copy (fast, no re-encoding)
                 "-avoid_negative_ts",
-                "make_zero",  # Handle negative timestamps
+                "make_zero",  # Handle negative timestamps,
+                "-f",
+                "mp4",
+                "-movflags",
+                "frag_keyframe+empty_moov",
             ]
         )
 
@@ -604,7 +592,7 @@ class FFmpegReader(VideoReader):
         if output_path is not None:
             # Output to file
             os.makedirs(os.path.dirname(output_path), exist_ok=True)
-            cmd.extend(["-f", "mp4", output_path])
+            cmd.extend([output_path])
             result = subprocess.run(cmd, capture_output=True, text=True)
             if result.returncode != 0:
                 return None
@@ -612,7 +600,7 @@ class FFmpegReader(VideoReader):
             frames = list(self.extract_frames(start_time, end_time))
         else:
             # Output to stdout
-            cmd.extend(["-f", "mpegts", "pipe:1"])  # Output to stdout
+            cmd.extend(["pipe:1"])  # Output to stdout
             process = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
             encoded_data, _ = process.communicate()
             self._kill_process(process)
