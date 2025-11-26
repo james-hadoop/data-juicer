@@ -217,6 +217,7 @@ class TestVideoReader(DataJuicerTestCaseBase):
                 extracted_frames = list(reader.extract_frames(start_time, end_time))
                 all_frames = list(reader.extract_frames())
                 clip_frames = reader.extract_clip(start_time, end_time).frames
+                all_keyframes = reader.extract_keyframes()
 
                 self.assertEqual(metadata.height, 360)
                 self.assertEqual(metadata.width, 640)
@@ -228,6 +229,7 @@ class TestVideoReader(DataJuicerTestCaseBase):
                 self.assertEqual(len(clip_frames), 48)
                 np.testing.assert_array_equal(clip_frames, extracted_frames) 
                 self.assertEqual(len(all_frames), 282)
+                self.assertEqual(len(all_keyframes.frames), 3)
 
     def test_edge_cases(self):
         test_video_path = self.vid_path1

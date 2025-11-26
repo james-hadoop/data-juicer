@@ -192,7 +192,7 @@ class AVReader(VideoReader):
         self.video_stream = self.container.streams.video[video_stream_index]
 
         # use "AUTO" thread_type for faster decode
-        self.video_stream.thread_type = AV_STREAM_THREAD_TYPE
+        # self.video_stream.thread_type = AV_STREAM_THREAD_TYPE
 
     def get_metadata(self) -> VideoMetadata:
         stream = self.video_stream
@@ -267,6 +267,7 @@ class AVReader(VideoReader):
         stream_start_seconds = self.video_stream.start_time * time_base
 
         key_frames = []
+        self.container.seek(0)
 
         for frame in self.container.decode(video=self.video_stream_index):
             # Calculate absolute time in container's timeline
@@ -459,7 +460,7 @@ class FFmpegReader(VideoReader):
             "-",
         ]
 
-        process = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, bufsize=10**8)
+        process = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
         frame_size = w * h * 3  # 3 bytes per pixel of RGB
 
@@ -501,18 +502,19 @@ class FFmpegReader(VideoReader):
             ]
         )
 
-        process = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, bufsize=10**8)
+        process = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         h, w = self.metadata.height, self.metadata.width
         frame_size = h * w * 3  # 3 bytes per pixel for RGB
 
         key_frames, metadata = [], []
         metadata_queue = Queue()
+        stop_event = threading.Event()
 
         def read_stderr():
             """
             Parse metadata from stderr and put it into a queue
             """
-            while True:
+            while not stop_event.is_set():
                 line = process.stderr.readline()
                 if not line:
                     break
@@ -546,6 +548,7 @@ class FFmpegReader(VideoReader):
                 frame = np.frombuffer(raw_frame, dtype=np.uint8).reshape((h, w, 3))
                 key_frames.append(frame)
         finally:
+            stop_event.set()
             self._kill_process(process)
             stderr_thread.join()
 
@@ -610,7 +613,7 @@ class FFmpegReader(VideoReader):
         else:
             # Output to stdout
             cmd.extend(["-f", "mpegts", "pipe:1"])  # Output to stdout
-            process = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, bufsize=10**8)
+            process = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
             encoded_data, _ = process.communicate()
             self._kill_process(process)
 
