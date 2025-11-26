@@ -71,7 +71,7 @@ class Clip:
     id: str | None = None
     path: str | None = None
     encoded_data: bytes | None = None
-    frames: npt.NDArray[np.uint8] | None = None
+    frames: List[npt.NDArray[np.uint8]] | None = None
 
 
 class VideoReader(abc.ABC):
@@ -114,8 +114,8 @@ class VideoReader(abc.ABC):
         raise NotImplementedError
 
     @abc.abstractmethod
-    def extract_keyframes(self, start_time: float = 0, end_time: Optional[float] = None) -> Iterator[np.ndarray]:
-        """Yield only keyframes (I-frames) as RGB numpy arrays.
+    def extract_keyframes(self, start_time: float = 0, end_time: Optional[float] = None) -> "Frames":
+        """Extract keyframes and return them in a `Frames` object.
 
         :param start_time: Start time in seconds (inclusive)
         :param end_time: End time in seconds (exclusive). If None, extract to end of video.
@@ -123,11 +123,16 @@ class VideoReader(abc.ABC):
         raise NotImplementedError
 
     @abc.abstractmethod
-    def extract_clip(self, start_time: float = 0, end_time: Optional[float] = None) -> Clip:
+    def extract_clip(
+        self, start_time: float = 0, end_time: Optional[float] = None, output_path: str = None, to_numpy: bool = True
+    ) -> Optional["Clip"]:
         """Extract a subclip.
 
         :param start_time: Start time in seconds
         :param end_time: End time in seconds. If None, extract to end of video.
+        :param output_path: The path to save the output video clip. If provided, the clip is saved to a file.
+        :param to_numpy: Whether to return frames as a list of numpy arrays.
+        :return: A `Clip` object on success, or `None` on failure.
         """
         raise NotImplementedError
 
@@ -302,7 +307,7 @@ class AVReader(VideoReader):
 
         frames, encoded_data = None, None
         if (not to_numpy) or output_path:
-            encoded_data = cut_video_by_seconds(
+            res = cut_video_by_seconds(
                 input_video=self.container,
                 output_video=output_path,
                 start_seconds=start_time,
@@ -310,9 +315,11 @@ class AVReader(VideoReader):
                 video_stream_index=self.video_stream_index,
             )
             if output_path:
+                if not res:
+                    return None
                 encoded_data = None
             else:
-                encoded_data = encoded_data.getvalue()
+                encoded_data = res.getvalue()
         else:
             frames = list(self.extract_frames(start_time, end_time))
 
@@ -542,6 +549,9 @@ class FFmpegReader(VideoReader):
             self._kill_process(process)
             stderr_thread.join()
 
+        if not metadata:
+            return Frames(frames=[], indices=[], pts_time=[])
+
         frame_indices, pts_time = zip(*metadata)
         return Frames(frames=key_frames, indices=list(frame_indices), pts_time=list(pts_time))
 
@@ -592,7 +602,9 @@ class FFmpegReader(VideoReader):
             # Output to file
             os.makedirs(os.path.dirname(output_path), exist_ok=True)
             cmd.extend(["-f", "mp4", output_path])
-            subprocess.run(cmd, capture_output=True, text=True)
+            result = subprocess.run(cmd, capture_output=True, text=True)
+            if result.returncode != 0:
+                return None
         elif to_numpy:
             frames = list(self.extract_frames(start_time, end_time))
         else:
@@ -730,7 +742,7 @@ class DecordReader(VideoReader):
 
         if not filtered_key_indices:
             print(f"Warning: No keyframes found between {start_time}s and {end_time}s")
-            return []
+            return Frames(frames=[], indices=[], pts_time=[])
 
         key_frames = vr.get_batch(filtered_key_indices)
         key_times = []
@@ -773,7 +785,7 @@ class DecordReader(VideoReader):
 
         # Handle empty frame range
         if start_frame >= end_frame:
-            return np.array([])
+            return None
 
         # Extract frames using decord
         frame_indices = range(start_frame, end_frame)
