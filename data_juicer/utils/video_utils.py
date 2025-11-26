@@ -16,11 +16,7 @@ import numpy as np
 import numpy.typing as npt
 
 from data_juicer.utils.lazy_loader import LazyLoader
-from data_juicer.utils.mm_utils import (
-    close_video,
-    cut_video_by_seconds,
-    extract_key_frames,
-)
+from data_juicer.utils.mm_utils import close_video, cut_video_by_seconds
 
 # TODO: support cuda
 
@@ -181,6 +177,13 @@ class AVReader(VideoReader):
         self.frame_format = frame_format
         self.video_stream_index = video_stream_index
         self.container = av.open(self.video_source)
+
+        video_streams = self.container.streams.video
+        if not video_streams:
+            raise ValueError("Not found video stream")
+        if self.video_stream_index < 0 or self.video_stream_index >= len(video_streams):
+            raise IndexError(f"index {self.video_stream_index} is out of range, valid range: 0-{len(video_streams)-1}")
+
         self.video_stream = self.container.streams.video[video_stream_index]
 
         # use "AUTO" thread_type for faster decode
@@ -254,29 +257,30 @@ class AVReader(VideoReader):
         """
         self.check_time_span(start_time, end_time)
 
-        if start_time > 0 or end_time is not None:
-            if not end_time:
-                end_time = self.metadata.duration
-            elif end_time > self.metadata.duration:
-                end_time = self.metadata.duration
+        end_time = min(end_time, self.metadata.duration) if end_time is not None else self.metadata.duration
+        time_base = self.video_stream.time_base
+        stream_start_seconds = self.video_stream.start_time * time_base
 
-            buffer = cut_video_by_seconds(
-                input_video=self.container,
-                output_video=None,
-                start_seconds=start_time,
-                end_seconds=end_time,
-                video_stream_index=self.video_stream_index,
-            )
-            cut_inp_container = av.open(buffer)
-            key_frames = extract_key_frames(cut_inp_container)
-        else:
-            key_frames = extract_key_frames(self.container)
+        key_frames = []
 
-        pts_time = [float(f.pts * f.time_base) for f in key_frames]
+        for frame in self.container.decode(video=self.video_stream_index):
+            # Calculate absolute time in container's timeline
+            frame_abs_time = stream_start_seconds + frame.pts * time_base
+
+            # Stop if we've passed the end time
+            if frame_abs_time >= end_time:
+                break
+
+            # Collect keyframes within the target range
+            if frame.key_frame and frame_abs_time >= start_time:
+                key_frames.append(frame)
+
+        # Convert frames to output format
+        pts_time = [float(stream_start_seconds + f.pts * time_base) for f in key_frames]
         frame_indices = [int(t * self.metadata.fps) for t in pts_time]
+        formatted_frames = [frame.reformat(format=self.frame_format).to_ndarray() for frame in key_frames]
 
-        key_frames = [frame.reformat(format=self.frame_format).to_ndarray() for frame in key_frames]
-        return Frames(frames=key_frames, indices=frame_indices, pts_time=pts_time)
+        return Frames(frames=formatted_frames, indices=frame_indices, pts_time=pts_time)
 
     def extract_clip(self, start_time, end_time, output_path: str = None, to_numpy: bool = True):
         """
@@ -411,11 +415,7 @@ class FFmpegReader(VideoReader):
         return metadata
 
     def extract_frames(
-        self,
-        start_time: Optional[float] = 0.0,
-        end_time: Optional[float] = None,
-        width: Optional[int] = None,
-        height: Optional[int] = None,
+        self, start_time: Optional[float] = 0.0, end_time: Optional[float] = None
     ) -> Iterator[np.ndarray]:
         """
         Get the video's frames within a specified time range.
@@ -423,8 +423,6 @@ class FFmpegReader(VideoReader):
         :param start_time: Start time in seconds (default: 0.0).
         :param end_time: End time in seconds (exclusive). If None, decode until end.
         :param duration: Duration from start_time. Mutually exclusive with end_time.
-        :param width: Width of the frames to decode. If None, use the video's width.
-        :param height: Height of the frames to decode. If None, use the video's height.
 
         :return: Iterator of VideoFrame objects within the specified time range.
         """
@@ -451,7 +449,6 @@ class FFmpegReader(VideoReader):
             "rawvideo",
             "-pix_fmt",
             self.frame_format,
-            # '-vf', f'scale={w}:{h}',
             "-",
         ]
 
@@ -693,7 +690,7 @@ class DecordReader(VideoReader):
         self,
         start_time: Optional[float] = 0.0,
         end_time: Optional[float] = None,
-    ) -> np.ndarray:
+    ) -> Iterator[np.ndarray]:
         """
         Get the video's frames within a specified time range using decord.
 
@@ -713,7 +710,7 @@ class DecordReader(VideoReader):
         frame_indices = range(start_frame, end_frame)
         frames = self.reader.get_batch(frame_indices).asnumpy()
 
-        return frames
+        yield from frames
 
     def extract_keyframes(self, start_time: float = 0, end_time: Optional[float] = None):
         self.check_time_span(start_time, end_time)
@@ -754,6 +751,15 @@ class DecordReader(VideoReader):
         :param output_path: the path to output video.
         :param to_numpy: whether to return clip data as numpy array and save to Clip.frames.
         :return: Clip object.
+
+        Note:
+        - When saving to output_path (video file mode):
+            1. This implementation uses full re-encoding with OpenCV's VideoWriter,
+            which is slower than stream copy methods and may cause quality loss
+            2. The output video uses MPEG-4 codec (mp4v fourcc) with default encoding parameters,
+            which may not be optimal for quality/size balance
+            3. For large-scale video processing, consider using FFmpeg-based implementations
+            (see AVReader/FFmpegReader) for better performance.
         """
         self.check_time_span(start_time, end_time)
 

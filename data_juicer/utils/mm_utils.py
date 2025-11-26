@@ -440,7 +440,7 @@ def cut_video_by_seconds(
     if len(container.streams.audio) == 0:
         input_audio_stream = None
     else:
-        input_audio_stream = container.streams.audio[video_stream_index]
+        input_audio_stream = container.streams.audio[0]
         output_container.add_stream(template=input_audio_stream)
 
     # seek to the start time, time must be in microsecond if no
