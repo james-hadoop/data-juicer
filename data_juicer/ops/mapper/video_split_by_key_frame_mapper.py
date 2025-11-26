@@ -36,7 +36,9 @@ class VideoSplitByKeyFrameMapper(Mapper):
 
     _batched_op = True
 
-    def __init__(self, keep_original_sample: bool = True, save_dir: str = None, *args, **kwargs):
+    def __init__(
+        self, keep_original_sample: bool = True, save_dir: str = None, video_backend: str = "ffmpeg", *args, **kwargs
+    ):
         """
         Initialization method.
 
@@ -47,6 +49,7 @@ class VideoSplitByKeyFrameMapper(Mapper):
         :param save_dir: The directory where generated video files will be stored.
             If not specified, outputs will be saved in the same directory as their corresponding input files.
             This path can alternatively be defined by setting the `DJ_PRODUCED_DATA_DIR` environment variable.
+        :param video_backend: video backend, can be `ffmpeg`, `av` or `decord`.
         :param args: extra args
         :param kwargs: extra args
         """
@@ -56,6 +59,8 @@ class VideoSplitByKeyFrameMapper(Mapper):
         self.keep_original_sample = keep_original_sample
         self.extra_args = kwargs
         self.save_dir = save_dir
+        self.video_backend = video_backend
+        assert self.video_backend in ["ffmpeg", "av", "decord"]
 
     def get_split_key_frame(self, video_key, container):
         timestamps = container.extract_keyframes().pts_time
@@ -94,7 +99,7 @@ class VideoSplitByKeyFrameMapper(Mapper):
         for loaded_video_key in loaded_video_keys:
             if loaded_video_key not in videos:
                 # avoid loading the same videos
-                video = create_video_reader(loaded_video_key)
+                video = create_video_reader(loaded_video_key, backend=self.video_backend)
                 videos[loaded_video_key] = video
 
         split_video_keys = []
