@@ -75,7 +75,7 @@ class VideoSplitByKeyFrameMapper(Mapper):
                 count += 1
 
         split_video_key = add_suffix_to_filename(unique_video_key, f"_{count}")
-        if container.extract_clip(timestamps[-1], None, split_video_key):
+        if timestamps and container.extract_clip(timestamps[-1], None, split_video_key):
             split_video_keys.append(split_video_key)
         return split_video_keys
 
