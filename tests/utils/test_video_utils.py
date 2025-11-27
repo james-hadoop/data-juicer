@@ -12,19 +12,16 @@ def is_valid_mp4_ffprobe(file_path):
     if not os.path.isfile(file_path):
         raise FileNotFoundError(f"File not found: {file_path}")
 
-    try:
-        cmd = ['ffprobe', '-v', 'error', '-select_streams', 'v:0',
-               '-show_entries', 'stream=codec_name', '-of', 'csv=p=0', file_path]
-        output = subprocess.run(cmd, stdout=subprocess.PIPE,
-                              stderr=subprocess.PIPE, timeout=10)
-        
-        if output.returncode != 0:
-            return False
-        if not output.stdout.decode().strip():
-            return False
-        return True
-    except Exception as e:
-        raise e
+    cmd = ['ffprobe', '-v', 'error', '-select_streams', 'v:0',
+           '-show_entries', 'stream=codec_name', '-of', 'csv=p=0', file_path]
+    output = subprocess.run(cmd, stdout=subprocess.PIPE,
+                          stderr=subprocess.PIPE, timeout=10)
+    
+    if output.returncode != 0:
+        return False
+    if not output.stdout.decode().strip():
+        return False
+    return True
 
 
 class TestVideoReader(DataJuicerTestCaseBase):
@@ -237,7 +234,7 @@ class TestVideoReader(DataJuicerTestCaseBase):
             try:
                 for check_name, check_cls in check_backends.items():
                     check_reader = check_cls(clip_path)
-                    check_readers[name] = check_reader
+                    check_readers[check_name] = check_reader
                     self.assertListEqual(check_reader.extract_keyframes().indices, [0, 144, 237])
                     self.assertEqual(len(list(check_reader.extract_frames())), 282)
             finally:
