@@ -1,4 +1,4 @@
-# DataJuicer Agent
+# DataJuicer Agents
 
 A multi-agent data processing system built on [AgentScope](https://github.com/agentscope-ai/agentscope) and [Data-Juicer (DJ)](https://github.com/datajuicer/data-juicer). This project demonstrates how to leverage the natural language understanding capabilities of large language models, enabling non-expert users to easily harness the powerful data processing capabilities of Data-Juicer.
 
@@ -207,7 +207,7 @@ The entire process is both automated and explainable. Users can intervene at any
 
 <details>
 <summary>View Complete Example Log (from AgentScope Studio)</summary>
-<img src="assets/dj_agent_image.png" width="100%">
+<img src="imgs/dj_agent_image.png" width="100%">
 </details>
 
 **Example Execution Flow:**
@@ -256,7 +256,7 @@ The entire process transforms vague requirements into runnable, testable, and re
 
 <details>
 <summary>View Complete Example Log (from AgentScope Studio)</summary>
-<img src="assets/dj_dev_agent_image.png" width="100%">
+<img src="imgs/dj_dev_agent_image.png" width="100%">
 </details>
 
 ## Advanced Features
@@ -332,7 +332,7 @@ Configure the service address in `configs/mcp_config.json`:
 
 #### Usage Methods
 
-Enable MCP Agent to replace DJ Agent:
+Enable MCP Agent to replace Data Processing Agent:
 
 ```bash
 # Enable MCP Agent and Dev Agent
