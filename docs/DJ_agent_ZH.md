@@ -131,11 +131,11 @@ uv pip install -e .
 > 
 > 2. 以可编辑模式安装：
 >    ```bash
->    uv pip install /path/to/data-juicer -e
+>    uv pip install -e /path/to/data-juicer
 >    ```
 >    或
 >    ```bash
->    pip install /path/to/data-juicer -e
+>    pip install -e /path/to/data-juicer
 >    ```
 > 
 > 可编辑模式安装对于确保 Agent 可以实时访问算子更新非常重要。
@@ -160,11 +160,11 @@ export DATA_JUICER_PATH="your-data-juicer-path"
 
 ### 使用
 
-通过 `-u` 或 `--use_studio` 参数选择运行方式：
+通过 `-u` 或 `--use-studio` 参数选择运行方式：
 
 ```bash
 # 使用 AgentScope Studio 的交互式界面（请先安装并启动 AgentScope Studio）
-dj-agents --use_studio True
+dj-agents --use-studio
 
 # 或直接使用命令行模式（默认）
 dj-agents

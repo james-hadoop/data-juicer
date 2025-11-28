@@ -131,11 +131,11 @@ uv pip install -e .
 > 
 > 2. Install it in editable mode:
 >    ```bash
->    uv pip install /path/to/data-juicer -e
+>    uv pip install -e /path/to/data-juicer
 >    ```
 >    or
 >    ```bash
->    pip install /path/to/data-juicer -e
+>    pip install -e /path/to/data-juicer
 >    ```
 > 
 > Editable mode installation is essential to ensure the agent can access real-time operator updates.
@@ -158,11 +158,11 @@ export DATA_JUICER_PATH="your-data-juicer-path"
 
 ### Usage
 
-Choose the running mode using the `-u` or `--use_studio` parameter:
+Choose the running mode using the `-u` or `--use-studio` parameter:
 
 ```bash
 # Use AgentScope Studio's interactive interface (please install and start AgentScope Studio first)
-dj-agents --use_studio True
+dj-agents --use-studio
 
 # Or use command line mode directly (default)
 dj-agents
