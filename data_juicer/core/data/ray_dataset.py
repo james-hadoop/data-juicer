@@ -243,7 +243,7 @@ class RayDataset(DJDataset):
             elif isinstance(op, (Deduplicator, Pipeline)):
                 self.data = op.run(self.data)
             else:
-                logger.error("Ray executor only support Filter, Mapper and Deduplicator OPs for now")
+                logger.error("Ray executor only support Filter, Mapper Deduplicator and Pipeline OPs for now")
                 raise NotImplementedError
         except:  # noqa: E722
             logger.error(f"An error occurred during Op [{op._name}].")

@@ -21,6 +21,8 @@ class VLMRayVLLMEnginePipeline(RayVLLMEnginePipeline):
     More details about ray vLLM engine can be found at: https://docs.ray.io/en/latest/data/working-with-llms.html
     """
 
+    _accelerator = "cuda"
+
     def __init__(
         self,
         api_or_hf_model: str = "Qwen/Qwen2.5-7B-Instruct",
@@ -35,7 +37,7 @@ class VLMRayVLLMEnginePipeline(RayVLLMEnginePipeline):
         """
         Initialization method.
 
-        :param hf_model: API or huggingface model name.
+        :param api_or_hf_model: API or huggingface model name.
         :param system_prompt: System prompt for guiding the optimization task.
         :param accelerator_type: The type of accelerator to use (e.g., "V100", "A100").
             Default to None, meaning that only the CPU will be used.
@@ -118,7 +120,11 @@ class VLMRayVLLMEnginePipeline(RayVLLMEnginePipeline):
         return out_row
 
     def run(self, dataset, *, exporter=None, tracer=None, reduce=True):
-        ori_columns = dataset.columns() + [self.response_key]
+        # keep original columns, for filter useless columns generated in the middle stages
+        ori_columns = dataset.columns()
+        if self.response_key not in ori_columns:
+            ori_columns.append(self.response_key)
+
         vision_preprocess = partial(
             self.vision_preprocess,
             query_key=self.query_key,

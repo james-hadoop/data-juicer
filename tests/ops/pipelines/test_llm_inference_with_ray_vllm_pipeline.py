@@ -30,7 +30,7 @@ class LLMRayVLLMEnginePipelineTest(DataJuicerTestCaseBase):
         ray_ds = ray.data.from_items(ds_list)
         ds = RayDataset(ray_ds)
         op = LLMRayVLLMEnginePipeline(
-            hf_model='Qwen/Qwen2.5-0.5B' ,
+            api_or_hf_model='Qwen/Qwen2.5-0.5B' ,
             num_proc=1
             )
         ds = ds.process([op])

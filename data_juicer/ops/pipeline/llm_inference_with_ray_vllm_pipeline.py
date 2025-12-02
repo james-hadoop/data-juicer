@@ -21,6 +21,8 @@ class LLMRayVLLMEnginePipeline(RayVLLMEnginePipeline):
     More details about ray vLLM engine can be found at: https://docs.ray.io/en/latest/data/working-with-llms.html
     """
 
+    _accelerator = "cuda"
+
     def __init__(
         self,
         api_or_hf_model: str = "Qwen/Qwen2.5-7B-Instruct",
@@ -37,7 +39,7 @@ class LLMRayVLLMEnginePipeline(RayVLLMEnginePipeline):
         """
         Initialization method.
 
-        :param hf_model: API or huggingface model name.
+        :param api_or_hf_model: API or huggingface model name.
         :param system_prompt: System prompt for guiding the optimization task.
         :param accelerator_type: The type of accelerator to use (e.g., "V100", "A100").
             Default to None, meaning that only the CPU will be used.
@@ -89,10 +91,16 @@ class LLMRayVLLMEnginePipeline(RayVLLMEnginePipeline):
             from ray.data.llm import HttpRequestProcessorConfig
 
             if not self.api_url:
-                base_url = os.environ["OPENAI_BASE_URL"]
-                self.api_url = f"{base_url}/chat/completions"
+                base_url = os.environ.get("OPENAI_BASE_URL", None)
+                if base_url:
+                    self.api_url = f"{base_url}/chat/completions"
             if not self.api_key:
-                self.api_key = os.environ["OPENAI_API_KEY"]
+                self.api_key = os.environ.get("OPENAI_API_KEY", None)
+
+            if not self.api_url:
+                raise ValueError("Please provide `api_url` or set OPENAI_BASE_URL environment variable.")
+            if not self.api_key:
+                raise ValueError("Please provide `api_key` or set OPENAI_API_KEY environment variable.")
 
             self.config = HttpRequestProcessorConfig(
                 url=self.api_url, headers={"Authorization": f"Bearer {self.api_key}"}
@@ -141,7 +149,10 @@ class LLMRayVLLMEnginePipeline(RayVLLMEnginePipeline):
         return out_row
 
     def run(self, dataset, *, exporter=None, tracer=None, reduce=True):
-        ori_columns = dataset.columns() + [self.response_key]
+        # keep original columns, for filter useless columns generated in the middle stages
+        ori_columns = dataset.columns()
+        if self.response_key not in ori_columns:
+            ori_columns.append(self.response_key)
 
         if self.is_hf_model:
             preprocess_fn = partial(

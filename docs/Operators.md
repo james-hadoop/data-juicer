@@ -273,9 +273,9 @@ All the specific operators are listed below, each featured with several capabili
 
 | Operator 算子 | Tags 标签 | Description 描述 | Details 详情 | Reference 参考 |
 |----------|------|-------------|-------------|-------------|
-| llm_inference_with_ray_vllm_pipeline | 💻CPU 🔴Alpha | Pipeline to generate response using vLLM engine on Ray. 使用Ray上的vLLM引擎生成响应的管道。 | - | - |
+| llm_inference_with_ray_vllm_pipeline | 🚀GPU 🔴Alpha | Pipeline to generate response using vLLM engine on Ray. 使用Ray上的vLLM引擎生成响应的管道。 | - | - |
 | ray_vllm_pipeline | 🚀GPU 🔴Alpha | Pipeline for Ray vLLM engine. Ray vLLM引擎的管道。 | - | - |
-| vlm_inference_with_ray_vllm_pipeline | 🏞Image 💻CPU 🔴Alpha | Pipeline to generate response using vLLM engine on Ray. 使用Ray上的vLLM引擎生成响应的管道。 | - | - |
+| vlm_inference_with_ray_vllm_pipeline | 🏞Image 🚀GPU 🔴Alpha | Pipeline to generate response using vLLM engine on Ray. 使用Ray上的vLLM引擎生成响应的管道。 | - | - |
 
 ## selector <a name="selector"/>
 

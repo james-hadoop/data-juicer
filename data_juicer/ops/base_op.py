@@ -751,6 +751,7 @@ class Aggregator(OP):
 
 
 class Pipeline(OP):
+    """Base class for Operators that represent a data processing pipeline."""
 
     def __init__(self, *args, **kwargs):
         """
