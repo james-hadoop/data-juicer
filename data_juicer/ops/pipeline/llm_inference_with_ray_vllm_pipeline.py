@@ -1,9 +1,10 @@
 import os
-from typing import Dict, Optional
 from functools import partial
+from typing import Dict, Optional
 
 from data_juicer.ops.base_op import OPERATORS
 from data_juicer.utils.lazy_loader import LazyLoader
+
 from .ray_vllm_pipeline import RayVLLMEnginePipeline
 
 torch = LazyLoader("torch")
@@ -30,7 +31,7 @@ class LLMRayVLLMEnginePipeline(RayVLLMEnginePipeline):
         sampling_params: Optional[Dict] = None,
         engine_kwargs: Optional[Dict] = None,
         api_url: str = None,
-        api_key: str = None, 
+        api_key: str = None,
         **kwargs,
     ):
         """
@@ -42,7 +43,7 @@ class LLMRayVLLMEnginePipeline(RayVLLMEnginePipeline):
             Default to None, meaning that only the CPU will be used.
         :param sampling_params: Sampling parameters for text generation (e.g.,
             {'temperature': 0.9, 'top_p': 0.95}).
-        :param engine_kwargs: The kwargs to pass to the vLLM engine. 
+        :param engine_kwargs: The kwargs to pass to the vLLM engine.
             See documentation for details: https://docs.vllm.ai/en/latest/api/vllm/engine/arg_utils/#vllm.engine.arg_utils.AsyncEngineArgs.
         :param api_url: Base URL of the OpenAI API
         :param api_key: API key for authentication
@@ -57,13 +58,13 @@ class LLMRayVLLMEnginePipeline(RayVLLMEnginePipeline):
         self.api_url = api_url
         self.api_key = api_key
 
-        _default_engine_kwargs=dict(
+        _default_engine_kwargs = dict(
             enable_chunked_prefill=True,
             max_num_batched_tokens=4096,  # Reduce if CUDA OOM occurs
             max_model_len=4096,  # Constrain to fit test GPU memory
             tensor_parallel_size=1,
             pipeline_parallel_size=1,
-            trust_remote_code=True
+            trust_remote_code=True,
         )
 
         if engine_kwargs:
@@ -71,6 +72,7 @@ class LLMRayVLLMEnginePipeline(RayVLLMEnginePipeline):
 
         if self.is_hf_model:
             from ray.data.llm import vLLMEngineProcessorConfig
+
             self.config = vLLMEngineProcessorConfig(
                 model_source=api_or_hf_model,
                 engine_kwargs=_default_engine_kwargs,
@@ -81,7 +83,8 @@ class LLMRayVLLMEnginePipeline(RayVLLMEnginePipeline):
                 tokenize=True,
                 detokenize=True,
                 has_image=False,
-                accelerator_type=self.accelerator_type)
+                accelerator_type=self.accelerator_type,
+            )
         else:
             from ray.data.llm import HttpRequestProcessorConfig
 
@@ -90,22 +93,18 @@ class LLMRayVLLMEnginePipeline(RayVLLMEnginePipeline):
                 self.api_url = f"{base_url}/chat/completions"
             if not self.api_key:
                 self.api_key = os.environ["OPENAI_API_KEY"]
-            
+
             self.config = HttpRequestProcessorConfig(
-                url=self.api_url,
-                headers={"Authorization": f"Bearer {self.api_key}"}
+                url=self.api_url, headers={"Authorization": f"Bearer {self.api_key}"}
             )
-        
+
     @staticmethod
     def preprocess_fn(row: Dict, query_key: str, system_prompt: Optional[str], sampling_params: Dict) -> Dict:
         input_prompt = row[query_key]
         messages = [{"role": "user", "content": input_prompt}]
         if system_prompt:
             messages.insert(0, {"role": "system", "content": system_prompt})
-        return dict(
-            messages=messages,
-            sampling_params=sampling_params
-        )
+        return dict(messages=messages, sampling_params=sampling_params)
 
     @staticmethod
     def postprocess_fn(row: Dict, response_key: str, ori_columns: list) -> Dict:
@@ -113,25 +112,20 @@ class LLMRayVLLMEnginePipeline(RayVLLMEnginePipeline):
         out_row = {k: v for k, v in row.items() if k in ori_columns}
         out_row[response_key] = output
         return out_row
-    
 
     @staticmethod
-    def preprocess_fn_api(row: Dict, model: str, query_key: str, system_prompt: Optional[str], 
-                            sampling_params: Optional[Dict] = None) -> Dict:
+    def preprocess_fn_api(
+        row: Dict, model: str, query_key: str, system_prompt: Optional[str], sampling_params: Optional[Dict] = None
+    ) -> Dict:
         input_prompt = row[query_key]
 
         messages = [{"role": "user", "content": input_prompt}]
         if system_prompt:
             messages.insert(0, {"role": "system", "content": system_prompt})
-        
+
         sampling_params = {} if not sampling_params else sampling_params
 
-        inp = dict(
-            payload=dict(
-                model=model,
-                messages=messages,
-                **sampling_params
-            ))
+        inp = dict(payload=dict(model=model, messages=messages, **sampling_params))
 
         return inp
 
@@ -151,29 +145,21 @@ class LLMRayVLLMEnginePipeline(RayVLLMEnginePipeline):
 
         if self.is_hf_model:
             preprocess_fn = partial(
-                self.preprocess_fn, 
-                query_key=self.query_key, 
-                system_prompt=self.system_prompt, 
-                sampling_params=self.sampling_params
+                self.preprocess_fn,
+                query_key=self.query_key,
+                system_prompt=self.system_prompt,
+                sampling_params=self.sampling_params,
             )
-            postprocess_fn = partial(
-                self.postprocess_fn,
-                response_key=self.response_key,
-                ori_columns=ori_columns
-            )
+            postprocess_fn = partial(self.postprocess_fn, response_key=self.response_key, ori_columns=ori_columns)
         else:
             preprocess_fn = partial(
-                self.preprocess_fn_api, 
+                self.preprocess_fn_api,
                 model=self.api_or_hf_model,
-                query_key=self.query_key, 
-                system_prompt=self.system_prompt, 
-                sampling_params=self.sampling_params
+                query_key=self.query_key,
+                system_prompt=self.system_prompt,
+                sampling_params=self.sampling_params,
             )
-            postprocess_fn = partial(
-                self.postprocess_fn_api,
-                response_key=self.response_key,
-                ori_columns=ori_columns
-            )
+            postprocess_fn = partial(self.postprocess_fn_api, response_key=self.response_key, ori_columns=ori_columns)
 
         from ray.data.llm import build_llm_processor
 

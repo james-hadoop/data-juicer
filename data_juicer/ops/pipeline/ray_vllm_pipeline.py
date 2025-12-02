@@ -1,10 +1,11 @@
 from typing import Optional
 
 from data_juicer.ops.base_op import Pipeline
-from data_juicer.utils.ray_utils import is_ray_mode
 from data_juicer.utils.lazy_loader import LazyLoader
+from data_juicer.utils.ray_utils import is_ray_mode
 
 ray = LazyLoader("ray")
+
 
 class RayVLLMEnginePipeline(Pipeline):
     """Pipeline for Ray vLLM engine."""
@@ -33,9 +34,10 @@ class RayVLLMEnginePipeline(Pipeline):
 
         if self.accelerator_type:
             all_accelerator_types = [t.value for t in GPUType]
-            assert self.accelerator_type in all_accelerator_types, \
-                f"Unsupported accelerator type: {self.accelerator_type}. " \
+            assert self.accelerator_type in all_accelerator_types, (
+                f"Unsupported accelerator type: {self.accelerator_type}. "
                 f"Supported types are: {all_accelerator_types}"
+            )
 
     def run(self, dataset: ray.data.Dataset, *, exporter=None, tracer=None, reduce=True) -> ray.data.Dataset:
         raise NotImplementedError

@@ -1,9 +1,10 @@
-from typing import Dict, Optional
 from functools import partial
+from typing import Dict, Optional
 
 from data_juicer.ops.base_op import OPERATORS
 from data_juicer.utils.lazy_loader import LazyLoader
 from data_juicer.utils.mm_utils import load_image
+
 from .ray_vllm_pipeline import RayVLLMEnginePipeline
 
 torch = LazyLoader("torch")
@@ -40,12 +41,12 @@ class VLMRayVLLMEnginePipeline(RayVLLMEnginePipeline):
             Default to None, meaning that only the CPU will be used.
         :param sampling_params: Sampling parameters for text generation (e.g.,
             {'temperature': 0.9, 'top_p': 0.95}).
-        :param engine_kwargs: The kwargs to pass to the vLLM engine. 
+        :param engine_kwargs: The kwargs to pass to the vLLM engine.
             See documentation for details: https://docs.vllm.ai/en/latest/api/vllm/engine/arg_utils/#vllm.engine.arg_utils.AsyncEngineArgs.
         :param kwargs: Extra keyword arguments.
         """
         super().__init__(accelerator_type=accelerator_type, **kwargs)
-        
+
         self.is_hf_model = is_hf_model
         if not self.is_hf_model:
             raise NotImplementedError("Only huggingface model is supported for now.")
@@ -53,13 +54,13 @@ class VLMRayVLLMEnginePipeline(RayVLLMEnginePipeline):
         self.system_prompt = system_prompt
         self.sampling_params = sampling_params
 
-        _default_engine_kwargs=dict(
+        _default_engine_kwargs = dict(
             enable_chunked_prefill=True,
             max_num_batched_tokens=4096,  # Reduce if CUDA OOM occurs
             max_model_len=4096,  # Constrain to fit test GPU memory
             tensor_parallel_size=1,
             pipeline_parallel_size=1,
-            trust_remote_code=True
+            trust_remote_code=True,
         )
 
         if engine_kwargs:
@@ -77,36 +78,33 @@ class VLMRayVLLMEnginePipeline(RayVLLMEnginePipeline):
             tokenize=True,
             detokenize=True,
             has_image=True,
-            accelerator_type=self.accelerator_type)
+            accelerator_type=self.accelerator_type,
+        )
 
     @staticmethod
-    def vision_preprocess(row: dict, query_key: str, image_key: str, 
-            system_prompt: Optional[str], sampling_params: Dict) -> dict:
+    def vision_preprocess(
+        row: dict, query_key: str, image_key: str, system_prompt: Optional[str], sampling_params: Dict
+    ) -> dict:
         """
         Preprocessing function for vision-language model inputs.
         """
         messages = []
 
         if system_prompt:
-            messages.append({
+            messages.append(
+                {
                     "role": "system",
                     "content": system_prompt,
-                })
+                }
+            )
 
         messages.append(
             {
                 "role": "user",
                 "content": [
                     {"type": "text", "text": row[query_key] + "\n\n"},
-                    *[
-                        {
-                            "type": "image",
-                            "image": load_image(img),
-                            "detail": "low"
-                        }
-                        for img in row[image_key]
-                    ],
-                ]
+                    *[{"type": "image", "image": load_image(img), "detail": "low"} for img in row[image_key]],
+                ],
             }
         )
         return dict(messages=messages, sampling_params=sampling_params)
@@ -126,7 +124,7 @@ class VLMRayVLLMEnginePipeline(RayVLLMEnginePipeline):
             query_key=self.query_key,
             image_key=self.image_key,
             system_prompt=self.system_prompt,
-            sampling_params=self.sampling_params
+            sampling_params=self.sampling_params,
         )
 
         postprocess_fn = partial(
