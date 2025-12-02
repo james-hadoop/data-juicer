@@ -5,7 +5,7 @@
 from typing import List, Optional, Tuple
 
 from loguru import logger
-from pyspark import SparkConf
+from pyspark import SparkConf, StorageLevel
 from pyspark.sql import SparkSession
 
 
@@ -93,10 +93,20 @@ def find_components(edges):
 
     a = edges
     while True:
-        b = a.flatMap(large_star_map).groupByKey().flatMap(
-            large_star_reduce).distinct()
-        a = b.map(small_star_map).groupByKey().flatMap(
-            small_star_reduce).distinct()
+        b = (
+            a.flatMap(large_star_map)
+            .groupByKey()
+            .flatMap(large_star_reduce)
+            .distinct()
+            .persist(StorageLevel.MEMORY_AND_DISK)
+        )
+        a = (
+            b.map(small_star_map)
+            .groupByKey()
+            .flatMap(small_star_reduce)
+            .distinct()
+            .persist(StorageLevel.MEMORY_AND_DISK)
+        )
         changes = a.subtract(b).union(b.subtract(a)).count()
         if changes == 0:
             break
