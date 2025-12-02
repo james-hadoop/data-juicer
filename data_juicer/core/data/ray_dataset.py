@@ -10,7 +10,7 @@ from loguru import logger
 
 from data_juicer.core.data import DJDataset
 from data_juicer.core.data.schema import Schema
-from data_juicer.ops import Deduplicator, Filter, Mapper
+from data_juicer.ops import Deduplicator, Filter, Mapper, Pipeline
 from data_juicer.ops.base_op import DEFAULT_BATCH_SIZE, TAGGING_OPS
 from data_juicer.utils.constant import Fields
 from data_juicer.utils.file_utils import is_remote_path
@@ -240,7 +240,7 @@ class RayDataset(DJDataset):
                     )
                 else:
                     self.data = self.data.filter(op.process)
-            elif isinstance(op, Deduplicator):
+            elif isinstance(op, (Deduplicator, Pipeline)):
                 self.data = op.run(self.data)
             else:
                 logger.error("Ray executor only support Filter, Mapper and Deduplicator OPs for now")
