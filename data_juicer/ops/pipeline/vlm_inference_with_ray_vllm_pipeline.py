@@ -54,7 +54,7 @@ class VLMRayVLLMEnginePipeline(RayVLLMEnginePipeline):
             raise NotImplementedError("Only huggingface model is supported for now.")
 
         self.system_prompt = system_prompt
-        self.sampling_params = sampling_params
+        self.sampling_params = sampling_params or {}
 
         _default_engine_kwargs = dict(
             enable_chunked_prefill=True,

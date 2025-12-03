@@ -56,7 +56,7 @@ class LLMRayVLLMEnginePipeline(RayVLLMEnginePipeline):
         self.api_or_hf_model = api_or_hf_model
         self.is_hf_model = is_hf_model
         self.system_prompt = system_prompt
-        self.sampling_params = sampling_params
+        self.sampling_params = sampling_params or {}
         self.api_url = api_url
         self.api_key = api_key
 
