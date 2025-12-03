@@ -156,6 +156,8 @@ class RayDataset(DJDataset):
         return self
 
     def _run_single_op(self, op):
+        from ray.data._internal.util import get_compute_strategy
+
         if op._name in TAGGING_OPS.modules and Fields.meta not in self.data.columns():
 
             def process_batch_arrow(table: pyarrow.Table):
@@ -172,6 +174,7 @@ class RayDataset(DJDataset):
             if isinstance(op, Mapper):
                 if op.use_ray_actor():
                     op_kwargs = op._op_cfg[op._name]
+                    compute = get_compute_strategy(op.__class__, concurrency=op.num_proc)
                     self.data = self.data.map_batches(
                         op.__class__,
                         fn_args=None,
@@ -181,18 +184,19 @@ class RayDataset(DJDataset):
                         batch_size=batch_size,
                         num_cpus=op.num_cpus,
                         num_gpus=op.num_gpus,
-                        concurrency=op.num_proc,
+                        compute=compute,
                         batch_format="pyarrow",
                         runtime_env=op.runtime_env,
                     )
                 else:
+                    compute = get_compute_strategy(op.process, concurrency=op.num_proc)
                     self.data = self.data.map_batches(
                         op.process,
                         batch_size=batch_size,
                         batch_format="pyarrow",
                         num_cpus=op.num_cpus,
                         num_gpus=op.num_gpus,
-                        concurrency=op.num_proc,
+                        compute=compute,
                         runtime_env=op.runtime_env,
                     )
             elif isinstance(op, Filter):
@@ -209,6 +213,7 @@ class RayDataset(DJDataset):
                     )
                 if op.use_ray_actor():
                     op_kwargs = op._op_cfg[op._name]
+                    compute = get_compute_strategy(op.__class__, concurrency=op.num_proc)
                     self.data = self.data.map_batches(
                         op.__class__,
                         fn_args=None,
@@ -218,18 +223,19 @@ class RayDataset(DJDataset):
                         batch_size=batch_size,
                         num_cpus=op.num_cpus,
                         num_gpus=op.num_gpus,
-                        concurrency=op.num_proc,
+                        compute=compute,
                         batch_format="pyarrow",
                         runtime_env=op.runtime_env,
                     )
                 else:
+                    compute = get_compute_strategy(op.compute_stats, concurrency=op.num_proc)
                     self.data = self.data.map_batches(
                         op.compute_stats,
                         batch_size=batch_size,
                         batch_format="pyarrow",
                         num_cpus=op.num_cpus,
                         num_gpus=op.num_gpus,
-                        concurrency=op.num_proc,
+                        compute=compute,
                         runtime_env=op.runtime_env,
                     )
                 if op.stats_export_path is not None:

@@ -256,7 +256,7 @@ class OP:
     def use_ray_actor(self):
         if self.ray_execution_mode:
             return self.ray_execution_mode == "actor"
-        
+
         return self.use_cuda()
 
     def process(self, *args, **kwargs):
