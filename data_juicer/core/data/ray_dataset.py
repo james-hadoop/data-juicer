@@ -179,18 +179,20 @@ class RayDataset(DJDataset):
                         fn_constructor_args=None,
                         fn_constructor_kwargs=op_kwargs,
                         batch_size=batch_size,
-                        num_cpus=op.cpu_required,
-                        num_gpus=op.gpu_required,
+                        num_cpus=op.num_cpus,
+                        num_gpus=op.num_gpus,
                         concurrency=op.num_proc,
                         batch_format="pyarrow",
+                        runtime_env=op.runtime_env,
                     )
                 else:
                     self.data = self.data.map_batches(
                         op.process,
                         batch_size=batch_size,
                         batch_format="pyarrow",
-                        num_cpus=op.cpu_required,
+                        num_cpus=op.num_cpus,
                         concurrency=op.num_proc,
+                        runtime_env=op.runtime_env,
                     )
             elif isinstance(op, Filter):
                 columns = self.data.columns()
@@ -213,18 +215,20 @@ class RayDataset(DJDataset):
                         fn_constructor_args=None,
                         fn_constructor_kwargs=op_kwargs,
                         batch_size=batch_size,
-                        num_cpus=op.cpu_required,
-                        num_gpus=op.gpu_required,
+                        num_cpus=op.num_cpus,
+                        num_gpus=op.num_gpus,
                         concurrency=op.num_proc,
                         batch_format="pyarrow",
+                        runtime_env=op.runtime_env,
                     )
                 else:
                     self.data = self.data.map_batches(
                         op.compute_stats,
                         batch_size=batch_size,
                         batch_format="pyarrow",
-                        num_cpus=op.cpu_required,
+                        num_cpus=op.num_cpus,
                         concurrency=op.num_proc,
+                        runtime_env=op.runtime_env,
                     )
                 if op.stats_export_path is not None:
                     self.data.write_json(op.stats_export_path, force_ascii=False)
@@ -237,9 +241,13 @@ class RayDataset(DJDataset):
                         batch_format="pyarrow",
                         zero_copy_batch=True,
                         batch_size=DEFAULT_BATCH_SIZE,
+                        runtime_env=op.runtime_env,
                     )
                 else:
-                    self.data = self.data.filter(op.process)
+                    self.data = self.data.filter(
+                        op.process,
+                        runtime_env=op.runtime_env,
+                    )
             elif isinstance(op, Deduplicator):
                 self.data = op.run(self.data)
             else:

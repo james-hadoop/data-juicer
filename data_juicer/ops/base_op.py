@@ -3,6 +3,7 @@ from functools import wraps
 
 import numpy as np
 import pyarrow as pa
+from loguru import logger
 
 from data_juicer.utils.constant import Fields
 from data_juicer.utils.mm_utils import size_to_bytes
@@ -202,6 +203,33 @@ class OP:
         if isinstance(self.mem_required, str):
             self.mem_required = size_to_bytes(self.mem_required) / 1024**3
 
+        self.num_cpus = kwargs.get("num_cpus", None)
+        self.num_gpus = kwargs.get("num_gpus", None)
+        self.memory = kwargs.get("memory", None)
+        if self.memory and isinstance(self.mem_required, str):
+            self.memory = size_to_bytes(self.mem_required) / 1024**3
+        # Optional[Union[Dict[str, Any], "RuntimeEnv"]]
+        self.runtime_env = kwargs.get("runtime_env", None)
+
+        if self.cpu_required:
+            logger.warning(
+                "The argument ``cpu_required`` will be deprecated. Please specify argument ``num_cpus`` instead."
+            )
+            if self.num_cpus is None:
+                self.num_cpus = self.cpu_required
+        if self.gpu_required:
+            logger.warning(
+                "The argument ``gpu_required`` will be deprecated. Please specify argument ``num_gpus`` instead."
+            )
+            if self.num_gpus is None:
+                self.num_gpus = self.num_gpus
+        if self.mem_required:
+            logger.warning(
+                "The argument ``mem_required`` will be deprecated. Please specify argument ``memory`` instead."
+            )
+            if self.memory is None:
+                self.memory = self.mem_required
+
         self.turbo = kwargs.get("turbo", False)
 
         # nested wrappers
@@ -233,9 +261,7 @@ class OP:
         # Local import to avoid logger being serialized in multiprocessing
         from loguru import logger
 
-        op_proc = calculate_np(
-            self._name, self.mem_required, self.cpu_required or 1, self.use_cuda(), self.gpu_required
-        )
+        op_proc = calculate_np(self._name, self.memory, self.num_cpus or 1, self.use_cuda(), self.num_gpus)
         if not self.use_auto_proc():
             op_proc = min(op_proc, self.num_proc)
         logger.debug(f"Op [{self._name}] running with number of procs:{op_proc}")
