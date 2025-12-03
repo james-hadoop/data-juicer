@@ -44,14 +44,8 @@ def timing_context(description):
 
 
 def _generate_module_name(abs_path):
-    """Generate a unique module name based on the absolute path of the file."""
-    abs_path_without_ext = os.path.splitext(abs_path)[0]
-
-    # handle path delimiters for different operating systems
-    normalized_path = os.path.normpath(abs_path_without_ext)
-    module_name = normalized_path.replace(os.path.sep, "_")
-
-    return module_name
+    """Generate a module name based on the absolute path of the file."""
+    return os.path.splitext(os.path.basename(abs_path))[0]
 
 
 def load_custom_operators(paths):
@@ -196,7 +190,8 @@ def init_configs(args: Optional[List[str]] = None, which_entry: object = None, l
                 type=Union[List[Dict], Dict],
                 default=[],
                 help="Dataset setting to define local/remote datasets; could be a "  # noqa: E251
-                "dict or a list of dicts; refer to configs/datasets for more "
+                "dict or a list of dicts; refer to "
+                "https://datajuicer.github.io/data-juicer/en/main/docs/DatasetCfg.html for more "
                 "detailed examples",
             )
             parser.add_argument(
@@ -266,6 +261,14 @@ def init_configs(args: Optional[List[str]] = None, which_entry: object = None, l
                 default={},
                 help="Other optional arguments for exporting in dict. For example, the key mapping info for exporting "
                 "the WebDataset format.",
+            )
+            parser.add_argument(
+                "--export_aws_credentials",
+                type=Dict,
+                default=None,
+                help="Export-specific AWS credentials for S3 export. If export_path is S3 and this is not provided, "
+                "an error will be raised. Should contain aws_access_key_id, aws_secret_access_key, aws_region, "
+                "and optionally aws_session_token and endpoint_url.",
             )
             parser.add_argument(
                 "--keep_stats_in_res_ds",
@@ -639,12 +642,30 @@ def init_setup_from_cfg(cfg: Namespace, load_configs_only=False):
     :param cfg: an updated cfg
     """
 
-    cfg.export_path = os.path.abspath(cfg.export_path)
-    if cfg.work_dir is None:
-        cfg.work_dir = os.path.dirname(cfg.export_path)
+    # Handle S3 paths differently from local paths
+    if cfg.export_path.startswith("s3://"):
+        # For S3 paths, keep as-is (don't use os.path.abspath)
+        # If work_dir is not provided, use a default local directory for logs/checkpoints
+        if cfg.work_dir is None:
+            # Use a default local work directory for S3 exports
+            # This is where logs, checkpoints, and other local artifacts will be stored
+            cfg.work_dir = os.path.abspath("./outputs")
+            logger.info(f"Using default work_dir [{cfg.work_dir}] for S3 export_path [{cfg.export_path}]")
+    else:
+        # For local paths, convert to absolute path
+        cfg.export_path = os.path.abspath(cfg.export_path)
+        if cfg.work_dir is None:
+            cfg.work_dir = os.path.dirname(cfg.export_path)
+
     timestamp = time.strftime("%Y%m%d%H%M%S", time.localtime(time.time()))
     if not load_configs_only:
-        export_rel_path = os.path.relpath(cfg.export_path, start=cfg.work_dir)
+        # For S3 paths, use a simplified export path for log filename
+        if cfg.export_path.startswith("s3://"):
+            # Extract bucket and key from S3 path for log filename
+            s3_path_parts = cfg.export_path.replace("s3://", "").split("/", 1)
+            export_rel_path = s3_path_parts[1] if len(s3_path_parts) > 1 else s3_path_parts[0]
+        else:
+            export_rel_path = os.path.relpath(cfg.export_path, start=cfg.work_dir)
         log_dir = os.path.join(cfg.work_dir, "log")
         if not os.path.exists(log_dir):
             os.makedirs(log_dir, exist_ok=True)
@@ -674,7 +695,7 @@ def init_setup_from_cfg(cfg: Namespace, load_configs_only=False):
     # check number of processes np
     from data_juicer.utils.resource_utils import cpu_count
 
-    sys_cpu_count = cpu_count()
+    sys_cpu_count = cpu_count(cfg)
     if cfg.get("np", None) and cfg.np > sys_cpu_count:
         logger.warning(
             f"Number of processes `np` is set as [{cfg.np}], which "
@@ -744,6 +765,12 @@ def init_setup_from_cfg(cfg: Namespace, load_configs_only=False):
         text_key = cfg.text_keys[0]
     else:
         text_key = cfg.text_keys
+
+    SpecialTokens.image = cfg.get("image_special_token", SpecialTokens.image)
+    SpecialTokens.audio = cfg.get("audio_special_token", SpecialTokens.audio)
+    SpecialTokens.video = cfg.get("video_special_token", SpecialTokens.video)
+    SpecialTokens.eoc = cfg.get("eoc_special_token", SpecialTokens.eoc)
+
     op_attrs = {
         "text_key": text_key,
         "image_key": cfg.get("image_key", "images"),
@@ -753,10 +780,6 @@ def init_setup_from_cfg(cfg: Namespace, load_configs_only=False):
         "turbo": cfg.get("turbo", False),
         "skip_op_error": cfg.get("skip_op_error", True),
         "work_dir": cfg.work_dir,
-        "image_special_token": cfg.get("image_special_token", SpecialTokens.image),
-        "audio_special_token": cfg.get("audio_special_token", SpecialTokens.audio),
-        "video_special_token": cfg.get("video_special_token", SpecialTokens.video),
-        "eoc_special_token": cfg.get("eoc_special_token", SpecialTokens.eoc),
     }
     if not is_ray_mode():
         op_attrs.update({"num_proc": cfg.get("np", None)})
@@ -958,7 +981,10 @@ def namespace_to_arg_list(namespace, prefix="", includes=None, excludes=None):
                 continue
             if excludes is not None and concat_key in excludes:
                 continue
-            arg_list.append(f"--{concat_key}={value}")
+            if key == "process":
+                arg_list.append(f"--{concat_key}={json.dumps(value, ensure_ascii=False)}")
+            else:
+                arg_list.append(f"--{concat_key}={value}")
 
     return arg_list
 
@@ -1141,12 +1167,12 @@ def get_init_configs(cfg: Union[Namespace, Dict], load_configs_only: bool = True
 
 
 def get_default_cfg():
-    """Get default config values from config_all.yaml"""
+    """Get default config values from config_min.yaml"""
     cfg = Namespace()
 
-    # Get path to config_all.yaml
+    # Get path to config_min.yaml
     config_dir = os.path.dirname(os.path.abspath(__file__))
-    default_config_path = os.path.join(config_dir, "../../configs/config_min.yaml")
+    default_config_path = os.path.join(config_dir, "config_min.yaml")
 
     # Load default values from yaml
     with open(default_config_path, "r", encoding="utf-8") as f:

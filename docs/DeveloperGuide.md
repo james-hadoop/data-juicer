@@ -119,13 +119,13 @@ process:
       max_len: 1000
 ```
 
-6. Community contributors can submit corresponding operator PRs and work with the Data-Juicer team to gradually improve it in subsequent PRs. Please see more details [below](#4-contribution-to-the-open-source-community). We greatly welcome co-construction and will [highlight acknowledgements](https://github.com/modelscope/data-juicer?tab=readme-ov-file#contribution-and-acknowledgements)!
+6. Community contributors can submit corresponding operator PRs and work with the Data-Juicer team to gradually improve it in subsequent PRs. Please see more details [below](#4-contribution-to-the-open-source-community). We greatly welcome co-construction and will [highlight acknowledgements](https://github.com/datajuicer/data-juicer?tab=readme-ov-file#contribution-and-acknowledgements)!
 
 
 ## 2. Build Your Own Data Recipes and Configs
 - We provide easy configuration based on [jsonargparse](https://github.com/omni-us/jsonargparse/) to reduce cost for boilerplate codes.
-- We provide fruitful examples in [Data Recipe Gallery](RecipeGallery.md) for reference reuse and extension.
-- 📣📣📣 Community contributors can submit PRs in the *Data Recipe Gallery* to add customized data recipes to promote dissemination, reuse and related technical evolution. We greatly welcome co-construction and will highlight [acknowledgements](https://github.com/modelscope/data-juicer?tab=readme-ov-file#contribution-and-acknowledgements)!
+- We provide fruitful examples in [Data Recipe Gallery](hub/RecipeGallery.md) for reference reuse and extension.
+- 📣📣📣 Community contributors can submit PRs in the *Data Recipe Gallery* to add customized data recipes to promote dissemination, reuse and related technical evolution. We greatly welcome co-construction and will highlight [acknowledgements](https://github.com/datajuicer/data-juicer?tab=readme-ov-file#contribution-and-acknowledgements)!
 
 ### 2.1 Fruitful Config Sources & Type Hints
 - A global config object can be initialized via
@@ -344,7 +344,7 @@ We use Sphinx for document management. To ensure the smooth integration of devel
   - ![beta](https://img.shields.io/badge/beta-yellow?style=plastic) version: Based on the alpha version, unittests for this OP and basic docstring are added as well.
   - ![stable](https://img.shields.io/badge/stable-green?style=plastic) version: Based on the beta version, OP optimizations (e.g. model management, batched processing, OP fusion, ...)
 
-- Community contributors can submit corresponding operator PRs in the alpha state. After that, the contributor can work with the Data-Juicer team to gradually improve it to beta and stable versions in subsequent PRs. We welcome co-construction and will highlight [acknowledgements](https://github.com/modelscope/data-juicer?tab=readme-ov-file#contribution-and-acknowledgements)!
+- Community contributors can submit corresponding operator PRs in the alpha state. After that, the contributor can work with the Data-Juicer team to gradually improve it to beta and stable versions in subsequent PRs. We welcome co-construction and will highlight [acknowledgements](https://github.com/datajuicer/data-juicer?tab=readme-ov-file#contribution-and-acknowledgements)!
 
 - Welcome to add the corresponding references of your new recipe (e.g., a new implementation inspired by some existing ideas or codes, or an advanced algorithm proposed in an existing paper).
 
@@ -379,7 +379,7 @@ if __name__ == '__main__':
 
 - (![beta](https://img.shields.io/badge/beta-yellow?style=plastic) strongly recommend) In order to facilitate other users to understand and use, it is best to update the newly added operator information to the corresponding documents, including the following two basic actions:
    1. Please add basic information to the doc string of the operator class to ensure that it is complete and readable (including basic function description of the operator, input parameters, output parameters, etc.). There is no need for users to write in multiple places. Our `pre-commit` and sphinx build scripts will automatically extract doc strings to form operator pool documents and API documents.
-   2. `configs/config_all.yaml`: This complete configuration file saves a list of all operators and parameters, as a source of information for some automated features and one of the important documents for users to refer to available operators. Therefore, after adding a new operator, please also add it to the document process list (grouped by operator type and sorted alphabetically):
+   2. `data_juicer/config/config_all.yaml`: This complete configuration file saves a list of all operators and parameters, as a source of information for some automated features and one of the important documents for users to refer to available operators. Therefore, after adding a new operator, please also add it to the document process list (grouped by operator type and sorted alphabetically):
    
    ```yaml
    ...
@@ -612,8 +612,8 @@ class PerplexityFilter(Filter):
 
 
 ### 4.4 Contribute Your New Recipes 
-- Community contributors can submit PRs in the [Data Recipe Gallery](RecipeGallery.md) to add customized data recipes to promote dissemination, reuse and related technical evolution. 
+- Community contributors can submit PRs in the [Data Recipe Gallery](hub/RecipeGallery.md) to add customized data recipes to promote dissemination, reuse and related technical evolution. 
 
 - Feel free to add the corresponding references of your new recipe, or just propose some requirements/ideas to improve the existing recipes.
 
-- We greatly welcome co-construction and will highlight [acknowledgements](https://github.com/modelscope/data-juicer?tab=readme-ov-file#contribution-and-acknowledgements)!
+- We greatly welcome co-construction and will highlight [acknowledgements](https://github.com/datajuicer/data-juicer?tab=readme-ov-file#contribution-and-acknowledgements)!
