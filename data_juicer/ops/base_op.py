@@ -206,8 +206,8 @@ class OP:
         self.num_cpus = kwargs.get("num_cpus", None)
         self.num_gpus = kwargs.get("num_gpus", None)
         self.memory = kwargs.get("memory", None)
-        if self.memory and isinstance(self.mem_required, str):
-            self.memory = size_to_bytes(self.mem_required) / 1024**3
+        if self.memory and isinstance(self.memory, str):
+            self.memory = size_to_bytes(self.memory) / 1024**3
         # Optional[Union[Dict[str, Any], "RuntimeEnv"]]
         self.runtime_env = kwargs.get("runtime_env", None)
 
@@ -222,7 +222,7 @@ class OP:
                 "The argument ``gpu_required`` will be deprecated. Please specify argument ``num_gpus`` instead."
             )
             if self.num_gpus is None:
-                self.num_gpus = self.num_gpus
+                self.num_gpus = self.gpu_required
         if self.mem_required:
             logger.warning(
                 "The argument ``mem_required`` will be deprecated. Please specify argument ``memory`` instead."
