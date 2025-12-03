@@ -170,7 +170,7 @@ class RayDataset(DJDataset):
         try:
             batch_size = getattr(op, "batch_size", 1) if op.is_batched_op() else 1
             if isinstance(op, Mapper):
-                if op.use_cuda():
+                if op.use_ray_actor():
                     op_kwargs = op._op_cfg[op._name]
                     self.data = self.data.map_batches(
                         op.__class__,
@@ -191,6 +191,7 @@ class RayDataset(DJDataset):
                         batch_size=batch_size,
                         batch_format="pyarrow",
                         num_cpus=op.num_cpus,
+                        num_gpus=op.num_gpus,
                         concurrency=op.num_proc,
                         runtime_env=op.runtime_env,
                     )
@@ -206,7 +207,7 @@ class RayDataset(DJDataset):
                     self.data = self.data.map_batches(
                         process_batch_arrow, batch_format="pyarrow", batch_size=DEFAULT_BATCH_SIZE
                     )
-                if op.use_cuda():
+                if op.use_ray_actor():
                     op_kwargs = op._op_cfg[op._name]
                     self.data = self.data.map_batches(
                         op.__class__,
@@ -227,6 +228,7 @@ class RayDataset(DJDataset):
                         batch_size=batch_size,
                         batch_format="pyarrow",
                         num_cpus=op.num_cpus,
+                        num_gpus=op.num_gpus,
                         concurrency=op.num_proc,
                         runtime_env=op.runtime_env,
                     )

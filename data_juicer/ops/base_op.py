@@ -210,6 +210,8 @@ class OP:
             self.memory = size_to_bytes(self.memory) / 1024**3
         # Optional[Union[Dict[str, Any], "RuntimeEnv"]]
         self.runtime_env = kwargs.get("runtime_env", None)
+        self.ray_execution_mode = kwargs.get("ray_execution_mode", None)
+        assert self.ray_execution_mode in [None, "actor", "task"]
 
         if self.cpu_required:
             logger.warning(
@@ -250,6 +252,12 @@ class OP:
 
     def is_batched_op(self):
         return self._batched_op
+
+    def use_ray_actor(self):
+        if self.ray_execution_mode:
+            return self.ray_execution_mode == "actor"
+        
+        return self.use_cuda()
 
     def process(self, *args, **kwargs):
         raise NotImplementedError
