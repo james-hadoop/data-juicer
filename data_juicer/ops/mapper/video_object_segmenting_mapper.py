@@ -200,9 +200,14 @@ class VideoObjectSegmentingMapper(Mapper):
             )[0]
             video_segments.append([video_res_masks[i].tolist() for i, obj_id in enumerate(inference_session.obj_ids)])
 
+        # cls_id_dict might be a list of classes
+        cls_id_list = cls_id_dict
+        if isinstance(cls_id_list, dict):
+            cls_id_list = [cls_id_list[key] for key in cls_id_list]
+
         sample[Fields.meta][self.tag_field_name] = {}
         sample[Fields.meta][self.tag_field_name]["segment_data"] = video_segments
-        sample[Fields.meta][self.tag_field_name]["cls_id_dict"] = [cls_id_dict[key] for key in cls_id_dict]
+        sample[Fields.meta][self.tag_field_name]["cls_id_dict"] = cls_id_list
         sample[Fields.meta][self.tag_field_name]["object_cls_list"] = object_cls_list
         sample[Fields.meta][self.tag_field_name]["yoloe_conf_list"] = yoloe_conf_list
 

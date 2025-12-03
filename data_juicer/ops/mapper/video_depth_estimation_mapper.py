@@ -76,6 +76,7 @@ class VideoDepthEstimationMapper(Mapper):
         import sys
 
         sys.path.append(video_depth_anything_repo_path)
+        print(f"======================= {sys.path[-1]}, {os.path.exists(sys.path[-1])}")
         from utils.dc_utils import read_video_frames, save_video
 
         if "metric" in video_depth_model_path:
