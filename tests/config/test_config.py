@@ -86,6 +86,12 @@ class ConfigTest(DataJuicerTestCaseBase):
                         'index_key': None,
                         'skip_op_error': True,
                         'work_dir': WORKDIR,
+                        'cpu_required': None,
+                        'gpu_required': None,
+                        'mem_required': None,
+                        'ray_execution_mode': None,
+                        'runtime_env': None,
+
                     }
                 }, 'nested dict load fail, for nonparametric op')
             self.assertDictEqual(
@@ -117,6 +123,11 @@ class ConfigTest(DataJuicerTestCaseBase):
                         'index_key': None,
                         'skip_op_error': True,
                         'work_dir': WORKDIR,
+                        'cpu_required': None,
+                        'gpu_required': None,
+                        'mem_required': None,
+                        'ray_execution_mode': None,
+                        'runtime_env': None,
                     }
                 }, 'nested dict load fail, un-expected internal value')
 
@@ -197,6 +208,11 @@ class ConfigTest(DataJuicerTestCaseBase):
                         'index_key': None,
                         'skip_op_error': True,
                         'work_dir': WORKDIR,
+                        'cpu_required': None,
+                        'gpu_required': None,
+                        'mem_required': None,
+                        'ray_execution_mode': None,
+                        'runtime_env': None,
                     }
                 })
             self.assertDictEqual(
@@ -228,6 +244,11 @@ class ConfigTest(DataJuicerTestCaseBase):
                         'index_key': None,
                         'skip_op_error': True,
                         'work_dir': WORKDIR,
+                        'cpu_required': None,
+                        'gpu_required': None,
+                        'mem_required': None,
+                        'ray_execution_mode': None,
+                        'runtime_env': None,
                     }
                 })
             self.assertDictEqual(
@@ -259,6 +280,11 @@ class ConfigTest(DataJuicerTestCaseBase):
                         'index_key': None,
                         'skip_op_error': True,
                         'work_dir': WORKDIR,
+                        'cpu_required': None,
+                        'gpu_required': None,
+                        'mem_required': None,
+                        'ray_execution_mode': None,
+                        'runtime_env': None,
                     }
                 })
             self.assertDictEqual(
@@ -290,6 +316,11 @@ class ConfigTest(DataJuicerTestCaseBase):
                         'index_key': None,
                         'skip_op_error': True,
                         'work_dir': WORKDIR,
+                        'cpu_required': None,
+                        'gpu_required': None,
+                        'mem_required': None,
+                        'ray_execution_mode': None,
+                        'runtime_env': None,
                     }
                 })
             self.assertDictEqual(
@@ -321,6 +352,11 @@ class ConfigTest(DataJuicerTestCaseBase):
                         'index_key': None,
                         'skip_op_error': True,
                         'work_dir': WORKDIR,
+                        'cpu_required': None,
+                        'gpu_required': None,
+                        'mem_required': None,
+                        'ray_execution_mode': None,
+                        'runtime_env': None,
                     }
                 })
 
