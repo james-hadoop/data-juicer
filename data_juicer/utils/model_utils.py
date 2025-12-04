@@ -1296,6 +1296,8 @@ def prepare_mmlab_model(model_cfg: str, deploy_cfg: str, model_files: List[str],
     )
 
     return model
+
+
 def prepare_qwen_vl_inputs_for_vllm(messages, processor):
     text = processor.apply_chat_template(messages, tokenize=False, add_generation_prompt=True)
     # qwen_vl_utils 0.0.14+ required

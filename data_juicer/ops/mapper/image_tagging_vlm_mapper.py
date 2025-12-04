@@ -18,6 +18,7 @@ from data_juicer.utils.model_utils import (
     prepare_model,
     update_sampling_params,
 )
+from data_juicer.utils.ray_utils import is_ray_mode
 
 from ..base_op import OPERATORS, TAGGING_OPS, Mapper
 
@@ -59,7 +60,7 @@ Verify text relevance before combining with visual elements. If text is missing 
 
     def __init__(
         self,
-        api_or_hf_model: str = "Qwen2.5-VL-7B-Instruct",
+        api_or_hf_model: str = "Qwen/Qwen2.5-VL-7B-Instruct",
         is_api_model: bool = False,
         *,
         tag_field_name: str = MetaKeys.image_tags,
@@ -113,13 +114,9 @@ Verify text relevance before combining with visual elements. If text is missing 
                 **model_params,
             )
         else:
-            assert torch.cuda.device_count() >= 1, "must be executed in CUDA"
-            # cannot initialize vllm replicas on different GPUs
-            self.num_proc = 1
-            if model_params.get("tensor_parallel_size") is None:
-                tensor_parallel_size = torch.cuda.device_count()
-                logger.info(f"Set tensor_parallel_size to {tensor_parallel_size} for vllm.")
-                model_params["tensor_parallel_size"] = tensor_parallel_size
+            if not is_ray_mode():
+                # cannot initialize vllm replicas on different GPUs
+                self.num_proc = 1
             self.model_key = prepare_model(
                 model_type="vllm", pretrained_model_name_or_path=api_or_hf_model, **model_params
             )
@@ -209,6 +206,7 @@ Verify text relevance before combining with visual elements. If text is missing 
                     try:
                         client = get_model(self.model_key, rank=rank)
                         output = client(messages, **self.sampling_params)
+                        break
                     except Exception as e:
                         logger.warning(f"Exception: {e}")
             else:

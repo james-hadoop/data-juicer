@@ -84,6 +84,10 @@ vision = [
     "rembg",  # Background removal
     "decord", # video/audio handling
     "qwen-vl-utils==0.0.14",  # for Qwen-VL
+    "mmdeploy",  # for mmlab model
+    "mmpose",  # for mmlab model
+    "mmdet==3.2.0",  # for mmlab model
+    "mmcv==2.1.0",  # for mmlab model
 ]
 
 # Natural Language Processing
