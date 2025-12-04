@@ -93,7 +93,9 @@ class LLMRayVLLMEnginePipeline(RayVLLMEnginePipeline):
             if not self.api_url:
                 base_url = os.environ.get("OPENAI_BASE_URL", None)
                 if base_url:
-                    self.api_url = f"{base_url}/chat/completions"
+                    from urllib.parse import urljoin
+
+                    self.api_url = urljoin(base_url, "chat/completions")
             if not self.api_key:
                 self.api_key = os.environ.get("OPENAI_API_KEY", None)
 
