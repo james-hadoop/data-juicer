@@ -310,8 +310,7 @@ def calculate_ray_np(operators):
             if op.num_proc:
                 if not isinstance(op.num_proc, int):
                     raise ValueError(
-                        f"Op[{op._name}] is running with cpu resource, ``num_proc`` is expected to be set as an integer. "
-                        f"Use ``concurrency=n`` to control maximum number of workers to use,  but got: {op.num_proc}."
+                        f"Op[{op._name}] is running in ray task mode, ``num_proc`` is expected to be set as an integer but got: {op.num_proc}."
                     )
             # set concurrency to none, using the default autoscaler of ray to ensure performance
             if op.num_proc == -1:

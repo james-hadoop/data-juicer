@@ -253,8 +253,7 @@ class CalculateRayNPTest(DataJuicerTestCaseBase):
             calculate_ray_np([op])
 
         self.assertEqual(str(cm.exception), 
-                         "Op[op1] is running with cpu resource, ``num_proc`` is expected to be set as an integer. "
-                         "Use ``concurrency=n`` to control maximum number of workers to use,  but got: (1, 2).")
+                         "Op[op1] is running in ray task mode, ``num_proc`` is expected to be set as an integer but got: (1, 2).")
 
     def test_mixed_ops_resource_allocation(self):
         """Test mixed operators with fixed and auto scaling"""

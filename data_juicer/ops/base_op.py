@@ -157,8 +157,26 @@ class OP:
         :param history_key: the key name of field that stores history of
             queries and responses
         :param index_key: index the samples before process if not None
+        :param system_key: the key name of field that stores system prompts
+        :param instruction_key: the key name of field that stores instruction
+        :param index_key: the key name of field that stores index
         :param batch_size: the batch size for processing
         :param work_dir: the working directory for this operator
+        :param skip_op_error: whether to skip the error when processing samples
+
+        # Ray related parameters
+        :param num_cpus: number of CPUs required for this operator, only used when
+            running in Ray mode
+        :param num_gpus: number of GPUs required for this operator, only used when
+            running in Ray mode
+        :param memory: memory size required for this operator, only used when
+            running in Ray mode
+        :param runtime_env: runtime environment for this operator, only used when
+            running in Ray mode. More details can be found in Ray documentation.
+        :param ray_execution_mode: execution mode in Ray, can be "actor" or "task" or None,
+            if None, the "actor" mode is used when the operator is a CUDA operator,
+            and the "task" mode is used if the operator is a CPU operator.
+
         """
         # init data keys
         self.text_key = kwargs.get("text_key", "text")
