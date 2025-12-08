@@ -43,7 +43,7 @@ Data-Juicer 中的算子分为以下 7 种类型。
 |------|:---------:|-------------|
 | [aggregator](#aggregator) |     4     | Aggregate for batched samples, such as summary or conclusion. 对批量样本进行汇总，如得出总结或结论。 |
 | [deduplicator](#deduplicator) |    10     | Detects and removes duplicate samples. 识别、删除重复样本。 |
-| [filter](#filter) |    54     | Filters out low-quality samples. 过滤低质量样本。 |
+| [filter](#filter) |    55     | Filters out low-quality samples. 过滤低质量样本。 |
 | [formatter](#formatter) |     8     | Discovers, loads, and canonicalizes source data. 发现、加载、规范化原始数据。 |
 | [grouper](#grouper) |     3     | Group samples to batched samples. 将样本分组，每一组组成一个批量样本。 |
 | [mapper](#mapper) |    92     | Edits and transforms samples. 对数据样本进行编辑和转换。 |
@@ -113,6 +113,7 @@ All the specific operators are listed below, each featured with several capabili
 | image_pair_similarity_filter | 🏞Image 🚀GPU 🧩HF 🟢Stable | Filter to keep image pairs with similarities between images within a specific range. 过滤器将图像之间具有相似性的图像对保持在特定范围内。 | [info](operators/filter/image_pair_similarity_filter.md) | - |
 | image_shape_filter | 🏞Image 💻CPU 🟢Stable | Filter to keep samples with image shape (width, height) within specific ranges. 过滤器，以保持样本的图像形状 (宽度，高度) 在特定的范围内。 | [info](operators/filter/image_shape_filter.md) | - |
 | image_size_filter | 🏞Image 💻CPU 🟢Stable | Keep data samples whose image size (in Bytes/KB/MB/...) is within a specific range. 保留图像大小 (以字节/KB/MB/... 为单位) 在特定范围内的数据样本。 | [info](operators/filter/image_size_filter.md) | - |
+| image_subplot_filter | 🏞Image 💻CPU 🟡Beta | Filter to detect and remove samples with images containing subplots. 过滤器来检测和删除包含子图的图像样本。 | [info](operators/filter/image_subplot_filter.md) | - |
 | image_text_matching_filter | 🔮Multimodal 🚀GPU 🧩HF 🟢Stable | Filter to keep samples with image-text matching scores within a specific range. 过滤器将图像文本匹配分数的样本保持在特定范围内。 | [info](operators/filter/image_text_matching_filter.md) | - |
 | image_text_similarity_filter | 🔮Multimodal 🚀GPU 🧩HF 🟢Stable | Filter to keep samples with image-text similarity within a specified range. 过滤器将具有图像-文本相似性的样本保持在指定范围内。 | [info](operators/filter/image_text_similarity_filter.md) | - |
 | image_watermark_filter | 🏞Image 🚀GPU 🧩HF 🟢Stable | Filter to keep samples whose images have no watermark with high probability. 过滤器以保持其图像没有水印的样本具有高概率。 | [info](operators/filter/image_watermark_filter.md) | - |
