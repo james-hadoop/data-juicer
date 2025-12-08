@@ -8,7 +8,7 @@ import pyarrow
 import ray
 from jsonargparse import Namespace
 from loguru import logger
-from ray.data._internal.util import get_compute_strategy
+from ray.data._internal.util import get_compute_strategy  # noqa: F401
 
 from data_juicer.core.data import DJDataset
 from data_juicer.core.data.schema import Schema
@@ -171,7 +171,8 @@ class RayDataset(DJDataset):
             if isinstance(op, Mapper):
                 if op.use_ray_actor():
                     op_kwargs = op._op_cfg[op._name]
-                    compute = get_compute_strategy(op.__class__, concurrency=op.num_proc)
+                    # compute = get_compute_strategy(op.__class__, concurrency=op.num_proc)
+                    compute = op.num_proc
                     self.data = self.data.map_batches(
                         op.__class__,
                         fn_args=None,
@@ -186,7 +187,8 @@ class RayDataset(DJDataset):
                         runtime_env=op.runtime_env,
                     )
                 else:
-                    compute = get_compute_strategy(op.process, concurrency=op.num_proc)
+                    # compute = get_compute_strategy(op.process, concurrency=op.num_proc)
+                    compute = op.num_proc
                     self.data = self.data.map_batches(
                         op.process,
                         batch_size=batch_size,
@@ -210,7 +212,8 @@ class RayDataset(DJDataset):
                     )
                 if op.use_ray_actor():
                     op_kwargs = op._op_cfg[op._name]
-                    compute = get_compute_strategy(op.__class__, concurrency=op.num_proc)
+                    # compute = get_compute_strategy(op.__class__, concurrency=op.num_proc)
+                    compute = op.num_proc
                     self.data = self.data.map_batches(
                         op.__class__,
                         fn_args=None,
@@ -225,7 +228,8 @@ class RayDataset(DJDataset):
                         runtime_env=op.runtime_env,
                     )
                 else:
-                    compute = get_compute_strategy(op.compute_stats, concurrency=op.num_proc)
+                    # compute = get_compute_strategy(op.compute_stats, concurrency=op.num_proc)
+                    compute = op.num_proc
                     self.data = self.data.map_batches(
                         op.compute_stats,
                         batch_size=batch_size,
