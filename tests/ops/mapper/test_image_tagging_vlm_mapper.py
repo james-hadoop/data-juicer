@@ -35,7 +35,7 @@ class ImageTaggingVLMMapperTest(DataJuicerTestCaseBase):
             'images': [self.img3_path]
         }]
         op = ImageTaggingVLMMapper(
-            api_or_hf_model="Qwen2.5-VL-7B-Instruct",
+            api_or_hf_model="Qwen/Qwen2.5-VL-7B-Instruct",
             is_api_model=False,
             sampling_params={},
             model_params={"tensor_parallel_size": 1}
@@ -52,7 +52,7 @@ class ImageTaggingVLMMapperTest(DataJuicerTestCaseBase):
             'images': [self.img2_path]
         }]
         op = ImageTaggingVLMMapper(
-            api_or_hf_model="Qwen2.5-VL-7B-Instruct",
+            api_or_hf_model="Qwen/Qwen2.5-VL-7B-Instruct",
             is_api_model=False,
             sampling_params={},
             model_params={"tensor_parallel_size": 1}
@@ -91,7 +91,7 @@ class ImageTaggingVLMMapperTest(DataJuicerTestCaseBase):
             'images': [self.img2_path]
         }]
         op = ImageTaggingVLMMapper(
-            api_or_hf_model="Qwen2.5-VL-7B-Instruct",
+            api_or_hf_model="Qwen/Qwen2.5-VL-7B-Instruct",
             is_api_model=False,
             tag_field_name=tag_field_name,
             sampling_params={},
