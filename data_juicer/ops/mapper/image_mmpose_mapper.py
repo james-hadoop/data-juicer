@@ -1,13 +1,12 @@
+import importlib
 import os
+import subprocess
+import sys
 from typing import Dict, Optional, Sequence, Union
 
 from data_juicer.ops.base_op import OPERATORS, Mapper
 from data_juicer.utils.constant import Fields, MetaKeys
-from data_juicer.utils.lazy_loader import LazyLoader
 from data_juicer.utils.model_utils import get_model, prepare_model
-
-mmpose = LazyLoader("mmpose")
-mmdet = LazyLoader("mmdet==3.2.0")
 
 OP_NAME = "image_mmpose_mapper"
 
@@ -48,6 +47,8 @@ class ImageMMPoseMapper(Mapper):
         :param args: extra args
         :param kwargs: extra args
         """
+        self._install_required_packages()
+
         super().__init__(*args, **kwargs)
         self.pose_key = pose_key
 
@@ -60,8 +61,6 @@ class ImageMMPoseMapper(Mapper):
 
         self.visualization_dir = visualization_dir
 
-        import mmdet  # noqa: F401
-
         self.model_key = prepare_model(
             "mmlab",
             model_cfg=self.model_cfg,
@@ -69,7 +68,27 @@ class ImageMMPoseMapper(Mapper):
             model_files=self.model_files,
         )
 
-    def parse_and_filter(self, data_sample: mmpose.structures.PoseDataSample) -> Dict:
+    def _install_required_packages(self):
+        try:
+            importlib.import_module("mim")
+        except ImportError:
+            print("Installing openmim...")
+            subprocess.run([sys.executable, "-m", "pip", "install", "openmim"], check=True, capture_output=True)
+
+        try:
+            importlib.import_module("mmpose")
+        except ImportError:
+            print("Installing mmpose...")
+            subprocess.run([sys.executable, "-m", "pip", "install", "chumpy"], check=True, capture_output=True)
+            subprocess.run([sys.executable, "-m", "mim", "install", "mmpose"], check=True, capture_output=True)
+
+        try:
+            importlib.import_module("mmdet")
+        except ImportError:
+            print("Installing mmdet using mim...")
+            subprocess.run([sys.executable, "-m", "mim", "install", "mmdet==3.2.0"], check=True, capture_output=True)
+
+    def parse_and_filter(self, data_sample) -> Dict:
         """Extract elements necessary to represent a prediction into a
         dictionary.
 
@@ -82,6 +101,10 @@ class ImageMMPoseMapper(Mapper):
         Returns:
             dict: Prediction results.
         """
+        from mmpose.structures import PoseDataSample
+
+        assert isinstance(data_sample, PoseDataSample)
+
         result = {
             "keypoints": [],
             "keypoint_scores": [],

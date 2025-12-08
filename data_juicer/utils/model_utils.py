@@ -2,6 +2,8 @@ import fnmatch
 import inspect
 import io
 import os
+import subprocess
+import sys
 from contextlib import redirect_stderr
 from functools import partial
 from pickle import UnpicklingError
@@ -40,8 +42,6 @@ openai = LazyLoader("openai")
 ultralytics = LazyLoader("ultralytics")
 tiktoken = LazyLoader("tiktoken")
 dashscope = LazyLoader("dashscope")
-mmdeploy = LazyLoader("mmdeploy")
-mmcv = LazyLoader("mmcv==2.1.0")
 qwen_vl_utils = LazyLoader("qwen_vl_utils", "qwen-vl-utils")
 transformers_stream_generator = LazyLoader(
     "transformers_stream_generator", "git+https://github.com/HYLcool/transformers-stream-generator.git"
@@ -916,8 +916,6 @@ def prepare_video_blip_model(pretrained_model_name_or_path, *, return_model=True
 
 
 def prepare_video_depth_anything(model_path, **model_params):
-    import subprocess
-
     from data_juicer.utils.cache_utils import DATA_JUICER_ASSETS_CACHE
 
     video_depth_anything_repo_path = os.path.join(DATA_JUICER_ASSETS_CACHE, "Video-Depth-Anything")
@@ -1002,14 +1000,11 @@ def prepare_yolo_model(model_path, **model_params):
 def prepare_vggt_model(model_path, **model_params):
     device = model_params.pop("device", "cpu")
 
-    import subprocess
-
     from data_juicer.utils.cache_utils import DATA_JUICER_ASSETS_CACHE
 
     vggt_repo_path = os.path.join(DATA_JUICER_ASSETS_CACHE, "vggt")
     if not os.path.exists(vggt_repo_path):
         subprocess.run(["git", "clone", "https://github.com/facebookresearch/vggt.git", vggt_repo_path], check=True)
-    import sys
 
     sys.path.append(vggt_repo_path)
 
@@ -1058,8 +1053,6 @@ def prepare_wilor_model(wilor_model_path, wilor_model_config, detector_model_pat
         raise ValueError(
             "Users need to download 'MANO_RIGHT.pkl' from https://mano.is.tue.mpg.de/ and comply with the MANO license."
         )
-
-    import subprocess
 
     from data_juicer.utils.cache_utils import DATA_JUICER_ASSETS_CACHE
 
@@ -1252,7 +1245,7 @@ class MMLabModel(object):
         :param model_files: Path to the model files.
         :param device: Device to use.
         """
-        import mmcv  # noqa: F401
+        self._install_required_packages()
 
         self.model_cfg_path = model_cfg_path
         self.deploy_cfg_path = deploy_cfg_path
@@ -1270,6 +1263,29 @@ class MMLabModel(object):
         )
 
         self.input_shape = get_input_shape(deploy_cfg)
+
+    def _install_required_packages(self):
+        import importlib
+
+        try:
+            importlib.import_module("mim")
+        except ImportError:
+            print("Installing openmim...")
+            subprocess.run([sys.executable, "-m", "pip", "install", "openmim"], check=True, capture_output=True)
+
+        # install mmcv using mim
+        try:
+            importlib.import_module("mmcv")
+        except ImportError:
+            print("Installing mmcv using mim...")
+            subprocess.run([sys.executable, "-m", "mim", "install", "mmcv==2.1.0"], check=True, capture_output=True)
+
+        # install mmdeploy using mim
+        try:
+            importlib.import_module("mmdeploy")
+        except ImportError:
+            print("Installing mmdeploy using mim...")
+            subprocess.run([sys.executable, "-m", "mim", "install", "mmdeploy"], check=True, capture_output=True)
 
     def __call__(self, images):
         model_inputs, _ = self.task_processor.create_input(images, self.input_shape)
