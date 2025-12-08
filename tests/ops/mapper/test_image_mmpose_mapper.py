@@ -98,6 +98,9 @@ class ImageMMPoseMapperTest(DataJuicerTestCaseBase):
             )
             if res != 0:
                 raise RuntimeError('Failed to download mmpose model.')
+            torch_model = glob.glob(os.path.join(mmlab_home, 'td-hm_hrnet-w32_8xb64-210e_coco-256x192-*.pth'))
+            if len(torch_model) >= 1:
+                torch_model = torch_model[0]
         
         # convert mmpose model to onnx
         if not os.path.exists(backend_model):
