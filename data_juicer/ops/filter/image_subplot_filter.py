@@ -55,9 +55,9 @@ class ImageSubplotFilter(Filter):
         :param min_confidence: Minimum confidence score for filtering.
             Images with subplot confidence above this threshold will be
             considered as containing subplots.
-        :param any_or_all: Strategy for multi-image samples. 'any' keeps
-            the sample if any image meets the condition. 'all' keeps the
-            sample only if all images meet the condition.
+        :param any_or_all: Strategy for multi-image samples. 'any' filters
+            the sample if any image contains subplots. 'all' filters the
+            sample only if all images contain subplots.
         :param canny_threshold1: First threshold for Canny edge detector.
         :param canny_threshold2: Second threshold for Canny edge detector.
         :param hough_threshold: Accumulator threshold for Hough transform.
@@ -250,7 +250,7 @@ class ImageSubplotFilter(Filter):
         :param height: Image height.
         :return: Confidence score between 0 and 1.
         """
-        if not horizontal_lines or not vertical_lines:
+        if not horizontal_lines or not vertical_lines or width == 0 or height == 0:
             return 0.0
 
         # 1. Base score from number of lines
