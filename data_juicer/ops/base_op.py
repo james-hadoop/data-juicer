@@ -228,27 +228,27 @@ class OP:
             self.memory = size_to_bytes(self.memory) / 1024**3
         # Optional[Union[Dict[str, Any], "RuntimeEnv"]]
         self.runtime_env = kwargs.get("runtime_env", None)
-        self.ray_execution_mode = kwargs.get("ray_execution_mode", None)
-        assert self.ray_execution_mode in [None, "actor", "task"]
+        # self.ray_execution_mode = kwargs.get("ray_execution_mode", None)
+        # assert self.ray_execution_mode in [None, "actor", "task"]
 
-        if self.cpu_required:
-            logger.warning(
-                "The argument ``cpu_required`` will be deprecated. Please specify argument ``num_cpus`` instead."
-            )
-            if self.num_cpus is None:
-                self.num_cpus = self.cpu_required
-        if self.gpu_required:
-            logger.warning(
-                "The argument ``gpu_required`` will be deprecated. Please specify argument ``num_gpus`` instead."
-            )
-            if self.num_gpus is None:
-                self.num_gpus = self.gpu_required
-        if self.mem_required:
-            logger.warning(
-                "The argument ``mem_required`` will be deprecated. Please specify argument ``memory`` instead."
-            )
-            if self.memory is None:
-                self.memory = self.mem_required
+        # if self.cpu_required:
+        #     logger.warning(
+        #         "The argument ``cpu_required`` will be deprecated. Please specify argument ``num_cpus`` instead."
+        #     )
+        #     if self.num_cpus is None:
+        #         self.num_cpus = self.cpu_required
+        # if self.gpu_required:
+        #     logger.warning(
+        #         "The argument ``gpu_required`` will be deprecated. Please specify argument ``num_gpus`` instead."
+        #     )
+        #     if self.num_gpus is None:
+        #         self.num_gpus = self.gpu_required
+        # if self.mem_required:
+        #     logger.warning(
+        #         "The argument ``mem_required`` will be deprecated. Please specify argument ``memory`` instead."
+        #     )
+        #     if self.memory is None:
+        #         self.memory = self.mem_required
 
         self.turbo = kwargs.get("turbo", False)
 
@@ -272,8 +272,8 @@ class OP:
         return self._batched_op
 
     def use_ray_actor(self):
-        if self.ray_execution_mode:
-            return self.ray_execution_mode == "actor"
+        # if self.ray_execution_mode:
+        #     return self.ray_execution_mode == "actor"
 
         return self.use_cuda()
 
