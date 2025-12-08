@@ -99,9 +99,9 @@ class ImageSubplotFilter(Filter):
         image_list = sample[self.image_key]
         if not image_list:
             # No images in this sample
-            sample[Fields.stats][StatsKeys.image_subplot_confidence] = 0.0
-            sample[Fields.stats][StatsKeys.horizontal_peak_count] = 0
-            sample[Fields.stats][StatsKeys.vertical_peak_count] = 0
+            sample[Fields.stats][StatsKeys.image_subplot_confidence] = np.array([], dtype=np.float64)
+            sample[Fields.stats][StatsKeys.horizontal_peak_count] = np.array([], dtype=np.int64)
+            sample[Fields.stats][StatsKeys.vertical_peak_count] = np.array([], dtype=np.int64)
             sample[Fields.stats][StatsKeys.subplot_detected] = False
             return sample
 
@@ -164,17 +164,14 @@ class ImageSubplotFilter(Filter):
         horizontal_lines = sample[Fields.stats][StatsKeys.horizontal_peak_count]
         vertical_lines = sample[Fields.stats][StatsKeys.vertical_peak_count]
 
-        valid_subplot_flags = []
-        for i, has_subplot in enumerate(subplot_flags):
-            if not has_subplot:
-                valid_subplot_flags.append(False)
-                continue
-
-            # Check if minimum line requirements are met
-            h_lines_ok = horizontal_lines[i] >= self.min_horizontal_lines
-            v_lines_ok = vertical_lines[i] >= self.min_vertical_lines
-
-            valid_subplot_flags.append(h_lines_ok and v_lines_ok)
+        valid_subplot_flags = [
+            (
+                has_subplot
+                and horizontal_lines[i] >= self.min_horizontal_lines
+                and vertical_lines[i] >= self.min_vertical_lines
+            )
+            for i, has_subplot in enumerate(subplot_flags)
+        ]
 
         if self.any:
             # Filter if any image contains valid subplots

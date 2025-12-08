@@ -83,17 +83,17 @@ class ImageSubplotFilterTest(DataJuicerTestCaseBase):
         # High line requirements - might not meet criteria
         tgt_list_high = [{'images': [self.subplot_img_path]}]
         dataset_high = Dataset.from_list(ds_list)
-        op_high = ImageSubplotFilter(min_horizontal_lines=5, 
-                                   min_vertical_lines=5, 
-                                   min_confidence=0.5)
+        op_high = ImageSubplotFilter(min_horizontal_lines=5,
+                                     min_vertical_lines=5,
+                                     min_confidence=0.5)
         self._run_image_subplot_filter(dataset_high, tgt_list_high, op_high)
         
         # Low line requirements - should meet criteria
         tgt_list_low = []
         dataset_low = Dataset.from_list(ds_list)
-        op_low = ImageSubplotFilter(min_horizontal_lines=1, 
-                                  min_vertical_lines=1, 
-                                  min_confidence=0.5)
+        op_low = ImageSubplotFilter(min_horizontal_lines=1,
+                                    min_vertical_lines=1,
+                                    min_confidence=0.5)
         self._run_image_subplot_filter(dataset_low, tgt_list_low, op_low)
 
     def test_no_images(self):
