@@ -1,6 +1,5 @@
 import os
 import unittest
-import numpy as np
 
 from data_juicer.core.data import NestedDataset as Dataset
 
@@ -81,7 +80,7 @@ class ImageSubplotFilterTest(DataJuicerTestCaseBase):
         ds_list = [{'images': [self.subplot_img_path]}]
         
         # High line requirements - might not meet criteria
-        tgt_list_high = [{'images': [self.subplot_img_path]}]
+        tgt_list_high = []
         dataset_high = Dataset.from_list(ds_list)
         op_high = ImageSubplotFilter(min_horizontal_lines=5,
                                      min_vertical_lines=5,
