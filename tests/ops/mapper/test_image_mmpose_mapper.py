@@ -1,6 +1,8 @@
 import os
+import sys
 import glob
 import shutil
+import importlib
 import unittest
 import subprocess
 import tempfile
@@ -24,10 +26,43 @@ class ImageMMPoseMapperTest(DataJuicerTestCaseBase):
 
         self.tmp_dir = tempfile.TemporaryDirectory().name
         os.makedirs(self.tmp_dir, exist_ok=True)
+        self._install_required_packages()
 
     def tearDown(self):
         super().tearDown()
         shutil.rmtree(self.tmp_dir)
+
+    def _install_required_packages(self):
+        try:
+            importlib.import_module("mim")
+        except ImportError:
+            print("Installing openmim...")
+            subprocess.run([sys.executable, "-m", "pip", "install", "openmim"], check=True, capture_output=True)
+
+        try:
+            importlib.import_module("mmcv")
+        except ImportError:
+            print("Installing mmcv using mim...")
+            subprocess.run([sys.executable, "-m", "mim", "install", "mmcv==2.1.0"], check=True, capture_output=True)
+
+        try:
+            importlib.import_module("mmpose")
+        except ImportError:
+            print("Installing mmpose...")
+            subprocess.run([sys.executable, "-m", "pip", "install", "chumpy"], check=True, capture_output=True)
+            subprocess.run([sys.executable, "-m", "mim", "install", "mmpose"], check=True, capture_output=True)
+
+        try:
+            importlib.import_module("mmdet")
+        except ImportError:
+            print("Installing mmdet using mim...")
+            subprocess.run([sys.executable, "-m", "mim", "install", "mmdet==3.2.0"], check=True, capture_output=True)
+        
+        try:
+            importlib.import_module("mmdeploy")
+        except ImportError:
+            print("Installing mmdeploy using mim...")
+            subprocess.run([sys.executable, "-m", "mim", "install", "mmdeploy"], check=True, capture_output=True)
 
     def test_mmpose_mapper(self):
         data_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), '..', 'data')
