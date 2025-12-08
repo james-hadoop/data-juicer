@@ -18,6 +18,50 @@ from data_juicer.utils.unittest_utils import DataJuicerTestCaseBase
 
 mmengine = LazyLoader('mmengine')
 
+def run_in_subprocess(cmd):
+    """Run command in subprocess and capture all output."""
+    try:
+        # Create a temporary file for logging
+        with tempfile.NamedTemporaryFile(mode='w+', suffix='.log') as log_file:
+            # Redirect both stdout and stderr to the log file
+            process = subprocess.Popen(
+                cmd, 
+                shell=True,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.STDOUT,
+                universal_newlines=True,
+                bufsize=1,  # Line buffered
+                encoding='utf-8',
+                errors='ignore',
+            )
+
+            # Real-time output handling
+            while True:
+                line = process.stdout.readline()
+                if not line and process.poll() is not None:
+                    break
+                if line:
+                    print(line.rstrip())  # Print to console
+                    log_file.write(line)  # Write to log file
+                    log_file.flush()      # Ensure it's written immediately
+
+            # Get return code
+            return_code = process.wait()
+            
+            # If process failed, read the entire log
+            if return_code != 0:
+                log_file.seek(0)
+                log_content = log_file.read()
+                raise RuntimeError(
+                    f"Process failed with return code {return_code}.\n"
+                    f"Command: {cmd}\n"
+                    f"Log output:\n{log_content}"
+                )
+
+    except Exception as e:
+        print(f"Error running subprocess: {str(e)}")
+        raise
+
 
 class ImageMMPoseMapperTest(DataJuicerTestCaseBase):
 
@@ -107,12 +151,13 @@ class ImageMMPoseMapperTest(DataJuicerTestCaseBase):
             import mmengine
             cmd = f"python {mmdeploy_home}/tools/deploy.py {deploy_cfg} {model_cfg} {torch_model} " + \
                 f"{mmdeploy_home}/demo/resources/human-pose.jpg --work-dir {out_deploy_dir}"
-            res = subprocess.call(
-                cmd,
-                shell=True
-            )
-            if res != 0:
-                raise RuntimeError(f'Convert mmpose model failed with cmd: {cmd}.')
+            # res = subprocess.call(
+            #     cmd,
+            #     shell=True
+            # )
+            run_in_subprocess(cmd)
+            # if res != 0:
+            #     raise RuntimeError(f'Convert mmpose model failed with cmd: {cmd}.')
 
         ds_list = [{
             'text': f'{SpecialTokens.image}a photo',
