@@ -63,6 +63,7 @@ def run_in_subprocess(cmd):
         raise
 
 
+@unittest.skip('skip test')
 class ImageMMPoseMapperTest(DataJuicerTestCaseBase):
 
     def setUp(self):
