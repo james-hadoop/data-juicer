@@ -148,16 +148,10 @@ class ImageMMPoseMapperTest(DataJuicerTestCaseBase):
         
         # convert mmpose model to onnx
         if not os.path.exists(backend_model):
-            import mmengine
-            cmd = f"python {mmdeploy_home}/tools/deploy.py {deploy_cfg} {model_cfg} {torch_model} " + \
+            cmd = f"TORCH_FORCE_NO_WEIGHTS_ONLY_LOAD=1 python {mmdeploy_home}/tools/deploy.py {deploy_cfg} {model_cfg} {torch_model} " + \
                 f"{mmdeploy_home}/demo/resources/human-pose.jpg --work-dir {out_deploy_dir}"
-            # res = subprocess.call(
-            #     cmd,
-            #     shell=True
-            # )
+
             run_in_subprocess(cmd)
-            # if res != 0:
-            #     raise RuntimeError(f'Convert mmpose model failed with cmd: {cmd}.')
 
         ds_list = [{
             'text': f'{SpecialTokens.image}a photo',
