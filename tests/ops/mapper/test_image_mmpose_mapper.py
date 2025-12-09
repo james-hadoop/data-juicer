@@ -81,32 +81,32 @@ class ImageMMPoseMapperTest(DataJuicerTestCaseBase):
             importlib.import_module("mim")
         except ImportError:
             print("Installing openmim...")
-            subprocess.run([sys.executable, "-m", "pip", "install", "openmim"], check=True, capture_output=True)
+            run_in_subprocess(' '.join([sys.executable, "-m", "pip", "install", "openmim"]))
 
         try:
             importlib.import_module("mmcv")
         except ImportError:
             print("Installing mmcv using mim...")
-            subprocess.run([sys.executable, "-m", "mim", "install", "mmcv==2.1.0"], check=True, capture_output=True)
+            run_in_subprocess(' '.join([sys.executable, "-m", "mim", "install", "mmcv==2.1.0"]))
 
         try:
             importlib.import_module("mmpose")
         except ImportError:
             print("Installing mmpose...")
-            subprocess.run([sys.executable, "-m", "pip", "install", "chumpy"], check=True, capture_output=True)
-            subprocess.run([sys.executable, "-m", "mim", "install", "mmpose"], check=True, capture_output=True)
+            run_in_subprocess(' '.join([sys.executable, "-m", "pip", "install", "chumpy"]))
+            run_in_subprocess(' '.join([sys.executable, "-m", "mim", "install", "mmpose"]))
 
         try:
             importlib.import_module("mmdet")
         except ImportError:
             print("Installing mmdet using mim...")
-            subprocess.run([sys.executable, "-m", "mim", "install", "mmdet==3.2.0"], check=True, capture_output=True)
+            run_in_subprocess(' '.join([sys.executable, "-m", "mim", "install", "mmdet==3.2.0"]))
         
         try:
             importlib.import_module("mmdeploy")
         except ImportError:
             print("Installing mmdeploy using mim...")
-            subprocess.run([sys.executable, "-m", "mim", "install", "mmdeploy"], check=True, capture_output=True)
+            run_in_subprocess(' '.join([sys.executable, "-m", "mim", "install", "mmdeploy"]))
 
     def test_mmpose_mapper(self):
         data_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), '..', 'data')
@@ -127,21 +127,11 @@ class ImageMMPoseMapperTest(DataJuicerTestCaseBase):
 
         # clone mmpose codes
         if not os.path.exists(mmdeploy_home):
-            res = subprocess.call(
-                f"git clone https://github.com/open-mmlab/mmdeploy.git {mmdeploy_home}",
-                shell=True
-            )
-            if res != 0:
-                raise RuntimeError('Failed to clone mmdeploy.')
+            run_in_subprocess(f"git clone https://github.com/open-mmlab/mmdeploy.git {mmdeploy_home}")
         
         # download mmpose model and config
         if not os.path.exists(model_cfg) or not os.path.exists(torch_model):
-            res = subprocess.call(
-                f"mim download mmpose --config td-hm_hrnet-w32_8xb64-210e_coco-256x192 --dest {mmlab_home}",
-                shell=True
-            )
-            if res != 0:
-                raise RuntimeError('Failed to download mmpose model.')
+            run_in_subprocess(f"mim download mmpose --config td-hm_hrnet-w32_8xb64-210e_coco-256x192 --dest {mmlab_home}")
             torch_model = glob.glob(os.path.join(mmlab_home, 'td-hm_hrnet-w32_8xb64-210e_coco-256x192-*.pth'))
             if len(torch_model) >= 1:
                 torch_model = torch_model[0]
