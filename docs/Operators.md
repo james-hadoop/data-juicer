@@ -40,14 +40,14 @@ The operators in Data-Juicer are categorized into 7 types.
 Data-Juicer 中的算子分为以下 7 种类型。
 
 | Type 类型 | Number 数量 | Description 描述 |
-|------|:---------:|-------------|
-| [aggregator](#aggregator) |     4     | Aggregate for batched samples, such as summary or conclusion. 对批量样本进行汇总，如得出总结或结论。 |
-| [deduplicator](#deduplicator) |    10     | Detects and removes duplicate samples. 识别、删除重复样本。 |
-| [filter](#filter) |    54     | Filters out low-quality samples. 过滤低质量样本。 |
-| [formatter](#formatter) |     8     | Discovers, loads, and canonicalizes source data. 发现、加载、规范化原始数据。 |
-| [grouper](#grouper) |     3     | Group samples to batched samples. 将样本分组，每一组组成一个批量样本。 |
-| [mapper](#mapper) |    92     | Edits and transforms samples. 对数据样本进行编辑和转换。 |
-| [selector](#selector) |     5     | Selects top samples based on ranking. 基于排序选取高质量样本。 |
+|------|:------:|-------------|
+| [aggregator](#aggregator) | 4 | Aggregate for batched samples, such as summary or conclusion. 对批量样本进行汇总，如得出总结或结论。 |
+| [deduplicator](#deduplicator) | 10 | Detects and removes duplicate samples. 识别、删除重复样本。 |
+| [filter](#filter) | 54 | Filters out low-quality samples. 过滤低质量样本。 |
+| [formatter](#formatter) | 8 | Discovers, loads, and canonicalizes source data. 发现、加载、规范化原始数据。 |
+| [grouper](#grouper) | 3 | Group samples to batched samples. 将样本分组，每一组组成一个批量样本。 |
+| [mapper](#mapper) | 94 | Edits and transforms samples. 对数据样本进行编辑和转换。 |
+| [selector](#selector) | 5 | Selects top samples based on ranking. 基于排序选取高质量样本。 |
 
 All the specific operators are listed below, each featured with several capability tags. 
 下面列出所有具体算子，每种算子都通过多个标签来注明其主要功能。
@@ -214,6 +214,7 @@ All the specific operators are listed below, each featured with several capabili
 | image_diffusion_mapper | 🔮Multimodal 🚀GPU 🧩HF 🟢Stable | Generate images using a diffusion model based on provided captions. 使用基于提供的字幕的扩散模型生成图像。 | [info](operators/mapper/image_diffusion_mapper.md) | - |
 | image_face_blur_mapper | 🏞Image 💻CPU 🟢Stable | Mapper to blur faces detected in images. 映射器模糊图像中检测到的人脸。 | [info](operators/mapper/image_face_blur_mapper.md) | - |
 | image_remove_background_mapper | 🏞Image 💻CPU 🟢Stable | Mapper to remove the background of images. 映射器删除图像的背景。 | [info](operators/mapper/image_remove_background_mapper.md) | - |
+| image_sam_3d_body_mapper | 🏞Image 🚀GPU 🟡Beta | SAM 3D Body (3DB) is a promptable model for single-image full-body 3D human mesh recovery (HMR). SAM 3D Body (3DB) 是用于单图像全身3D人体网格恢复 (HMR) 的可提示模型。 | - | - |
 | image_segment_mapper | 🏞Image 🚀GPU 🟢Stable | Perform segment-anything on images and return the bounding boxes. 对图像执行segment-任何操作并返回边界框。 | [info](operators/mapper/image_segment_mapper.md) | - |
 | image_tagging_mapper | 🏞Image 🚀GPU 🟢Stable | Generates image tags for each image in the sample. 为样本中的每个图像生成图像标记。 | [info](operators/mapper/image_tagging_mapper.md) | - |
 | imgdiff_difference_area_generator_mapper | 🚀GPU 🟡Beta | Generates and filters bounding boxes for image pairs based on similarity, segmentation, and text matching. 根据相似性、分割和文本匹配生成和过滤图像对的边界框。 | [info](operators/mapper/imgdiff_difference_area_generator_mapper.md) | [ImgDiff](https://arxiv.org/abs/2408.04594) |
