@@ -1281,45 +1281,59 @@ def prepare_sam_3d_body_model(
         os.makedirs(local_dir, exist_ok=True)
         if not os.path.exists(local_dir):
             subprocess.run(
-                f"pip install modelscope && modelscope download --model facebook/sam-3d-body-dinov3 --local_dir {local_dir}",
-                shell=True,
+                [sys.executable, "-m", "pip", "install", "modelscope"],
+                check=True,
+                capture_output=True,
+            )
+            subprocess.run(
+                [
+                    "modelscope",
+                    "download",
+                    "--model",
+                    "facebook/sam-3d-body-dinov3",
+                    "--local_dir",
+                    local_dir,
+                ],
                 check=True,
                 capture_output=True,
             )
 
         checkpoint_path = os.path.join(local_dir, "model.ckpt")
 
-    # TODO: the tools directory may easily conflict with other tools.
-    sys.path.insert(0, sam_3d_body_repo_path)
-    from sam_3d_body import SAM3DBodyEstimator, load_sam_3d_body
+    try:
+        # TODO: the tools directory may easily conflict with other tools.
+        sys.path.insert(0, sam_3d_body_repo_path)
+        from sam_3d_body import SAM3DBodyEstimator, load_sam_3d_body
 
-    device = model_params.pop("device", "cpu")
+        device = model_params.pop("device", "cpu")
 
-    # Initialize sam-3d-body model and other optional modules
-    model, model_cfg = load_sam_3d_body(checkpoint_path, device=device, mhr_path=mhr_path)
+        # Initialize sam-3d-body model and other optional modules
+        model, model_cfg = load_sam_3d_body(checkpoint_path, device=device, mhr_path=mhr_path)
 
-    human_detector, human_segmentor, fov_estimator = None, None, None
-    if detector_name:
-        from tools.build_detector import HumanDetector
+        human_detector, human_segmentor, fov_estimator = None, None, None
+        if detector_name:
+            from tools.build_detector import HumanDetector
 
-        human_detector = HumanDetector(name=detector_name, device=device, path=detector_path)
-    if segmentor_path:
-        from tools.build_sam import HumanSegmentor
+            human_detector = HumanDetector(name=detector_name, device=device, path=detector_path)
+        if segmentor_path:
+            from tools.build_sam import HumanSegmentor
 
-        human_segmentor = HumanSegmentor(name=segmentor_name, device=device, path=segmentor_path)
-    if fov_name:
-        from tools.build_fov_estimator import FOVEstimator
+            human_segmentor = HumanSegmentor(name=segmentor_name, device=device, path=segmentor_path)
+        if fov_name:
+            from tools.build_fov_estimator import FOVEstimator
 
-        fov_estimator = FOVEstimator(name=fov_name, device=device, path=fov_path)
+            fov_estimator = FOVEstimator(name=fov_name, device=device, path=fov_path)
 
-    estimator = SAM3DBodyEstimator(
-        sam_3d_body_model=model,
-        model_cfg=model_cfg,
-        human_detector=human_detector,
-        human_segmentor=human_segmentor,
-        fov_estimator=fov_estimator,
-    )
-    sys.path.remove(sam_3d_body_repo_path)
+        estimator = SAM3DBodyEstimator(
+            sam_3d_body_model=model,
+            model_cfg=model_cfg,
+            human_detector=human_detector,
+            human_segmentor=human_segmentor,
+            fov_estimator=fov_estimator,
+        )
+    finally:
+        if sam_3d_body_repo_path in sys.path:
+            sys.path.remove(sam_3d_body_repo_path)
 
     return estimator
 

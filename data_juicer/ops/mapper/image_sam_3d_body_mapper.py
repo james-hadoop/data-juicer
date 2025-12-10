@@ -155,21 +155,24 @@ class ImageSAM3DBodyMapper(Mapper):
             outputs.append(output)
 
             if self.visualization_dir:
-                sys.path.insert(0, self._sam_3d_body_repo_path)
-                from tools.vis_utils import visualize_sample_together
+                try:
+                    sys.path.insert(0, self._sam_3d_body_repo_path)
+                    from tools.vis_utils import visualize_sample_together
 
-                img_name = os.path.basename(sample[self.image_key][0])
-                os.makedirs(self.visualization_dir, exist_ok=True)
+                    img_name = os.path.basename(image_path)
+                    os.makedirs(self.visualization_dir, exist_ok=True)
 
-                vis_path = os.path.join(self.visualization_dir, os.path.splitext(img_name)[0] + "_vis.jpg")
+                    vis_path = os.path.join(self.visualization_dir, os.path.splitext(img_name)[0] + "_vis.jpg")
 
-                img = cv2.imread(image_path)
-                rend_img = visualize_sample_together(img, output, estimator.faces)
-                cv2.imwrite(
-                    vis_path,
-                    rend_img.astype(np.uint8),
-                )
-                sys.path.remove(self._sam_3d_body_repo_path)
+                    img = cv2.imread(image_path)
+                    rend_img = visualize_sample_together(img, output, estimator.faces)
+                    cv2.imwrite(
+                        vis_path,
+                        rend_img.astype(np.uint8),
+                    )
+                finally:
+                    if self._sam_3d_body_repo_path in sys.path:
+                        sys.path.remove(self._sam_3d_body_repo_path)
 
         sample[Fields.meta][self.tag_field_name] = outputs
 
