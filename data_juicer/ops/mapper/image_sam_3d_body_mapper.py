@@ -1,9 +1,11 @@
-import os
-import sys
-import subprocess
-import numpy as np
 import importlib
+import os
+import subprocess
+import sys
+
+import numpy as np
 from loguru import logger
+
 from data_juicer.utils.cache_utils import DATA_JUICER_ASSETS_CACHE
 from data_juicer.utils.constant import Fields
 from data_juicer.utils.lazy_loader import LazyLoader
@@ -20,8 +22,7 @@ cv2 = LazyLoader("cv2", "opencv-python")
 @TAGGING_OPS.register_module(OP_NAME)
 @OPERATORS.register_module(OP_NAME)
 class ImageSAM3DBodyMapper(Mapper):
-    """SAM 3D Body (3DB) is a promptable model for single-image full-body 3D human mesh recovery (HMR).
-    """
+    """SAM 3D Body (3DB) is a promptable model for single-image full-body 3D human mesh recovery (HMR)."""
 
     _accelerator = "cuda"
 
@@ -35,7 +36,7 @@ class ImageSAM3DBodyMapper(Mapper):
         detector_path: str = None,
         segmentor_path: str = None,
         fov_path: str = None,
-        bbox_thresh: float = 0.8, 
+        bbox_thresh: float = 0.8,
         use_mask: bool = False,
         visualization_dir: str = None,
         tag_field_name: str = "sam_3d_body_data",
@@ -75,7 +76,7 @@ class ImageSAM3DBodyMapper(Mapper):
         self._install_required_packages()
 
         self.tag_field_name = tag_field_name
-        
+
         sam_3d_body_repo_path = os.path.join(DATA_JUICER_ASSETS_CACHE, "sam-3d-body")
         if not os.path.exists(sam_3d_body_repo_path):
             logger.info("Cloning SAM 3D Body repo...")
@@ -99,23 +100,38 @@ class ImageSAM3DBodyMapper(Mapper):
             fov_path=fov_path,
             detector_name=detector_name,
             segmentor_name=segmentor_name,
-            fov_name=fov_name)
-        
+            fov_name=fov_name,
+        )
+
     def _install_required_packages(self):
         try:
             importlib.import_module("detectron2")
         except ImportError:
             logger.info("Installing detectron2...")
-            subprocess.run([sys.executable, "-m", "pip", "install", 
-                            "git+https://github.com/facebookresearch/detectron2.git@a1ce2f9",
-                            "--no-build-isolation", "--no-deps"], check=True, capture_output=True)
+            subprocess.run(
+                [
+                    sys.executable,
+                    "-m",
+                    "pip",
+                    "install",
+                    "git+https://github.com/facebookresearch/detectron2.git@a1ce2f9",
+                    "--no-build-isolation",
+                    "--no-deps",
+                ],
+                check=True,
+                capture_output=True,
+            )
 
         if self.fov_name.lower().startswith("moge"):
             try:
                 importlib.import_module("moge")
             except ImportError:
                 logger.info("Installing MoGe...")
-                subprocess.run([sys.executable, "-m", "pip", "install", "git+https://github.com/microsoft/MoGe.git"], check=True, capture_output=True)
+                subprocess.run(
+                    [sys.executable, "-m", "pip", "install", "git+https://github.com/microsoft/MoGe.git"],
+                    check=True,
+                    capture_output=True,
+                )
 
     def process_single(self, sample=None, rank=None):
         # check if it's generated already
@@ -145,9 +161,7 @@ class ImageSAM3DBodyMapper(Mapper):
                 img_name = os.path.basename(sample[self.image_key][0])
                 os.makedirs(self.visualization_dir, exist_ok=True)
 
-                vis_path = os.path.join(
-                    self.visualization_dir,
-                    os.path.splitext(img_name)[0] + "_vis.jpg")
+                vis_path = os.path.join(self.visualization_dir, os.path.splitext(img_name)[0] + "_vis.jpg")
 
                 img = cv2.imread(image_path)
                 rend_img = visualize_sample_together(img, output, estimator.faces)
