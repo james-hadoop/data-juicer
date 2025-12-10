@@ -18,7 +18,7 @@
 
 
 
-[![OpZoo](https://img.shields.io/badge/Doc-OperatorZoo-blue?logo=Markdown)]([docs/Operators.md](https://datajuicer.github.io/data-juicer/en/main/docs/Operators.html))
+[![OpZoo](https://img.shields.io/badge/Doc-OperatorZoo-blue?logo=Markdown)](https://datajuicer.github.io/data-juicer/en/main/docs/Operators.html)
 [![Paper](http://img.shields.io/badge/cs.LG-1.0Paper(SIGMOD'24)-B31B1B?logo=arxiv&logoColor=red)](https://arxiv.org/abs/2309.02033)
 [![Paper](http://img.shields.io/badge/cs.AI-2.0Paper(NeurIPS'25)-B31B1B?logo=arxiv&logoColor=red)](https://arxiv.org/abs/2501.14755)
 
