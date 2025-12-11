@@ -1243,14 +1243,14 @@ def prepare_qwen_vl_inputs_for_vllm(messages, processor):
 
 
 def prepare_sam_3d_body_model(
-    checkpoint_path: str = None,
+    checkpoint_path: str = "",
     detector_name: str = "vitdet",
     segmentor_name: str = "sam2",
     fov_name: str = "moge2",
-    mhr_path: str = None,
-    detector_path: str = None,
-    segmentor_path: str = None,
-    fov_path: str = None,
+    mhr_path: str = "",
+    detector_path: str = "",
+    segmentor_path: str = "",
+    fov_path: str = "",
     **model_params,
 ):
     """
