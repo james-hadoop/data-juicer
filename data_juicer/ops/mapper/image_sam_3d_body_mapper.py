@@ -197,15 +197,18 @@ class ImageSAM3DBodyMapper(Mapper):
             if self.visualization_dir:
                 try:
                     sys.path.insert(0, self._sam_3d_body_repo_path)
-                    from tools.vis_utils import visualize_sample_together
+
+                    module_path = f"{self._sam_3d_body_repo_path}/tools/vis_utils.py"
+                    spec = importlib.util.spec_from_file_location("vis_utils", module_path)
+                    if spec is None:
+                        raise ImportError(f"Could not load spec from {module_path}")
+                    vis_utils = importlib.util.module_from_spec(spec)
 
                     img_name = os.path.basename(image_path)
                     os.makedirs(self.visualization_dir, exist_ok=True)
-
                     vis_path = os.path.join(self.visualization_dir, os.path.splitext(img_name)[0] + "_vis.jpg")
-
                     img = cv2.imread(image_path)
-                    rend_img = visualize_sample_together(img, output, estimator.faces)
+                    rend_img = vis_utils.visualize_sample_together(img, output, estimator.faces)
                     cv2.imwrite(
                         vis_path,
                         rend_img.astype(np.uint8),

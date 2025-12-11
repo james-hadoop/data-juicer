@@ -1,4 +1,5 @@
 import fnmatch
+import importlib
 import inspect
 import io
 import os
@@ -1310,7 +1311,6 @@ def prepare_sam_3d_body_model(
             mhr_path = os.path.join(local_dir, "assets/mhr_model.pt")
 
     try:
-        # TODO: the tools directory may easily conflict with other tools.
         sys.path.insert(0, sam_3d_body_repo_path)
         from sam_3d_body import SAM3DBodyEstimator, load_sam_3d_body
 
@@ -1325,22 +1325,26 @@ def prepare_sam_3d_body_model(
 
         human_detector, human_segmentor, fov_estimator = None, None, None
         if detector_name:
-            import tools
-
-            logger.error(
-                f"\n>>>>>>>>====================\n>>>>>>>>tools path: {tools.__file__}\n>>>>>>>>tools dir: {os.listdir(tools.__path__[0])}\n>>>>>>>>sys path: {sys.path}\n==================="
-            )
-            from tools.build_detector import HumanDetector
-
-            human_detector = HumanDetector(name=detector_name, device=device, path=detector_path)
+            module_path = f"{sam_3d_body_repo_path}/tools/build_detector.py"
+            spec = importlib.util.spec_from_file_location("build_detector", module_path)
+            if spec is None:
+                raise ImportError(f"Could not load spec from {module_path}")
+            build_detector = importlib.util.module_from_spec(spec)
+            human_detector = build_detector.HumanDetector(name=detector_name, device=device, path=detector_path)
         if segmentor_path:
-            from tools.build_sam import HumanSegmentor
-
-            human_segmentor = HumanSegmentor(name=segmentor_name, device=device, path=segmentor_path)
+            module_path = f"{sam_3d_body_repo_path}/tools/build_sam.py"
+            spec = importlib.util.spec_from_file_location("build_sam", module_path)
+            if spec is None:
+                raise ImportError(f"Could not load spec from {module_path}")
+            build_sam = importlib.util.module_from_spec(spec)
+            human_segmentor = build_sam.HumanSegmentor(name=segmentor_name, device=device, path=segmentor_path)
         if fov_name:
-            from tools.build_fov_estimator import FOVEstimator
-
-            fov_estimator = FOVEstimator(name=fov_name, device=device, path=fov_path)
+            module_path = f"{sam_3d_body_repo_path}/tools/build_fov_estimator.py"
+            spec = importlib.util.spec_from_file_location("build_fov_estimator", module_path)
+            if spec is None:
+                raise ImportError(f"Could not load spec from {module_path}")
+            build_fov_estimator = importlib.util.module_from_spec(spec)
+            fov_estimator = build_fov_estimator.FOVEstimator(name=fov_name, device=device, path=fov_path)
 
         estimator = SAM3DBodyEstimator(
             sam_3d_body_model=model,
