@@ -1325,6 +1325,14 @@ def prepare_sam_3d_body_model(
 
         human_detector, human_segmentor, fov_estimator = None, None, None
         if detector_name:
+            import logging
+            import os
+
+            import tools
+
+            logging.error(
+                f"\n>>>>>>>>====================\n>>>>>>>>tools path: {tools.__file__}\n>>>>>>>>tools dir: {os.listdir(tools.__path__[0])}\n>>>>>>>>sys path: {sys.path}\n==================="
+            )
             from tools.build_detector import HumanDetector
 
             human_detector = HumanDetector(name=detector_name, device=device, path=detector_path)
