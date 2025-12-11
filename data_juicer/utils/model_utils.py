@@ -1242,14 +1242,14 @@ def prepare_qwen_vl_inputs_for_vllm(messages, processor):
 
 
 def prepare_sam_3d_body_model(
-    checkpoint_path=None,
-    detector_name="vitdet",
-    segmentor_name="sam2",
-    fov_name="moge2",
-    mhr_path=None,
-    detector_path=None,
-    segmentor_path=None,
-    fov_path=None,
+    checkpoint_path: str = None,
+    detector_name: str = "vitdet",
+    segmentor_name: str = "sam2",
+    fov_name: str = "moge2",
+    mhr_path: str = None,
+    detector_path: str = None,
+    segmentor_path: str = None,
+    fov_path: str = None,
     **model_params,
 ):
     """
@@ -1298,13 +1298,16 @@ def prepare_sam_3d_body_model(
             check=True,
         )
 
-    if checkpoint_path is None:
+    if not checkpoint_path or not mhr_path:
         local_dir = os.path.join(DJMC, "sam-3d-body-dinov3")
 
         if not os.path.exists(local_dir):
             _download_model(local_dir)
 
-        checkpoint_path = os.path.join(local_dir, "model.ckpt")
+        if not checkpoint_path:
+            checkpoint_path = os.path.join(local_dir, "model.ckpt")
+        if not mhr_path:
+            mhr_path = os.path.join(local_dir, "assets/mhr_model.pt")
 
     try:
         # TODO: the tools directory may easily conflict with other tools.
