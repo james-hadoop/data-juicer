@@ -1330,6 +1330,7 @@ def prepare_sam_3d_body_model(
             if spec is None:
                 raise ImportError(f"Could not load spec from {module_path}")
             build_detector = importlib.util.module_from_spec(spec)
+            spec.loader.exec_module(build_detector)
             human_detector = build_detector.HumanDetector(name=detector_name, device=device, path=detector_path)
         if segmentor_path:
             module_path = f"{sam_3d_body_repo_path}/tools/build_sam.py"
@@ -1337,6 +1338,7 @@ def prepare_sam_3d_body_model(
             if spec is None:
                 raise ImportError(f"Could not load spec from {module_path}")
             build_sam = importlib.util.module_from_spec(spec)
+            spec.loader.exec_module(build_sam)
             human_segmentor = build_sam.HumanSegmentor(name=segmentor_name, device=device, path=segmentor_path)
         if fov_name:
             module_path = f"{sam_3d_body_repo_path}/tools/build_fov_estimator.py"
@@ -1344,6 +1346,7 @@ def prepare_sam_3d_body_model(
             if spec is None:
                 raise ImportError(f"Could not load spec from {module_path}")
             build_fov_estimator = importlib.util.module_from_spec(spec)
+            spec.loader.exec_module(build_fov_estimator)
             fov_estimator = build_fov_estimator.FOVEstimator(name=fov_name, device=device, path=fov_path)
 
         estimator = SAM3DBodyEstimator(

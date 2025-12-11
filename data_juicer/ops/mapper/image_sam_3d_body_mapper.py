@@ -203,7 +203,7 @@ class ImageSAM3DBodyMapper(Mapper):
                     if spec is None:
                         raise ImportError(f"Could not load spec from {module_path}")
                     vis_utils = importlib.util.module_from_spec(spec)
-
+                    spec.loader.exec_module(vis_utils)
                     img_name = os.path.basename(image_path)
                     os.makedirs(self.visualization_dir, exist_ok=True)
                     vis_path = os.path.join(self.visualization_dir, os.path.splitext(img_name)[0] + "_vis.jpg")
