@@ -104,6 +104,46 @@ class ImageSAM3DBodyMapper(Mapper):
         )
 
     def _install_required_packages(self):
+        LazyLoader.check_packages(
+            [
+                "pytorch-lightning",
+                "pyrender",
+                "opencv-python",
+                "yacs",
+                "scikit-image",
+                "einops",
+                "timm",
+                "dill",
+                "pandas",
+                "rich",
+                "hydra-core",
+                "hydra-submitit-launcher",
+                "hydra-colorlog",
+                "pyrootutils",
+                "webdataset",
+                "chump",
+                "networkx==3.2.1",
+                "roma",
+                "joblib",
+                "seaborn",
+                "wandb",
+                "appdirs",
+                "appnope",
+                "ffmpeg",
+                "cython",
+                "jsonlines",
+                "pytest",
+                "xtcocotools",
+                "loguru",
+                "optree",
+                "fvcore",
+                "black",
+                "pycocotools",
+                "tensorboard",
+                "huggingface_hub",
+            ]
+        )
+
         try:
             importlib.import_module("detectron2")
         except ImportError:
