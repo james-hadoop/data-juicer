@@ -1276,27 +1276,33 @@ def prepare_sam_3d_body_model(
             check=True,
         )
 
+    def _download_model(local_dir):
+        import importlib
+
+        os.makedirs(local_dir, exist_ok=True)
+        try:
+            importlib.import_module("modelscope")
+        except ImportError:
+            logger.info("Installing modelscope...")
+            subprocess.run([sys.executable, "-m", "pip", "install", "modelscope"], check=True)
+        logger.info("Downloading model 'facebook/sam-3d-body-dinov3'...")
+        subprocess.run(
+            [
+                "modelscope",
+                "download",
+                "--model",
+                "facebook/sam-3d-body-dinov3",
+                "--local_dir",
+                local_dir,
+            ],
+            check=True,
+        )
+
     if checkpoint_path is None:
         local_dir = os.path.join(DJMC, "sam-3d-body-dinov3")
-        os.makedirs(local_dir, exist_ok=True)
+
         if not os.path.exists(local_dir):
-            subprocess.run(
-                [sys.executable, "-m", "pip", "install", "modelscope"],
-                check=True,
-                capture_output=True,
-            )
-            subprocess.run(
-                [
-                    "modelscope",
-                    "download",
-                    "--model",
-                    "facebook/sam-3d-body-dinov3",
-                    "--local_dir",
-                    local_dir,
-                ],
-                check=True,
-                capture_output=True,
-            )
+            _download_model(local_dir)
 
         checkpoint_path = os.path.join(local_dir, "model.ckpt")
 
@@ -1307,8 +1313,12 @@ def prepare_sam_3d_body_model(
 
         device = model_params.pop("device", "cpu")
 
-        # Initialize sam-3d-body model and other optional modules
-        model, model_cfg = load_sam_3d_body(checkpoint_path, device=device, mhr_path=mhr_path)
+        try:
+            # Initialize sam-3d-body model and other optional modules
+            model, model_cfg = load_sam_3d_body(checkpoint_path, device=device, mhr_path=mhr_path)
+        except Exception:  # double check, local_dir exists but files broken or missing
+            _download_model(local_dir)
+            model, model_cfg = load_sam_3d_body(checkpoint_path, device=device, mhr_path=mhr_path)
 
         human_detector, human_segmentor, fov_estimator = None, None, None
         if detector_name:
