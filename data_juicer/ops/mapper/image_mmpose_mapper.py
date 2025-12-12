@@ -4,6 +4,8 @@ import subprocess
 import sys
 from typing import Dict, Optional, Sequence, Union
 
+from loguru import logger
+
 from data_juicer.ops.base_op import OPERATORS, Mapper
 from data_juicer.utils.constant import Fields, MetaKeys
 from data_juicer.utils.model_utils import get_model, prepare_model
@@ -72,21 +74,41 @@ class ImageMMPoseMapper(Mapper):
         try:
             importlib.import_module("mim")
         except ImportError:
-            print("Installing openmim...")
-            subprocess.run([sys.executable, "-m", "pip", "install", "openmim"], check=True, capture_output=True)
+            logger.info("Installing openmim...")
+            try:
+                subprocess.run([sys.executable, "-m", "pip", "install", "openmim"], check=True)
+            except Exception:
+                raise ValueError(
+                    "Failed to install openmim, please refer to the documentation at "
+                    "https://github.com/open-mmlab/mim/blob/main/docs/en/installation.md for installation instructions."
+                )
 
         try:
             importlib.import_module("mmpose")
         except ImportError:
-            print("Installing mmpose...")
-            subprocess.run([sys.executable, "-m", "pip", "install", "chumpy"], check=True, capture_output=True)
-            subprocess.run([sys.executable, "-m", "mim", "install", "mmpose"], check=True, capture_output=True)
+            logger.info("Installing mmpose...")
+            try:
+                subprocess.run(
+                    [sys.executable, "-m", "pip", "install", "chumpy", "--no-build-isolation", "--no-deps"], check=True
+                )
+                subprocess.run([sys.executable, "-m", "mim", "install", "mmpose"], check=True)
+            except Exception:
+                raise ValueError(
+                    "Failed to install mmpose, please refer to the documentation at "
+                    "https://mmpose.readthedocs.io/en/latest/installation.html for installation instructions."
+                )
 
         try:
             importlib.import_module("mmdet")
         except ImportError:
-            print("Installing mmdet using mim...")
-            subprocess.run([sys.executable, "-m", "mim", "install", "mmdet==3.2.0"], check=True, capture_output=True)
+            logger.info("Installing mmdet using mim...")
+            try:
+                subprocess.run([sys.executable, "-m", "mim", "install", "mmdet==3.2.0"], check=True)
+            except Exception:
+                raise ValueError(
+                    "Failed to install mmdet, please refer to the documentation at "
+                    "https://mmdetection.readthedocs.io/en/latest/get_started.html#installation for installation instructions."
+                )
 
     def parse_and_filter(self, data_sample) -> Dict:
         """Extract elements necessary to represent a prediction into a

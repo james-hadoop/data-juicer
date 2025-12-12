@@ -1270,22 +1270,40 @@ class MMLabModel(object):
         try:
             importlib.import_module("mim")
         except ImportError:
-            print("Installing openmim...")
-            subprocess.run([sys.executable, "-m", "pip", "install", "openmim"], check=True, capture_output=True)
+            logger.info("Installing openmim...")
+            try:
+                subprocess.run([sys.executable, "-m", "pip", "install", "openmim"], check=True)
+            except Exception:
+                raise ValueError(
+                    "Failed to install openmim, please refer to the documentation at "
+                    "https://github.com/open-mmlab/mim/blob/main/docs/en/installation.md for installation instructions."
+                )
 
         # install mmcv using mim
         try:
             importlib.import_module("mmcv")
         except ImportError:
-            print("Installing mmcv using mim...")
-            subprocess.run([sys.executable, "-m", "mim", "install", "mmcv==2.1.0"], check=True, capture_output=True)
+            logger.info("Installing mmcv using mim...")
+            try:
+                subprocess.run([sys.executable, "-m", "mim", "install", "mmcv==2.1.0"], check=True)
+            except Exception:
+                raise ValueError(
+                    "Failed to install mmcv, please refer to the documentation at "
+                    "https://mmcv.readthedocs.io/en/latest/get_started/installation.html# for installation instructions."
+                )
 
         # install mmdeploy using mim
         try:
             importlib.import_module("mmdeploy")
         except ImportError:
-            print("Installing mmdeploy using mim...")
-            subprocess.run([sys.executable, "-m", "mim", "install", "mmdeploy"], check=True, capture_output=True)
+            logger.info("Installing mmdeploy using mim...")
+            try:
+                subprocess.run([sys.executable, "-m", "mim", "install", "mmdeploy"], check=True)
+            except Exception:
+                raise ValueError(
+                    "Failed to install mmdeploy, please refer to the documentation at "
+                    "https://mmdeploy.readthedocs.io/en/latest/get_started.html#installation for installation instructions."
+                )
 
     def __call__(self, images):
         model_inputs, _ = self.task_processor.create_input(images, self.input_shape)
