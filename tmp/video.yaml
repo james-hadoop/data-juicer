@@ -1,0 +1,52 @@
+# global parameters
+project_name: 'dj-video-demo'
+dataset_path: '/apsarapangu/disk3/jiangnana.jnn/data/Youku-AliceMind/caption/validation/youku_alice_mind_dj_100.jsonl' 
+
+executor_type: 'ray' 
+skip_op_error: false  # 调试阶段
+export_type: 'jsonl'
+export_path: './outputs/video_demo/v1'
+video_key: 'videos'
+video_special_token: '<__dj__video>'
+
+eoc_special_token: '<|__dj__eoc|>'
+
+# process schedule
+# a list of several process operators with their arguments
+process:
+  - video_duration_filter:
+      min_duration: 0
+      max_duration: 3600
+      any_or_all: any
+  # - video_nsfw_filter:
+  #     hf_nsfw_model: Falconsai/nsfw_image_detection
+  #     max_score: 0.5
+  #     frame_sampling_method: all_keyframes
+  #     frame_num: 3
+  #     reduce_mode: avg
+  #     any_or_all: any
+  # - video_captioning_from_frames_mapper:
+  #     hf_img2seq: 'Salesforce/blip2-opt-2.7b'
+  #     caption_num: 1
+  #     keep_candidate_mode: 'random_any'
+  #     keep_original_sample: true
+  #     frame_sampling_method: 'all_keyframes'
+  #     frame_num: 3
+  - video_split_by_duration_mapper:                         # Mapper to split video by duration.
+      split_duration: 3                                      # duration of each video split in seconds.
+      min_last_split_duration: 0.1                            # the minimum allowable duration in seconds for the last video split. If the duration of the last split is less than this value, it will be discarded.
+      keep_original_sample: true                              # whether to keep the original sample. If it's set to False, there will be only cut sample in the final datasets and the original sample will be removed. It's True in default
+      save_dir: ./outputs/clips1/                                           # The directory where generated files will be stored. If not specified, outputs will be saved in the same directory as their corresponding input files. This path can alternatively be defined by setting the `DJ_PRODUCED_DATA_DIR` environment variable.
+      batch_size: 2
+  - video_split_by_key_frame_mapper:                        # Mapper to split video by key frame.
+      keep_original_sample: true                              # whether to keep the original sample. If it's set to False, there will be only cut sample in the final datasets and the original sample will be removed. It's True in default
+      save_dir: ./outputs/clips2/
+      batch_size: 2     
+  - video_extract_frames_mapper:                            # extract frames from video files according to specified methods
+      frame_sampling_method: 'all_keyframes'                  # sampling method of extracting frame images from the videos. Should be one of ["all_keyframes", "uniform"]. The former one extracts all key frames and the latter one extract specified number of frames uniformly from the video. Default: "all_keyframes".
+      output_format: 'path'                                   # output format of frame images. Should be one of ["path", "bytes"].
+      frame_num: 3                                            # the number of frames to be extracted uniformly from the video. Only works when frame_sampling_method is "uniform". If it's 1, only the middle frame will be extracted. If it's 2, only the first and the last frames will be extracted. If it's larger than 2, in addition to the first and the last frames, other frames will be extracted uniformly within the video duration.
+      duration: 0                                             # The duration of each segment in seconds. If 0, frames are extracted from the entire video. If duration > 0, the video is segmented into multiple segments based on duration, and frames are extracted from each segment.
+      frame_dir: ./outputs/frames/                                              # Output directory to save extracted frames. If output_format is "path", must specify a directory.
+      frame_key: 'video_frames' 
+      batch_size: 2                              # The name of field to save generated frames info.
