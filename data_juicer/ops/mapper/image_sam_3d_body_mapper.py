@@ -10,6 +10,7 @@ from data_juicer.utils.cache_utils import DATA_JUICER_ASSETS_CACHE
 from data_juicer.utils.constant import Fields
 from data_juicer.utils.lazy_loader import LazyLoader
 from data_juicer.utils.model_utils import get_model, prepare_model
+from data_juicer.utils.ray_utils import is_ray_mode
 
 from ..base_op import OPERATORS, TAGGING_OPS, Mapper
 
@@ -90,6 +91,12 @@ class ImageSAM3DBodyMapper(Mapper):
                 check=True,
             )
         self._sam_3d_body_repo_path = sam_3d_body_repo_path
+
+        if self.num_proc > 1 or not is_ray_mode():
+            logger.warning(
+                "num_proc > 1 may not supported for SAM 3D Body in single mode "
+                "Please set num_proc=1 or use ray mode."
+            )
 
         self.model_key = prepare_model(
             model_type="sam_3d_body",
