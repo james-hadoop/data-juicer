@@ -11,16 +11,15 @@
 [![Docker on OSS](https://img.shields.io/badge/OSS%20latest-none?logo=docker&label=Docker&color=498bdf)](https://dail-wlcb.oss-cn-wulanchabu.aliyuncs.com/data_juicer/docker_images/data-juicer-latest.tar.gz)
 ![](https://img.shields.io/endpoint?url=https%3A%2F%2Fgist.githubusercontent.com%2FHYLcool%2Ff856b14416f08f73d05d32fd992a9c29%2Fraw%2Ftotal_cov.json)
 
-[![DataModality](https://img.shields.io/badge/DataModality-Text,Image,Audio,Video-brightgreen.svg)](docs/tutorial/DJ-Cookbook_ZH.md)
-[![Usage](https://img.shields.io/badge/Usage-Cleaning,Synthesis,Analysis-FFD21E.svg)](docs/tutorial/DJ-Cookbook_ZH.md)
-[![ModelScope- Demos](https://img.shields.io/badge/ModelScope-Demos-4e29ff.svg?logo=data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMjI0IDEyMS4zMyIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KCTxwYXRoIGQ9Im0wIDQ3Ljg0aDI1LjY1djI1LjY1aC0yNS42NXoiIGZpbGw9IiM2MjRhZmYiIC8+Cgk8cGF0aCBkPSJtOTkuMTQgNzMuNDloMjUuNjV2MjUuNjVoLTI1LjY1eiIgZmlsbD0iIzYyNGFmZiIgLz4KCTxwYXRoIGQ9Im0xNzYuMDkgOTkuMTRoLTI1LjY1djIyLjE5aDQ3Ljg0di00Ny44NGgtMjIuMTl6IiBmaWxsPSIjNjI0YWZmIiAvPgoJPHBhdGggZD0ibTEyNC43OSA0Ny44NGgyNS42NXYyNS42NWgtMjUuNjV6IiBmaWxsPSIjMzZjZmQxIiAvPgoJPHBhdGggZD0ibTAgMjIuMTloMjUuNjV2MjUuNjVoLTI1LjY1eiIgZmlsbD0iIzM2Y2ZkMSIgLz4KCTxwYXRoIGQ9Im0xOTguMjggNDcuODRoMjUuNjV2MjUuNjVoLTI1LjY1eiIgZmlsbD0iIzYyNGFmZiIgLz4KCTxwYXRoIGQ9Im0xOTguMjggMjIuMTloMjUuNjV2MjUuNjVoLTI1LjY1eiIgZmlsbD0iIzM2Y2ZkMSIgLz4KCTxwYXRoIGQ9Im0xNTAuNDQgMHYyMi4xOWgyNS42NXYyNS42NWgyMi4xOXYtNDcuODR6IiBmaWxsPSIjNjI0YWZmIiAvPgoJPHBhdGggZD0ibTczLjQ5IDQ3Ljg0aDI1LjY1djI1LjY1aC0yNS42NXoiIGZpbGw9IiMzNmNmZDEiIC8+Cgk8cGF0aCBkPSJtNDcuODQgMjIuMTloMjUuNjV2LTIyLjE5aC00Ny44NHY0Ny44NGgyMi4xOXoiIGZpbGw9IiM2MjRhZmYiIC8+Cgk8cGF0aCBkPSJtNDcuODQgNzMuNDloLTIyLjE5djQ3Ljg0aDQ3Ljg0di0yMi4xOWgtMjUuNjV6IiBmaWxsPSIjNjI0YWZmIiAvPgo8L3N2Zz4K)](https://modelscope.cn/studios?name=Data-Jiucer&page=1&sort=latest&type=1)
-[![HuggingFace- Demos](https://img.shields.io/badge/🤗HuggingFace-Demos-4e29ff.svg)](https://huggingface.co/spaces?&search=datajuicer)
+[![DataModality](https://img.shields.io/badge/DataModality-Text,Image,Audio,Video-brightgreen.svg)](https://datajuicer.github.io/data-juicer/en/main/docs/tutorial/DJ-Cookbook.html)
+[![Usage](https://img.shields.io/badge/Usage-Cleaning,Synthesis,Analysis-FFD21E.svg)](https://datajuicer.github.io/data-juicer/en/main/docs/hub/RecipeGallery.html)
+[![PyPI Downloads](https://static.pepy.tech/personalized-badge/py-data-juicer?period=total&units=INTERNATIONAL_SYSTEM&left_color=BLACK&right_color=GREEN&left_text=downloads)](https://pepy.tech/projects/py-data-juicer)
 
-[![Document_List](https://img.shields.io/badge/Doc-DJ_Cookbook-blue?logo=Markdown)](docs/tutorial/DJ-Cookbook.md)
-[![文档列表](https://img.shields.io/badge/文档-DJ指南-blue?logo=Markdown)](docs/tutorial/DJ-Cookbook_ZH.md)
-[![算子池](https://img.shields.io/badge/文档-算子池-blue?logo=Markdown)](docs/Operators.md)
+
+
+[![算子池](https://img.shields.io/badge/文档-算子池-blue?logo=Markdown)](https://datajuicer.github.io/data-juicer/en/main/docs/Operators.html)
 [![Paper](http://img.shields.io/badge/cs.LG-1.0Paper(SIGMOD'24)-B31B1B?logo=arxiv&logoColor=red)](https://arxiv.org/abs/2309.02033)
-[![Paper](http://img.shields.io/badge/cs.AI-2.0Paper-B31B1B?logo=arxiv&logoColor=red)](https://arxiv.org/abs/2501.14755)
+[![Paper](http://img.shields.io/badge/cs.AI-2.0Paper(NeurIPS'25)-B31B1B?logo=arxiv&logoColor=red)](https://arxiv.org/abs/2501.14755)
 
 
 
@@ -91,8 +90,8 @@ https://github.com/user-attachments/assets/a45f0eee-0f0e-4ffe-9a42-d9a55370089d
 - **易用、可扩展**：
 简洁灵活，提供快速[入门指南](docs/tutorial/QuickStart_ZH.md)和包含丰富使用示例的[DJ-Cookbook](docs/tutorial/DJ-Cookbook_ZH.md)。您可以灵活实现自己的OP，[自定义](docs/DeveloperGuide_ZH.md)数据处理工作流。
 
-Data-Juicer 现采用 AI 自动重写和优化算子的 docstring，并生成详细的算子文档，帮助更快理解每个算子的功能及用法。  
-如需了解该文档增强流程的具体实现，欢迎访问 [`dj_agents` 分支下的 demos/op_doc_enhance_workflow 文件夹](https://github.com/datajuicer/data-juicer/tree/dj_agents/demos/op_doc_enhance_workflow)。
+  Data-Juicer 现采用 AI 自动重写和优化算子的 docstring，并生成详细的算子文档，帮助更快理解每个算子的功能及用法。  
+  如需了解该文档增强流程的具体实现，欢迎访问 [op_doc_enhance_workflow](https://github.com/datajuicer/data-juicer/tree/main/docs/op_doc_enhance_workflow)。
 
 - **高效、稳定**：提供性能优化的[并行数据处理能力](docs/Distributed_ZH.md)（Aliyun-PAI\Ray\CUDA\OP Fusion），
 更快、更少资源消耗，基于大规模生产环境打磨。
@@ -117,7 +116,7 @@ Data-Juicer 现采用 AI 自动重写和优化算子的 docstring，并生成详
   - [开发者指南](docs/DeveloperGuide_ZH.md)
   - [Data-Juicer分布式数据处理](docs/Distributed_ZH.md)
   - [沙盒实验室](docs/Sandbox_ZH.md)
-  - [Data-Juicer Agent](docs/DJ_agent_ZH.md)
+  - [Data-Juicer Agents](docs/DJ_agents_ZH.md)
 - Demos
   - [演示](demos/README_ZH.md)
     - [自动化评测：HELM 评测及可视化](demos/auto_evaluation_helm/README_ZH.md)
@@ -130,12 +129,12 @@ Data-Juicer 现采用 AI 自动重写和优化算子的 docstring，并生成详
   - [格式转换工具](tools/fmt_conversion/README_ZH.md)
     - [多模态工具](tools/fmt_conversion/multimodal/README_ZH.md)
     - [后微调工具](tools/fmt_conversion/post_tuning_dialog/README_ZH.md)
-  - [数据菜谱的自动化超参优化](tools/hpo/README_ZH.md)
+  - [数据菜谱的自动化超参优化](data_juicer/tools/hpo/README_ZH.md)
   - [Label Studio Service Utility](tools/humanops/README.md)
   - [视频生成评测工具](tools/mm_eval/inception_metrics/README_ZH.md)
   - [后处理工具](tools/postprocess/README_ZH.md)
   - [预处理工具](tools/preprocess/README_ZH.md)
-  - [给数据打分](tools/quality_classifier/README_ZH.md)
+  - [给数据打分](data_juicer/tools/quality_classifier/README_ZH.md)
 - 第三方
   - [大语言模型生态](thirdparty/LLM_ecosystems/README_ZH.md)
   - [第三方模型库](thirdparty/models/README_ZH.md)

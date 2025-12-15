@@ -2,10 +2,12 @@ import fnmatch
 import inspect
 import io
 import os
+import subprocess
+import sys
 from contextlib import redirect_stderr
 from functools import partial
 from pickle import UnpicklingError
-from typing import Optional, Union
+from typing import List, Optional, Union
 
 import httpx
 import multiprocess as mp
@@ -34,12 +36,16 @@ nltk = LazyLoader("nltk")
 aes_pred = LazyLoader("aesthetics_predictor", "simple-aesthetics-predictor")
 vllm = LazyLoader("vllm")
 diffusers = LazyLoader("diffusers")
-ram = LazyLoader("ram", "git+https://github.com/xinyu1205/recognize-anything.git")
+ram = LazyLoader("ram", "git+https://github.com/HYLcool/recognize-anything.git")
 cv2 = LazyLoader("cv2", "opencv-python")
 openai = LazyLoader("openai")
 ultralytics = LazyLoader("ultralytics")
 tiktoken = LazyLoader("tiktoken")
 dashscope = LazyLoader("dashscope")
+qwen_vl_utils = LazyLoader("qwen_vl_utils", "qwen-vl-utils")
+transformers_stream_generator = LazyLoader(
+    "transformers_stream_generator", "git+https://github.com/HYLcool/transformers-stream-generator.git"
+)
 
 MODEL_ZOO = {}
 
@@ -499,6 +505,7 @@ def prepare_huggingface_model(
         model = model_class.from_pretrained(pretrained_model_name_or_path, **model_params)
 
         if return_pipe:
+            pipe_params = {}
             if isinstance(processor, transformers.PreTrainedTokenizerBase):
                 pipe_params = {"tokenizer": processor}
             elif isinstance(processor, transformers.SequenceFeatureExtractor):
@@ -898,11 +905,90 @@ def prepare_video_blip_model(pretrained_model_name_or_path, *, return_model=True
             self.post_init()
 
     pretrained_model_name_or_path = check_model_home(pretrained_model_name_or_path)
-    processor = transformers.AutoProcessor.from_pretrained(pretrained_model_name_or_path, **model_params)
+    processor = transformers.AutoProcessor.from_pretrained(
+        pretrained_model_name_or_path, num_query_tokens=32, **model_params
+    )
     if return_model:
         model_class = VideoBlipForConditionalGeneration
         model = model_class.from_pretrained(pretrained_model_name_or_path, **model_params)
+        model.config.image_token_index = 50265
     return (model, processor) if return_model else processor
+
+
+def prepare_video_depth_anything(model_path, **model_params):
+    from data_juicer.utils.cache_utils import DATA_JUICER_ASSETS_CACHE
+
+    video_depth_anything_repo_path = os.path.join(DATA_JUICER_ASSETS_CACHE, "Video-Depth-Anything")
+    if not os.path.exists(video_depth_anything_repo_path):
+        subprocess.run(
+            [
+                "git",
+                "clone",
+                "https://github.com/DepthAnything/Video-Depth-Anything.git",
+                video_depth_anything_repo_path,
+            ],
+            check=True,
+        )
+    import sys
+
+    sys.path.append(video_depth_anything_repo_path)
+
+    from video_depth_anything.video_depth import VideoDepthAnything
+
+    device = model_params.pop("device", "cpu")
+
+    model_configs = {
+        "vits": {"encoder": "vits", "features": 64, "out_channels": [48, 96, 192, 384]},
+        "vitb": {"encoder": "vitb", "features": 128, "out_channels": [96, 192, 384, 768]},
+        "vitl": {"encoder": "vitl", "features": 256, "out_channels": [256, 512, 1024, 1024]},
+    }
+
+    model_links = {
+        "video_depth_anything_vits": "https://huggingface.co/depth-anything/Video-Depth-Anything-Small/resolve/main/video_depth_anything_vits.pth",
+        "video_depth_anything_vitb": "https://huggingface.co/depth-anything/Video-Depth-Anything-Base/resolve/main/video_depth_anything_vitb.pth",
+        "video_depth_anything_vitl": "https://huggingface.co/depth-anything/Video-Depth-Anything-Large/resolve/main/video_depth_anything_vitl.pth",
+        "metric_video_depth_anything_vits": "https://huggingface.co/depth-anything/Metric-Video-Depth-Anything-Small/resolve/main/metric_video_depth_anything_vits.pth",
+        "metric_video_depth_anything_vitb": "https://huggingface.co/depth-anything/Metric-Video-Depth-Anything-Base/resolve/main/metric_video_depth_anything_vitb.pth",
+        "metric_video_depth_anything_vitl": "https://huggingface.co/depth-anything/Metric-Video-Depth-Anything-Large/resolve/main/metric_video_depth_anything_vitl.pth",
+    }
+
+    if "vits" in model_path:
+        encoder_type = "vits"
+    elif "vitb" in model_path:
+        encoder_type = "vitb"
+    else:
+        encoder_type = "vitl"
+
+    if "metric" in model_path:
+        metric = True
+    else:
+        metric = False
+
+    if "metric_video_depth_anything_vitl" in model_path:
+        model_type = "metric_video_depth_anything_vitl"
+    elif "metric_video_depth_anything_vitb" in model_path:
+        model_type = "metric_video_depth_anything_vitb"
+    elif "metric_video_depth_anything_vits" in model_path:
+        model_type = "metric_video_depth_anything_vits"
+    elif "video_depth_anything_vitb" in model_path:
+        model_type = "video_depth_anything_vitb"
+    elif "video_depth_anything_vitl" in model_path:
+        model_type = "video_depth_anything_vitl"
+    else:
+        model_type = "video_depth_anything_vits"
+
+    if not os.path.exists(model_path):
+        if not os.path.exists(DJMC):
+            os.makedirs(DJMC)
+
+        model_path = os.path.join(DJMC, model_type + ".pth")
+        wget.download(model_links[model_type], model_path)
+
+    model = VideoDepthAnything(**model_configs[encoder_type], metric=metric)
+    model.load_state_dict(torch.load(model_path, map_location="cpu"), strict=True)
+    model = model.to(device).eval()
+
+    return model
 
 
 def prepare_yolo_model(model_path, **model_params):
@@ -914,14 +1000,11 @@ def prepare_yolo_model(model_path, **model_params):
 def prepare_vggt_model(model_path, **model_params):
     device = model_params.pop("device", "cpu")
 
-    import subprocess
-
     from data_juicer.utils.cache_utils import DATA_JUICER_ASSETS_CACHE
 
     vggt_repo_path = os.path.join(DATA_JUICER_ASSETS_CACHE, "vggt")
     if not os.path.exists(vggt_repo_path):
         subprocess.run(["git", "clone", "https://github.com/facebookresearch/vggt.git", vggt_repo_path], check=True)
-    import sys
 
     sys.path.append(vggt_repo_path)
 
@@ -932,18 +1015,19 @@ def prepare_vggt_model(model_path, **model_params):
     return model
 
 
-def prepare_vllm_model(pretrained_model_name_or_path, **model_params):
+def prepare_vllm_model(pretrained_model_name_or_path, return_processor=False, **model_params):
     """
     Prepare and load a HuggingFace model with the corresponding processor.
 
     :param pretrained_model_name_or_path: model name or path
+    :param return_processor: whether to return the processor instead of the tokenizer
     :param model_params: LLM initialization parameters.
     :return: a tuple of (model, tokenizer)
     """
     os.environ["VLLM_WORKER_MULTIPROC_METHOD"] = "spawn"
 
-    if model_params.get("device", "").startswith("cuda:"):
-        model_params["device"] = "cuda"
+    if "device" in model_params:
+        model_params.pop("device")
 
     if is_ray_mode():
         tensor_parallel_size = model_params.get("tensor_parallel_size", 1)
@@ -954,7 +1038,11 @@ def prepare_vllm_model(pretrained_model_name_or_path, **model_params):
     model = vllm.LLM(model=check_model_home(pretrained_model_name_or_path), generation_config="auto", **model_params)
     tokenizer = model.get_tokenizer()
 
-    return (model, tokenizer)
+    if return_processor:
+        processor = transformers.AutoProcessor.from_pretrained(pretrained_model_name_or_path)
+        return model, processor
+    else:
+        return model, tokenizer
 
 
 def prepare_wilor_model(wilor_model_path, wilor_model_config, detector_model_path, mano_right_path, **model_params):
@@ -965,8 +1053,6 @@ def prepare_wilor_model(wilor_model_path, wilor_model_config, detector_model_pat
         raise ValueError(
             "Users need to download 'MANO_RIGHT.pkl' from https://mano.is.tue.mpg.de/ and comply with the MANO license."
         )
-
-    import subprocess
 
     from data_juicer.utils.cache_utils import DATA_JUICER_ASSETS_CACHE
 
@@ -1146,6 +1232,125 @@ def update_sampling_params(sampling_params, pretrained_model_name_or_path, enabl
     return sampling_params
 
 
+class MMLabModel(object):
+    """
+    A wrapper for mmdeploy model.
+    It is used to load a mmdeploy model and run inference on given images.
+    """
+
+    def __init__(self, model_cfg_path, deploy_cfg_path, model_files, device):
+        """Initialize the MMLabModel.
+        :param model_cfg: Path to the model config.
+        :param deploy_cfg: Path to the deployment config.
+        :param model_files: Path to the model files.
+        :param device: Device to use.
+        """
+        self._install_required_packages()
+
+        self.model_cfg_path = model_cfg_path
+        self.deploy_cfg_path = deploy_cfg_path
+        self.model_files = model_files
+        self.device = device
+
+        from mmdeploy.apis.utils import build_task_processor
+        from mmdeploy.utils import get_input_shape, load_config
+
+        deploy_cfg, model_cfg = load_config(self.deploy_cfg_path, self.model_cfg_path)
+        self.task_processor = build_task_processor(model_cfg, deploy_cfg, self.device)
+
+        self.model = self.task_processor.build_backend_model(
+            self.model_files, data_preprocessor_updater=self.task_processor.update_data_preprocessor
+        )
+
+        self.input_shape = get_input_shape(deploy_cfg)
+
+    def _install_required_packages(self):
+        import importlib
+
+        try:
+            importlib.import_module("mim")
+        except ImportError:
+            logger.info("Installing openmim...")
+            try:
+                subprocess.run([sys.executable, "-m", "pip", "install", "openmim"], check=True)
+            except Exception:
+                raise ValueError(
+                    "Failed to install openmim, please refer to the documentation at "
+                    "https://github.com/open-mmlab/mim/blob/main/docs/en/installation.md for installation instructions."
+                )
+
+        # install mmcv using mim
+        try:
+            importlib.import_module("mmcv")
+        except ImportError:
+            logger.info("Installing mmcv using mim...")
+            try:
+                subprocess.run([sys.executable, "-m", "mim", "install", "mmcv==2.1.0"], check=True)
+            except Exception:
+                raise ValueError(
+                    "Failed to install mmcv, please refer to the documentation at "
+                    "https://mmcv.readthedocs.io/en/latest/get_started/installation.html# for installation instructions."
+                )
+
+        # install mmdeploy using mim
+        try:
+            importlib.import_module("mmdeploy")
+        except ImportError:
+            logger.info("Installing mmdeploy using mim...")
+            try:
+                subprocess.run([sys.executable, "-m", "mim", "install", "mmdeploy"], check=True)
+            except Exception:
+                raise ValueError(
+                    "Failed to install mmdeploy, please refer to the documentation at "
+                    "https://mmdeploy.readthedocs.io/en/latest/get_started.html#installation for installation instructions."
+                )
+
+    def __call__(self, images):
+        model_inputs, _ = self.task_processor.create_input(images, self.input_shape)
+
+        with torch.no_grad():
+            result = self.model.test_step(model_inputs)
+
+        return result
+
+
+def prepare_mmlab_model(model_cfg: str, deploy_cfg: str, model_files: List[str], device: str = "cpu"):
+    """Prepare and load a model using mmdeploy.
+
+    :param model_cfg: Path to the model config.
+    :param deploy_cfg: Path to the deployment config.
+    :param model_files: Path to the model files.
+    :param device: Device to use.
+    """
+    model = MMLabModel(
+        model_cfg,
+        deploy_cfg,
+        model_files,
+        device,
+    )
+
+    return model
+
+
+def prepare_qwen_vl_inputs_for_vllm(messages, processor):
+    text = processor.apply_chat_template(messages, tokenize=False, add_generation_prompt=True)
+    # qwen_vl_utils 0.0.14+ required
+    image_inputs, video_inputs, video_kwargs = qwen_vl_utils.process_vision_info(
+        messages,
+        image_patch_size=processor.image_processor.patch_size,
+        return_video_kwargs=True,
+        return_video_metadata=True,
+    )
+
+    mm_data = {}
+    if image_inputs is not None:
+        mm_data["image"] = image_inputs
+    if video_inputs is not None:
+        mm_data["video"] = video_inputs
+
+    return {"prompt": text, "multi_modal_data": mm_data, "mm_processor_kwargs": video_kwargs}
+
+
 MODEL_FUNCTION_MAPPING = {
     "api": prepare_api_model,
     "diffusion": prepare_diffusion_model,
@@ -1164,10 +1369,12 @@ MODEL_FUNCTION_MAPPING = {
     "spacy": prepare_spacy_model,
     "vggt": prepare_vggt_model,
     "video_blip": prepare_video_blip_model,
+    "video_depth_anything": prepare_video_depth_anything,
     "vllm": prepare_vllm_model,
     "wilor": prepare_wilor_model,
     "yolo": prepare_yolo_model,
     "embedding": prepare_embedding_model,
+    "mmlab": prepare_mmlab_model,
 }
 
 _MODELS_WITHOUT_FILE_LOCK = {"fasttext", "fastsam", "kenlm", "nltk", "recognizeAnything", "sentencepiece", "spacy"}
