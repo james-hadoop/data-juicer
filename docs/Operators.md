@@ -46,7 +46,7 @@ Data-Juicer 中的算子分为以下 7 种类型。
 | [filter](#filter) | 55 | Filters out low-quality samples. 过滤低质量样本。 |
 | [formatter](#formatter) | 8 | Discovers, loads, and canonicalizes source data. 发现、加载、规范化原始数据。 |
 | [grouper](#grouper) | 3 | Group samples to batched samples. 将样本分组，每一组组成一个批量样本。 |
-| [mapper](#mapper) | 88 | Edits and transforms samples. 对数据样本进行编辑和转换。 |
+| [mapper](#mapper) | 95 | Edits and transforms samples. 对数据样本进行编辑和转换。 |
 | [selector](#selector) | 5 | Selects top samples based on ranking. 基于排序选取高质量样本。 |
 
 All the specific operators are listed below, each featured with several capability tags. 
