@@ -94,7 +94,7 @@ class ImageSAM3DBodyMapper(Mapper):
 
         if self.num_proc > 1 or not is_ray_mode():
             logger.warning(
-                "num_proc > 1 may not supported for SAM 3D Body in single mode "
+                "num_proc > 1 may not supported for SAM 3D Body in standalone mode "
                 "Please set num_proc=1 or use ray mode."
             )
 
