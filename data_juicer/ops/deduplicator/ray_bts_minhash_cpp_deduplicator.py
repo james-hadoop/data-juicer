@@ -41,9 +41,7 @@ class HashAggregator:
 
     def set_hash_pairs(self, pairs):
         for hash_table_id, hash_value, uid in pairs:
-            if hash_value not in self.hash_table[hash_table_id]:
-                self.hash_table[hash_table_id][hash_value] = []
-            self.hash_table[hash_table_id][hash_value].append(uid)
+            self.hash_table[hash_table_id].setdefault(hash_value, []).append(uid)
 
     def get_hash_table(self, hash_table_id):
         result = self.hash_table[hash_table_id]
@@ -59,9 +57,9 @@ class EdgeBuffer:
     def set_edges(self, edge_buffer):
         self.edge_buffer = edge_buffer
 
-    def get_edges(self, pararlle_id):
-        result = self.edge_buffer[pararlle_id]
-        self.edge_buffer[pararlle_id] = []
+    def get_edges(self, parallel_id):
+        result = self.edge_buffer[parallel_id]
+        self.edge_buffer[parallel_id] = []
         return result
 
 
@@ -102,17 +100,13 @@ class BTSUnionFind:
                 hash_table_list = ray.get(ready_refs)
                 for hash_table in hash_table_list:
                     for key, value in hash_table.items():
-                        if key not in self.hash_table:
-                            self.hash_table[key] = []
-                        self.hash_table[key].extend(value)
+                        self.hash_table.setdefault(key, []).extend(value)
                 del ready_refs
             result_refs.append(hash_aggregator.get_hash_table.remote(self.parallel_id))
         hash_table_list = ray.get(result_refs)
         for hash_table in hash_table_list:
             for key, value in hash_table.items():
-                if key not in self.hash_table:
-                    self.hash_table[key] = []
-                self.hash_table[key].extend(value)
+                self.hash_table.setdefault(key, []).extend(value)
         key_cnt = len(self.hash_table)
         value_cnt = 0
         for value in self.hash_table.values():
@@ -307,11 +301,9 @@ class MinhashCalculator:
             self.tokenizer = None
 
         if self.tokenization == "character":
-            self.tokenization_func = lambda x: [
-                str.encode(x[i : i + self.window_size]) for i in range(len(x) - self.window_size + 1)
-            ]
+            self.tokenization_func = lambda x: [s.encode("utf-8") for s in list(x)]
         elif self.tokenization == "punctuation":
-            self.tokenization_func = lambda x: self.punctuation_pattern.split(x)
+            self.tokenization_func = lambda x: [s.encode("utf-8") for s in self.punctuation_pattern.split(x)]
         elif self.tokenization == "space":
             from .tokenize import split_on_whitespace
 
