@@ -12,8 +12,6 @@ namespace py = pybind11;
 const uint32_t MERSENNE_PRIME = 2147483647;  // 2^31 - 1
 const uint32_t MAX_HASH = 4294967295;  // 2^32 - 1
 
-
-
 uint32_t simple_hash(const std::string& token) {
     uint32_t hash = 5381;
     for (const uint8_t c : token) {
@@ -60,12 +58,12 @@ std::vector<std::tuple<uint32_t, py::bytes, uint64_t>> calc_minhash_c(
     for (size_t i = 0; i < hash_ranges.size(); ++i) {
         const auto& [start, end] = hash_ranges[i];
         std::vector<uint32_t> band_hash_values(hash_values.begin() + start, hash_values.begin() + end);
-        
+
         py::bytes hash_value = py::bytes(
             std::string(reinterpret_cast<char*>(&i), sizeof(uint32_t)) +
             std::string(reinterpret_cast<char*>(band_hash_values.data()), band_hash_values.size() * sizeof(uint32_t))
         );
-        
+
         uint32_t hash_table_id = hash_values[start] % union_find_parallel_num;
         pairs.emplace_back(hash_table_id, hash_value, uid);
     }
@@ -119,7 +117,7 @@ py::list calc_minhash_batch_c(
                 const auto& [start, end] = hash_ranges[i];
                 std::string hash_value(reinterpret_cast<char*>(&i), sizeof(uint32_t));
                 hash_value.append(reinterpret_cast<char*>(&hash_values[start]), (end - start) * sizeof(uint32_t));
-                
+
                 uint32_t hash_table_id = hash_values[start] % union_find_parallel_num;
                 local_pairs.emplace_back(hash_table_id, std::move(hash_value), uid);
             }
@@ -177,11 +175,11 @@ std::vector<std::tuple<uint32_t, py::bytes>> calc_simple_minhash_c(
     for (size_t i = 0; i < hash_ranges.size(); ++i) {
         const auto& [start, end] = hash_ranges[i];
         std::vector<uint32_t> band_hash_values(hash_values.begin() + start, hash_values.begin() + end);
-        
+
         py::bytes hash_value = py::bytes(
             std::string(reinterpret_cast<char*>(band_hash_values.data()), band_hash_values.size() * sizeof(uint32_t))
         );
-        
+
         uint32_t hash_table_id = bucket_per_band * i + (hash_values[start] % bucket_per_band);
         pairs.emplace_back(hash_table_id, hash_value);
     }

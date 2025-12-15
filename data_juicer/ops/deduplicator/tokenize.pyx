@@ -6,8 +6,6 @@ cdef extern from "Python.h":
     char* PyUnicode_AsUTF8AndSize(object unicode, Py_ssize_t *size)
 
 
-
-
 @cython.boundscheck(False)
 @cython.wraparound(False)
 def n_grams(list tokens, int n):
@@ -16,7 +14,7 @@ def n_grams(list tokens, int n):
     cdef int i
     cdef bytes window
     cdef list window_tokens
-    
+
     for i in range(n_tokens - n):
         window_tokens = tokens[i:i + n]
         window = b''.join(window_tokens)

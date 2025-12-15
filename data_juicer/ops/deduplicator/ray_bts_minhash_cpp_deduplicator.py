@@ -1,25 +1,20 @@
-import time
-import uuid
-from typing import Optional
-
 import os
+import time
+from typing import Optional, Union
+
 import numpy as np
 import pyarrow as pa
 import regex
 from loguru import logger
 from pydantic import Field, PositiveInt
 from typing_extensions import Annotated
-from typing import List, Union
 
 from data_juicer.utils.constant import HashKeys
-from data_juicer.utils.model_utils import prepare_sentencepiece_model
 from data_juicer.utils.lazy_loader import LazyLoader
+from data_juicer.utils.model_utils import prepare_sentencepiece_model
 
 from ..base_op import OPERATORS, Deduplicator
-from .document_minhash_deduplicator import (MAX_HASH, optimal_param)
-
-from .tokenize import split_on_whitespace, n_grams
-from .minhash import calc_minhash_batch_c
+from .document_minhash_deduplicator import MAX_HASH, optimal_param
 
 ray = LazyLoader("ray")
 
@@ -29,7 +24,7 @@ MAX_DATA_NUM = 2**63
 
 @ray.remote
 class IdGenerator:
-    def __init__(self, start_id = 0):
+    def __init__(self, start_id=0):
         self.next_id = start_id
 
     @ray.method(num_returns=2)
@@ -54,6 +49,7 @@ class HashAggregator:
         result = self.hash_table[hash_table_id]
         self.hash_table[hash_table_id] = {}
         return result
+
 
 @ray.remote
 class EdgeBuffer:
@@ -102,10 +98,7 @@ class BTSUnionFind:
         result_refs = []
         for hash_aggregator in hash_aggregators:
             if len(result_refs) > self.max_pending_edge_buffer_task:
-                ready_refs, result_refs = ray.wait(
-                    result_refs,
-                    num_returns=self.num_edge_buffer_task_returns
-                )
+                ready_refs, result_refs = ray.wait(result_refs, num_returns=self.num_edge_buffer_task_returns)
                 hash_table_list = ray.get(ready_refs)
                 for hash_table in hash_table_list:
                     for key, value in hash_table.items():
@@ -113,9 +106,7 @@ class BTSUnionFind:
                             self.hash_table[key] = []
                         self.hash_table[key].extend(value)
                 del ready_refs
-            result_refs.append(
-                hash_aggregator.get_hash_table.remote(self.parallel_id)
-            )
+            result_refs.append(hash_aggregator.get_hash_table.remote(self.parallel_id))
         hash_table_list = ray.get(result_refs)
         for hash_table in hash_table_list:
             for key, value in hash_table.items():
@@ -141,18 +132,13 @@ class BTSUnionFind:
             if i == self.parallel_id:
                 continue
             if len(result_refs) > self.max_pending_edge_buffer_task:
-                ready_refs, result_refs = ray.wait(
-                    result_refs,
-                    num_returns=self.num_edge_buffer_task_returns
-                )
+                ready_refs, result_refs = ray.wait(result_refs, num_returns=self.num_edge_buffer_task_returns)
                 edge_list = ray.get(ready_refs)
                 for edges in edge_list:
                     for x, y in edges:
                         self.union(x, y)
                 del ready_refs
-            result_refs.append(
-                remote_edge_buffer.get_edges.remote(self.parallel_id)
-            )
+            result_refs.append(remote_edge_buffer.get_edges.remote(self.parallel_id))
         edge_list = ray.get(result_refs)
         for edges in edge_list:
             for x, y in edges:
@@ -262,6 +248,7 @@ class BTSUnionFind:
 
     def remain_mask(self, uid_div, cmp_uid_mods):
         from bitarray import bitarray
+
         if uid_div in self.dup_uids:
             mask = self.dup_uids[uid_div][np.array(cmp_uid_mods.tolist(), dtype=np.bool_)]
             cmp_mask = bitarray()
@@ -283,7 +270,7 @@ class MinhashCalculator:
         num_rows_per_band,
         union_find_parallel_num,
         text_key,
-        tokenization: str = 'space',
+        tokenization: str = "space",
         window_size: PositiveInt = 5,
         lowercase: bool = True,
         ignore_pattern: Optional[str] = None,
@@ -292,8 +279,7 @@ class MinhashCalculator:
         node_id = ray.get_runtime_context().get_node_id()
         self.id_generator = ray.get_actor(name=f"id_generators_{node_id}")
         self.hash_aggregators = [
-            ray.get_actor(name=f"hash_aggregator_{node_id}_{i}")
-            for i in range(num_hash_aggregators_per_node)
+            ray.get_actor(name=f"hash_aggregator_{node_id}_{i}") for i in range(num_hash_aggregators_per_node)
         ]
         # about minhash computation
         self.text_key = text_key
@@ -305,58 +291,67 @@ class MinhashCalculator:
             self.ignore_pattern = regex.compile(self.ignore_pattern)
 
         # check parameters
-        if self.ignore_pattern and self.tokenization == 'punctuation':
-            logger.warning('Be careful that tokenization with punctuations '
-                           'won\'t work if the ignore pattern includes '
-                           'punctuations.')
-        self.punctuation_pattern = regex.compile(r'\p{P}')
+        if self.ignore_pattern and self.tokenization == "punctuation":
+            logger.warning(
+                "Be careful that tokenization with punctuations "
+                "won't work if the ignore pattern includes "
+                "punctuations."
+            )
+        self.punctuation_pattern = regex.compile(r"\p{P}")
 
-        if self.tokenization == 'sentencepiece':
+        if self.tokenization == "sentencepiece":
             if tokenizer_model is None:
-                raise ValueError("To use 'sentencepiece' tokenization, "
-                                 "'tokenizer_model' is required.")
+                raise ValueError("To use 'sentencepiece' tokenization, " "'tokenizer_model' is required.")
             self.tokenizer = prepare_sentencepiece_model(tokenizer_model)
         else:
             self.tokenizer = None
 
-        if self.tokenization == 'character':
-            self.tokenization_func = lambda x: [str.encode(x[i : i + self.window_size]) for i in range(len(x) - self.window_size + 1)]
-        elif self.tokenization == 'punctuation':
+        if self.tokenization == "character":
+            self.tokenization_func = lambda x: [
+                str.encode(x[i : i + self.window_size]) for i in range(len(x) - self.window_size + 1)
+            ]
+        elif self.tokenization == "punctuation":
             self.tokenization_func = lambda x: self.punctuation_pattern.split(x)
-        elif self.tokenization == 'space':
+        elif self.tokenization == "space":
+            from .tokenize import split_on_whitespace
+
             self.tokenization_func = split_on_whitespace
-        elif self.tokenization == 'sentencepiece':
+        elif self.tokenization == "sentencepiece":
             self.tokenization_func = lambda x: self.tokenizer.encode(x, out_type=str)
         else:
-            raise NotImplementedError(
-                f'Unimplemented tokenization method [{self.tokenization}]')
+            raise NotImplementedError(f"Unimplemented tokenization method [{self.tokenization}]")
         self.num_permutation = num_permutation
         self.num_bands = num_bands
         self.num_rows_per_band = num_rows_per_band
         # compute hash ranges and create hash tables
-        self.hash_ranges = [(i * self.num_rows_per_band,
-                             (i + 1) * self.num_rows_per_band)
-                            for i in range(self.num_bands)]
+        self.hash_ranges = [
+            (i * self.num_rows_per_band, (i + 1) * self.num_rows_per_band) for i in range(self.num_bands)
+        ]
 
         # generate permutations
         gen = np.random.RandomState(seed=42)
         max_int64 = np.iinfo(np.int64).max
         self.perm_a, self.perm_b = np.array(
-            [(
-                gen.randint(1, max_int64, dtype=np.uint64),
-                gen.randint(0, max_int64, dtype=np.uint64),
-            ) for _ in range(self.num_permutation)],
+            [
+                (
+                    gen.randint(1, max_int64, dtype=np.uint64),
+                    gen.randint(0, max_int64, dtype=np.uint64),
+                )
+                for _ in range(self.num_permutation)
+            ],
             dtype=np.uint64,
         ).T
 
         self.union_find_parallel_num = union_find_parallel_num
 
         empty_hash_value = np.full((self.num_rows_per_band,), MAX_HASH, dtype=np.uint32)
-        self.empty_hash_value = b'\x00\x00\x00\x00' + empty_hash_value.tobytes()
+        self.empty_hash_value = b"\x00\x00\x00\x00" + empty_hash_value.tobytes()
         self.empty_hash_table_id = int(MAX_HASH % self.union_find_parallel_num)
 
-
     def calc_minhash(self, text_list: pa.Array, uid_begin: int, thread_num: int = 4) -> pa.Table:
+        from .minhash import calc_minhash_batch_c
+        from .tokenize import n_grams
+
         tokens = [n_grams(self.tokenization_func(text.as_py()), self.window_size) for text in text_list]
         pairs = calc_minhash_batch_c(
             tokens,
@@ -395,6 +390,7 @@ class MinhashFilter:
 
     def __call__(self, samples: pa.Table) -> pa.Table:
         from bitarray import bitarray
+
         uids = samples[HashKeys.uid].to_numpy()
         uids_div, uids_mod = np.divmod(uids, BATCH_SIZE)
         diff_idx = np.where(uids_div[1:] != uids_div[:-1])[0] + 1
@@ -410,22 +406,13 @@ class MinhashFilter:
             uid_div = uids_div[start]
             hash_id = uid_div % self.union_find_parallel_num
             union_find = ray.get_actor(f"union_find_{hash_id}")
-            result_refs.append(
-                union_find.remain_mask.remote(uid_div, compressed_uid_mask)
-            )
-        mask = np.concatenate([
-            np.array(cmp_mask.tolist(), dtype=np.bool_)
-            for cmp_mask in ray.get(result_refs)
-        ])
-        columns_to_keep = [
-            name
-            for name in samples.column_names
-            if name != HashKeys.uid
-        ]
+            result_refs.append(union_find.remain_mask.remote(uid_div, compressed_uid_mask))
+        mask = np.concatenate([np.array(cmp_mask.tolist(), dtype=np.bool_) for cmp_mask in ray.get(result_refs)])
+        columns_to_keep = [name for name in samples.column_names if name != HashKeys.uid]
         return samples.select(columns_to_keep).filter(mask)
 
 
-OP_NAME = 'ray_bts_minhash_cpp_deduplicator'
+OP_NAME = "ray_bts_minhash_cpp_deduplicator"
 
 
 @OPERATORS.register_module(OP_NAME)
@@ -437,12 +424,12 @@ class RayBTSMinhashCppDeduplicator(Deduplicator):
     """
 
     # TODO: Set a more reasonable value
-    EMPTY_HASH_VALUE = 'EMPTY'
+    EMPTY_HASH_VALUE = "EMPTY"
     _batched_op = True
 
     def __init__(
         self,
-        tokenization: str = 'space',
+        tokenization: str = "space",
         window_size: PositiveInt = 5,
         lowercase: bool = True,
         ignore_pattern: Optional[str] = None,
@@ -451,7 +438,7 @@ class RayBTSMinhashCppDeduplicator(Deduplicator):
         jaccard_threshold: Annotated[float, Field(ge=0, le=1)] = 0.7,
         num_bands: Optional[PositiveInt] = None,
         num_rows_per_band: Optional[PositiveInt] = None,
-        union_find_parallel_num: Union[int, str] = 'auto',
+        union_find_parallel_num: Union[int, str] = "auto",
         union_threshold: Optional[int] = 256,
         max_pending_edge_buffer_task: Optional[int] = 20,
         num_edge_buffer_task_returns: Optional[int] = 10,
@@ -514,19 +501,15 @@ class RayBTSMinhashCppDeduplicator(Deduplicator):
                 self.num_permutation,
             )
 
-        cpu_num = int(ray.cluster_resources().get('CPU'))
-        if union_find_parallel_num == 'auto':
+        cpu_num = int(ray.cluster_resources().get("CPU"))
+        if union_find_parallel_num == "auto":
             union_find_parallel_num = cpu_num // 2
         else:
             union_find_parallel_num = int(union_find_parallel_num)
 
-        worker_node_ids = [
-            node["NodeID"]
-            for node in ray.nodes()
-            if node['Resources'].get('CPU', 0)
-        ]
+        worker_node_ids = [node["NodeID"] for node in ray.nodes() if node["Resources"].get("CPU", 0)]
         self.num_nodes = num_nodes = len(worker_node_ids)
-        logger.info(f'Total number of nodes: {num_nodes}')
+        logger.info(f"Total number of nodes: {num_nodes}")
         for node in ray.nodes():
             logger.info(node)
 
@@ -539,7 +522,7 @@ class RayBTSMinhashCppDeduplicator(Deduplicator):
                 scheduling_strategy=NodeAffinitySchedulingStrategy(
                     node_id=worker_node_ids[i],
                     soft=False,
-                )
+                ),
             ).remote(num_ids_per_node * i)
             for i in range(num_nodes)
         ]
@@ -554,9 +537,7 @@ class RayBTSMinhashCppDeduplicator(Deduplicator):
                     node_id=worker_node_ids[i % num_nodes],
                     soft=False,
                 ),
-            ).remote(
-                parallel_num=union_find_parallel_num
-            )
+            ).remote(parallel_num=union_find_parallel_num)
             for i in range(num_hash_aggregators)
         ]
 
@@ -568,7 +549,7 @@ class RayBTSMinhashCppDeduplicator(Deduplicator):
         self.num_filter_task_returns = num_filter_task_returns
         self.merge_batch_size = min(merge_batch_size, union_find_parallel_num)
 
-        logger.info(f'union_find_parallel_num = {union_find_parallel_num}')
+        logger.info(f"union_find_parallel_num = {union_find_parallel_num}")
         self.union_find_parallel_num = union_find_parallel_num
         self.union_threshold = union_threshold
         self.remote_edge_buffers = [
@@ -603,88 +584,75 @@ class RayBTSMinhashCppDeduplicator(Deduplicator):
         ]
         self.tmp_dir = os.path.join(self.work_dir, ".tmp", ray.get_runtime_context().get_job_id())
         os.makedirs(self.tmp_dir)
-        logger.info(f'init finished!')
+        logger.info("init finished!")
         ray.data._internal.execution.operators.actor_pool_map_operator.DEFAULT_MAX_TASKS_IN_FLIGHT = 2
 
     def merge_op_batch(self, object_refs):
         results = []
         while object_refs:
-            ready_refs, object_refs = ray.wait(
-                object_refs,
-                num_returns=min(self.merge_batch_size, len(object_refs))
-            )
+            ready_refs, object_refs = ray.wait(object_refs, num_returns=min(self.merge_batch_size, len(object_refs)))
             results.extend(ray.get(ready_refs))
         return results
 
     def merge(self):
         hash_aggregators_ref = ray.put(self.hash_aggregators)
-        result = self.merge_op_batch([
-            union_find.edge_redistribution.remote(hash_aggregators_ref)
-            for union_find in self.union_find_list
-        ])
-        logger.info(f'start merge loop')
+        result = self.merge_op_batch(
+            [union_find.edge_redistribution.remote(hash_aggregators_ref) for union_find in self.union_find_list]
+        )
+        logger.info("start merge loop")
         key_cnt = sum(r[0] for r in result)
         value_cnt = sum(r[1] for r in result)
-        logger.info(f'key_cnt = {key_cnt}, value_cnt = {value_cnt}')
+        logger.info(f"key_cnt = {key_cnt}, value_cnt = {value_cnt}")
         idx = 0
         while any(
-            self.merge_op_batch([
-                union_find.balanced_union_find.remote()
-                for union_find in self.union_find_list
-            ])
+            self.merge_op_batch([union_find.balanced_union_find.remote() for union_find in self.union_find_list])
         ):
-            logger.info(f'loop {idx} start')
-            self.merge_op_batch([
-                union_find.communication.remote()
-                for union_find in self.union_find_list
-            ])
-            logger.info(f'loop {idx} finished')
+            logger.info(f"loop {idx} start")
+            self.merge_op_batch([union_find.communication.remote() for union_find in self.union_find_list])
+            logger.info(f"loop {idx} finished")
             idx += 1
-        self.merge_op_batch([
-            union_find.squeeze.remote()
-            for union_find in self.union_find_list
-        ])
-        logger.info(f'merge finished')
+        self.merge_op_batch([union_find.squeeze.remote() for union_find in self.union_find_list])
+        logger.info("merge finished")
 
     def run(self, dataset):
         start_time = time.time()
         dataset.map_batches(
             MinhashCalculator,
-            batch_format='pyarrow',
+            batch_format="pyarrow",
             zero_copy_batch=True,
             concurrency=self.min_hash_concurrency,
             fn_constructor_kwargs={
-                'num_hash_aggregators_per_node': self.num_hash_aggregators_per_node,
-                'num_permutation': self.num_permutation,
-                'num_bands': self.num_bands,
-                'num_rows_per_band': self.num_rows_per_band,
-                'union_find_parallel_num': self.union_find_parallel_num,
-                'text_key': self.text_key,
-                'tokenization': self.tokenization,
-                'window_size': self.window_size,
-                'lowercase': self.lowercase,
-                'ignore_pattern': self.ignore_pattern,
-                'tokenizer_model': self.tokenizer_model,
+                "num_hash_aggregators_per_node": self.num_hash_aggregators_per_node,
+                "num_permutation": self.num_permutation,
+                "num_bands": self.num_bands,
+                "num_rows_per_band": self.num_rows_per_band,
+                "union_find_parallel_num": self.union_find_parallel_num,
+                "text_key": self.text_key,
+                "tokenization": self.tokenization,
+                "window_size": self.window_size,
+                "lowercase": self.lowercase,
+                "ignore_pattern": self.ignore_pattern,
+                "tokenizer_model": self.tokenizer_model,
             },
-        ).write_parquet(self.tmp_dir, ray_remote_args={'num_cpus': 0.25})
+        ).write_parquet(self.tmp_dir, ray_remote_args={"num_cpus": 0.25})
         end_time = time.time()
-        logger.info(f'MinHash time = {end_time - start_time}')
+        logger.info(f"MinHash time = {end_time - start_time}")
 
         start_time = time.time()
         self.merge()
         end_time = time.time()
-        logger.info(f'merge time = {end_time - start_time}')
+        logger.info(f"merge time = {end_time - start_time}")
         dataset = ray.data.read_parquet(self.tmp_dir)
         result = dataset.map_batches(
             MinhashFilter,
-            batch_format='pyarrow',
+            batch_format="pyarrow",
             zero_copy_batch=True,
             concurrency=self.filter_concurrency,
             fn_constructor_kwargs={
-                'num_nodes': self.num_nodes,
-                'union_find_parallel_num': self.union_find_parallel_num,
-                'max_pending_filter_tasks': self.max_pending_filter_tasks,
-                'num_filter_task_returns': self.num_filter_task_returns,
+                "num_nodes": self.num_nodes,
+                "union_find_parallel_num": self.union_find_parallel_num,
+                "max_pending_filter_tasks": self.max_pending_filter_tasks,
+                "num_filter_task_returns": self.num_filter_task_returns,
             },
         )
         # logger.info(f'origin count = {dataset.count()}, keep count = {result.count()}')
