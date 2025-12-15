@@ -8,7 +8,7 @@ import sys
 from contextlib import redirect_stderr
 from functools import partial
 from pickle import UnpicklingError
-from typing import Optional, Union
+from typing import List, Optional, Union
 
 import httpx
 import multiprocess as mp
@@ -1223,6 +1223,106 @@ def update_sampling_params(sampling_params, pretrained_model_name_or_path, enabl
     return sampling_params
 
 
+class MMLabModel(object):
+    """
+    A wrapper for mmdeploy model.
+    It is used to load a mmdeploy model and run inference on given images.
+    """
+
+    def __init__(self, model_cfg_path, deploy_cfg_path, model_files, device):
+        """Initialize the MMLabModel.
+        :param model_cfg: Path to the model config.
+        :param deploy_cfg: Path to the deployment config.
+        :param model_files: Path to the model files.
+        :param device: Device to use.
+        """
+        self._install_required_packages()
+
+        self.model_cfg_path = model_cfg_path
+        self.deploy_cfg_path = deploy_cfg_path
+        self.model_files = model_files
+        self.device = device
+
+        from mmdeploy.apis.utils import build_task_processor
+        from mmdeploy.utils import get_input_shape, load_config
+
+        deploy_cfg, model_cfg = load_config(self.deploy_cfg_path, self.model_cfg_path)
+        self.task_processor = build_task_processor(model_cfg, deploy_cfg, self.device)
+
+        self.model = self.task_processor.build_backend_model(
+            self.model_files, data_preprocessor_updater=self.task_processor.update_data_preprocessor
+        )
+
+        self.input_shape = get_input_shape(deploy_cfg)
+
+    def _install_required_packages(self):
+        import importlib
+
+        try:
+            importlib.import_module("mim")
+        except ImportError:
+            logger.info("Installing openmim...")
+            try:
+                subprocess.run([sys.executable, "-m", "pip", "install", "openmim"], check=True)
+            except Exception:
+                raise ValueError(
+                    "Failed to install openmim, please refer to the documentation at "
+                    "https://github.com/open-mmlab/mim/blob/main/docs/en/installation.md for installation instructions."
+                )
+
+        # install mmcv using mim
+        try:
+            importlib.import_module("mmcv")
+        except ImportError:
+            logger.info("Installing mmcv using mim...")
+            try:
+                subprocess.run([sys.executable, "-m", "mim", "install", "mmcv==2.1.0"], check=True)
+            except Exception:
+                raise ValueError(
+                    "Failed to install mmcv, please refer to the documentation at "
+                    "https://mmcv.readthedocs.io/en/latest/get_started/installation.html# for installation instructions."
+                )
+
+        # install mmdeploy using mim
+        try:
+            importlib.import_module("mmdeploy")
+        except ImportError:
+            logger.info("Installing mmdeploy using mim...")
+            try:
+                subprocess.run([sys.executable, "-m", "mim", "install", "mmdeploy"], check=True)
+            except Exception:
+                raise ValueError(
+                    "Failed to install mmdeploy, please refer to the documentation at "
+                    "https://mmdeploy.readthedocs.io/en/latest/get_started.html#installation for installation instructions."
+                )
+
+    def __call__(self, images):
+        model_inputs, _ = self.task_processor.create_input(images, self.input_shape)
+
+        with torch.no_grad():
+            result = self.model.test_step(model_inputs)
+
+        return result
+
+
+def prepare_mmlab_model(model_cfg: str, deploy_cfg: str, model_files: List[str], device: str = "cpu"):
+    """Prepare and load a model using mmdeploy.
+
+    :param model_cfg: Path to the model config.
+    :param deploy_cfg: Path to the deployment config.
+    :param model_files: Path to the model files.
+    :param device: Device to use.
+    """
+    model = MMLabModel(
+        model_cfg,
+        deploy_cfg,
+        model_files,
+        device,
+    )
+
+    return model
+
+
 def prepare_qwen_vl_inputs_for_vllm(messages, processor):
     text = processor.apply_chat_template(messages, tokenize=False, add_generation_prompt=True)
     # qwen_vl_utils 0.0.14+ required
@@ -1387,6 +1487,7 @@ MODEL_FUNCTION_MAPPING = {
     "yolo": prepare_yolo_model,
     "embedding": prepare_embedding_model,
     "sam_3d_body": prepare_sam_3d_body_model,
+    "mmlab": prepare_mmlab_model,
 }
 
 _MODELS_WITHOUT_FILE_LOCK = {"fasttext", "fastsam", "kenlm", "nltk", "recognizeAnything", "sentencepiece", "spacy"}

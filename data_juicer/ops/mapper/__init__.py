@@ -37,10 +37,12 @@ from .image_captioning_mapper import ImageCaptioningMapper
 from .image_detection_yolo_mapper import ImageDetectionYoloMapper
 from .image_diffusion_mapper import ImageDiffusionMapper
 from .image_face_blur_mapper import ImageFaceBlurMapper
+from .image_mmpose_mapper import ImageMMPoseMapper
 from .image_remove_background_mapper import ImageRemoveBackgroundMapper
 from .image_sam_3d_body_mapper import ImageSAM3DBodyMapper
 from .image_segment_mapper import ImageSegmentMapper
 from .image_tagging_mapper import ImageTaggingMapper
+from .image_tagging_vlm_mapper import ImageTaggingVLMMapper
 from .imgdiff_difference_area_generator_mapper import Difference_Area_Generator_Mapper
 from .imgdiff_difference_caption_generator_mapper import (
     Difference_Caption_Generator_Mapper,
@@ -139,11 +141,13 @@ __all__ = [
     "ImageCaptioningMapper",
     "ImageDetectionYoloMapper",
     "ImageDiffusionMapper",
+    "ImageMMPoseMapper",
     "ImageFaceBlurMapper",
     "ImageRemoveBackgroundMapper",
     "ImageSAM3DBodyMapper",
     "ImageSegmentMapper",
     "ImageTaggingMapper",
+    "ImageTaggingVLMMapper",
     "MllmMapper",
     "NlpaugEnMapper",
     "NlpcdaZhMapper",
