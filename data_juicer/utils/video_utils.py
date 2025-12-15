@@ -559,8 +559,9 @@ class FFmpegReader(VideoReader):
         self.check_time_span(start_time, end_time)
 
         # allows adding extra arguments passed to ffmpeg
-        ffmpeg_extra_args = kwargs.get("ffmpeg_extra_args", "")
-        ffmpeg_extra_args = ffmpeg_extra_args.replace('\\"', '"').strip().split(" ")
+        import shlex
+
+        ffmpeg_extra_args = shlex.split(kwargs.get("ffmpeg_extra_args", ""))
 
         # Build ffmpeg command
         cmd = [
