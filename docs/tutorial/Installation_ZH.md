@@ -91,7 +91,7 @@ uv pip install "py-data-juicer[all]"
 
 ## 从源码安装
 
-Data-Juicer 也可以从源码安装：
+如果想要使用最新的特性与更新，也可以从源码安装 Data-Juicer：
 ```bash
 # 克隆仓库
 git clone https://github.com/datajuicer/data-juicer.git

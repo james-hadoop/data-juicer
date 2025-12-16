@@ -94,7 +94,7 @@ uv pip install "py-data-juicer[all]"
 
 ## Installation From Source
 
-Data-Juicer can be installed from source as well:
+If you want to use the latest features and updates, Data-Juicer can be installed from source as well:
 ```bash
 # Clone repository
 git clone https://github.com/datajuicer/data-juicer.git
