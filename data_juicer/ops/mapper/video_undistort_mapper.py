@@ -114,7 +114,6 @@ class VideoUndistortMapper(Mapper):
         height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
         width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
         fps = cap.get(cv2.CAP_PROP_FPS)
-        video_length = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
 
         K = sample["intrinsics"]  # 3x3 camera intrinsics.
         D = sample[
@@ -158,7 +157,6 @@ class VideoUndistortMapper(Mapper):
         idx = 0
         # Read and process frames
         while True:
-            print(f"Processing {video_name} frame {idx} / {video_length}", end="\r")
             ret, frame = cap.read()
             if not ret:
                 # End of video stream: close the last writer

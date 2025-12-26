@@ -370,6 +370,8 @@ def prepare_api_model(
 def prepare_deepcalib_model(model_path, **model_params):
 
     device = model_params.pop("device", None)
+    if device is None:
+        raise ValueError("video_camera_calibration_static_deepcalib_mapper currently supports GPU usage only.")
     device = device.replace("cuda", "/gpu")
 
     if not os.path.exists(model_path):
