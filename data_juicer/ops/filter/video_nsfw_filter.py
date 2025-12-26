@@ -124,9 +124,7 @@ class VideoNSFWFilter(Filter):
             inputs = processor(images=frame_images, return_tensors="pt")
             inputs = inputs.to(model.device)
             outputs = model(**inputs)
-            logits = outputs.logits
-            cur_scores = [scores[1] for scores in torch.softmax(logits, dim=-1)]
-            cur_scores = torch.Tensor(cur_scores)
+            cur_scores = torch.softmax(outputs.logits, dim=-1)[:, 1]
 
             if self.reduce_mode == "avg":
                 cur_score = cur_scores.mean()
@@ -193,11 +191,11 @@ class VideoNSFWFilter(Filter):
                 cur_score = self._calculate_score(frame_images, model, processor)
                 nsfw_scores.append(cur_score)
 
-        sample[Fields.stats][StatsKeys.video_nsfw_score] = nsfw_scores
+            if not context:
+                for vid_key in videos:
+                    close_video(videos[vid_key])
 
-        if not context and not self.frame_field:
-            for vid_key in videos:
-                close_video(videos[vid_key])
+        sample[Fields.stats][StatsKeys.video_nsfw_score] = nsfw_scores
 
         return sample
 

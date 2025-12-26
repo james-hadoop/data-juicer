@@ -327,9 +327,8 @@ class VideoCaptioningFromVideoMapper(Mapper):
 
     def _process_single_sample(self, ori_sample, rank=None, context=False):
         # there is no videos or frames in this sample
-        if ((not self.frame_field)
-                or (self.frame_field not in ori_sample or not ori_sample[self.frame_field])
-                or (self.video_key not in ori_sample or not ori_sample[self.video_key])):
+        if (not self.frame_field or self.frame_field not in ori_sample or not ori_sample.get(self.frame_field)) and \
+           (self.video_key not in ori_sample or not ori_sample.get(self.video_key)):
             return []
 
         # the generated results

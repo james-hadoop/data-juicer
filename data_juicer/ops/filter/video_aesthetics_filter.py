@@ -131,7 +131,7 @@ class VideoAestheticsFilter(Filter):
             "" if frame_sampling_method == "all_keyframes" else f"-{frame_num}"
         )
 
-    def _caculate_score(self, frame_images, model, processor):
+    def _calculate_score(self, frame_images, model, processor):
         if len(frame_images) > 0:
             # compute aesthetics_scores
             inputs = processor(images=frame_images, return_tensors="pt").to(model.device)
@@ -177,7 +177,7 @@ class VideoAestheticsFilter(Filter):
                     frames_path = [frames_path[i] for i in indices]
 
                 frame_images = [load_image(frame_path) for frame_path in frames_path]
-                aesthetics_score = self._caculate_score(frame_images, model, processor)
+                aesthetics_score = self._calculate_score(frame_images, model, processor)
                 aesthetics_scores.append(aesthetics_score)
         else:
             # extract frames from videos
@@ -205,16 +205,16 @@ class VideoAestheticsFilter(Filter):
                     if context:
                         sample[Fields.context][sampled_frames_key] = frames
                 frame_images = [frame.to_image() for frame in frames]
-                aesthetics_score = self._caculate_score(frame_images, model, processor)
+                aesthetics_score = self._calculate_score(frame_images, model, processor)
                 aesthetics_scores.append(aesthetics_score)
+
+            if not context:
+                for vid_key in videos:
+                    close_video(videos[vid_key])
 
         logger.debug(f"aesthetics_score: {aesthetics_scores}")
 
         sample[Fields.stats][StatsKeys.video_frames_aesthetics_score] = aesthetics_scores
-
-        if not context and not self.frame_field:
-            for vid_key in videos:
-                close_video(videos[vid_key])
 
         return sample
 
