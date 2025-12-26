@@ -268,7 +268,7 @@ class VideoCaptioningFromFramesMapperTest(DataJuicerTestCaseBase):
         self.assertNotEqual(result[0]['text'], ds_list[0]['text'])
         self.assertTrue(result[0]['text'].startswith(SpecialTokens.video))
         self.assertTrue(result[0]['text'].endswith(SpecialTokens.eoc))
-        self.assertTrue(result[0]['text'].count(SpecialTokens.video), 2)
+        self.assertEqual(result[0]['text'].count(SpecialTokens.video), 2)
 
     def test_caption_field(self):
         ds_list = [

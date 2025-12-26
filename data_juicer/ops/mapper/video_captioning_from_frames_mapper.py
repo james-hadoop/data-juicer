@@ -129,7 +129,7 @@ class VideoCaptioningFromFramesMapper(Mapper):
         :param horizontal_flip: flip frame video horizontally (left to right).
         :param vertical_flip: flip frame video vertically (top to bottom).
         :param text_update_strategy: strategy to update the text field after caption
-            generation. Can be one of ['keep_origin', 'rewrite', 'tile'].
+            generation. Can be one of ['keep_origin', 'rewrite'].
             'keep_origin': keep the original text unchanged.
             'rewrite': rewrite the text field with the generated captions concated by special tokens.
         :param caption_field: the field name to save the generated captions.
@@ -297,11 +297,7 @@ class VideoCaptioningFromFramesMapper(Mapper):
                     new_generated_text_per_video[i])
 
         if not self.legacy_split_by_text_token:
-            # return new_generated_text_per_video
-            captions_list = []
-            for i in range(self.num_newly_generated_samples):
-                captions_list.append(new_generated_text_all_videos[i])
-            return captions_list
+            return new_generated_text_all_videos
 
         text_with_only_special_tokens = remove_non_special_tokens(chunk)
         # insert the captions according to given mode
@@ -321,8 +317,8 @@ class VideoCaptioningFromFramesMapper(Mapper):
     def _process_single_sample(self, ori_sample, rank=None, context=False):
         # there is no videos or frames in this sample
         if ((not self.frame_field)
-            or (self.frame_field not in ori_sample or not ori_sample[self.frame_field])
-            or (self.video_key not in ori_sample or not ori_sample[self.video_key])):
+                or (self.frame_field not in ori_sample or not ori_sample[self.frame_field])
+                or (self.video_key not in ori_sample or not ori_sample[self.video_key])):
             return []
 
         # the generated results
@@ -409,8 +405,11 @@ class VideoCaptioningFromFramesMapper(Mapper):
             generated_text_candidates_single_chunk = [
                 [] for _ in range(self.caption_num)
             ]
-            for video_key in loaded_video_keys[offset:offset + video_count]:
+
+            index_list = list(range(offset, offset + video_count))
+            for idx in index_list:
                 if load_video_data:
+                    video_key = loaded_video_keys[idx]
                     inp = videos[video_key]
                 else:
                     frames = ori_sample[self.frame_field][idx]
@@ -511,14 +510,15 @@ class VideoCaptioningFromFramesMapper(Mapper):
             generated_samples = self._process_single_sample(ori_sample,
                                                             rank=rank,
                                                             context=context)
-            keys_after_process = []
             if len(generated_samples) != 0:
                 samples_after_generation.extend(generated_samples)
-                keys_after_process = generated_samples[0].keys()
         # reconstruct samples from "list of dicts" to "dict of lists"
-        keys = set(list(samples_after_generation[0].keys()) + list(keys_after_process))
+        keys = set()
+        for s in samples_after_generation:
+            keys.update(s.keys())
+
         res_samples = {}
         for key in keys:
-            res_samples[key] = [s[key] for s in samples_after_generation]
+            res_samples[key] = [s.get(key) for s in samples_after_generation]
 
         return res_samples
