@@ -59,6 +59,7 @@ class VideoSplitBySceneMapper(Mapper):
         min_scene_len: NonNegativeInt = 15,
         show_progress: bool = False,
         save_dir: str = None,
+        save_field: str = None,
         ffmpeg_extra_args: str = "",
         *args,
         **kwargs,
@@ -74,6 +75,8 @@ class VideoSplitBySceneMapper(Mapper):
         :param save_dir: The directory where generated video files will be stored.
             If not specified, outputs will be saved in the same directory as their corresponding input files.
             This path can alternatively be defined by setting the `DJ_PRODUCED_DATA_DIR` environment variable.
+        :param save_field: The new field name to save generated video files path.
+            If not specified, will overwrite the original video field.
         :param ffmpeg_extra_args: Extra ffmpeg args for splitting video.
         :param args: extra args
         :param kwargs: extra args
@@ -93,6 +96,7 @@ class VideoSplitBySceneMapper(Mapper):
         self.min_scene_len = min_scene_len
         self.show_progress = show_progress
         self.save_dir = save_dir
+        self.save_field = save_field
         self.ffmpeg_extra_args = ffmpeg_extra_args
 
         # prepare detector args
@@ -156,5 +160,8 @@ class VideoSplitBySceneMapper(Mapper):
         for value in loaded_video_keys:
             sample[Fields.source_file].extend([value] * len(output_video_keys[value]))
 
-        sample[self.video_key] = list(chain.from_iterable([output_video_keys[key] for key in loaded_video_keys]))
+        if self.save_field:
+            sample[self.save_field] = list(chain.from_iterable([output_video_keys[key] for key in loaded_video_keys]))
+        else:
+            sample[self.video_key] = list(chain.from_iterable([output_video_keys[key] for key in loaded_video_keys]))
         return sample
