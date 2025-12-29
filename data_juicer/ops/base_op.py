@@ -1,4 +1,5 @@
 import copy
+from abc import ABCMeta
 from functools import wraps
 
 import numpy as np
@@ -133,7 +134,7 @@ def catch_map_single_exception(method, return_sample=True, skip_op_error=False, 
     return wrapper
 
 
-class OPMetaClass(type):
+class OPMetaClass(ABCMeta):
     def __call__(cls, *args, **kwargs):
         instance = super().__call__(*args, **kwargs)
         instance._init_args = args
