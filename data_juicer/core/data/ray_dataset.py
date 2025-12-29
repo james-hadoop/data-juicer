@@ -179,14 +179,13 @@ class RayDataset(DJDataset):
             batch_size = getattr(op, "batch_size", 1) if op.is_batched_op() else 1
             if isinstance(op, Mapper):
                 if op.use_ray_actor():
-                    op_kwargs = op._op_cfg[op._name]
                     compute = get_compute_strategy(op.__class__, concurrency=op.num_proc)
                     self.data = self.data.map_batches(
                         op.__class__,
                         fn_args=None,
                         fn_kwargs=None,
-                        fn_constructor_args=None,
-                        fn_constructor_kwargs=op_kwargs,
+                        fn_constructor_args=op._init_args,
+                        fn_constructor_kwargs=op._init_kwargs,
                         batch_size=batch_size,
                         num_cpus=op.num_cpus,
                         num_gpus=op.num_gpus,
@@ -219,14 +218,13 @@ class RayDataset(DJDataset):
                     )
                     cached_columns.add(Fields.stats)
                 if op.use_ray_actor():
-                    op_kwargs = op._op_cfg[op._name]
                     compute = get_compute_strategy(op.__class__, concurrency=op.num_proc)
                     self.data = self.data.map_batches(
                         op.__class__,
                         fn_args=None,
                         fn_kwargs=None,
-                        fn_constructor_args=None,
-                        fn_constructor_kwargs=op_kwargs,
+                        fn_constructor_args=op._init_args,
+                        fn_constructor_kwargs=op._init_kwargs,
                         batch_size=batch_size,
                         num_cpus=op.num_cpus,
                         num_gpus=op.num_gpus,

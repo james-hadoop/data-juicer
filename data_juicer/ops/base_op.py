@@ -133,7 +133,15 @@ def catch_map_single_exception(method, return_sample=True, skip_op_error=False, 
     return wrapper
 
 
-class OP:
+class OPMetaClass(type):
+    def __call__(cls, *args, **kwargs):
+        instance = super().__call__(*args, **kwargs)
+        instance._init_args = args
+        instance._init_kwargs = kwargs
+        return instance
+
+
+class OP(metaclass=OPMetaClass):
     _accelerator = "cpu"
     _batched_op = False
 
