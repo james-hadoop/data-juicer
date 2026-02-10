@@ -41,14 +41,15 @@
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
     <script src="../../../_static/documentation_options.js?v=91bfbbb6"></script>
-    <script src="../../../_static/doctools.js?v=9bcbadda"></script>
-    <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="../../../_static/copybutton.js?v=f281be69"></script>
-    <script src="../../../_static/translations.js?v=beaddf03"></script>
+    <script src="../../../_static/translations.js?v=540d3cec"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'tools/evaluator/gpt_eval/README_ZH';</script>
     <script src="../../../_static/sidebar.js?v=3fc1065c"></script>
     <script src="../../../_static/switcher-mobile.js?v=07875724"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <link rel="icon" href="../../../_static/icon.png"/>
     <link rel="index" title="索引" href="../../../genindex.html" />
     <link rel="search" title="搜索" href="../../../search.html" />
@@ -202,7 +203,7 @@
           
           
           
-          <a href="https://github.com/datajuicer/data-juicer" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
+          <a href="https://github.com/james-hadoop/data-juicer" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
             <span class="sr-only">GitHub</span></a>
         </li>
 </ul></div>
@@ -230,19 +231,23 @@
     <div class="navbar-dropdown-panel" role="menu">
       <div class="dropdown-content">
         
-        <a href="../../../../../en/v1.4.1/tools/evaluator/gpt_eval/README.html"
-           class="dropdown-item "
-           role="menuitem"
-           >
-          English
-        </a>
+          
+          
+          <a href="../../../../../en/v1.4.1/tools/evaluator/gpt_eval/README.html"
+             class="dropdown-item "
+             role="menuitem"
+             >
+            English
+          </a>
         
-        <a href="../../../../../zh_CN/v1.4.1/tools/evaluator/gpt_eval/README_ZH.html"
-           class="dropdown-item "
-           role="menuitem"
-           >
-          简体中文
-        </a>
+          
+          
+          <a href="../../../../../zh_CN/v1.4.1/tools/evaluator/gpt_eval/README_ZH.html"
+             class="dropdown-item active"
+             role="menuitem"
+             aria-current="true">
+            简体中文
+          </a>
         
       </div>
     </div>
@@ -410,7 +415,7 @@
           
           
           
-          <a href="https://github.com/datajuicer/data-juicer" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
+          <a href="https://github.com/james-hadoop/data-juicer" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
             <span class="sr-only">GitHub</span></a>
         </li>
 </ul></div>
@@ -438,19 +443,23 @@
     <div class="navbar-dropdown-panel" role="menu">
       <div class="dropdown-content">
         
-        <a href="../../../../../en/v1.4.1/tools/evaluator/gpt_eval/README.html"
-           class="dropdown-item "
-           role="menuitem"
-           >
-          English
-        </a>
+          
+          
+          <a href="../../../../../en/v1.4.1/tools/evaluator/gpt_eval/README.html"
+             class="dropdown-item "
+             role="menuitem"
+             >
+            English
+          </a>
         
-        <a href="../../../../../zh_CN/v1.4.1/tools/evaluator/gpt_eval/README_ZH.html"
-           class="dropdown-item "
-           role="menuitem"
-           >
-          简体中文
-        </a>
+          
+          
+          <a href="../../../../../zh_CN/v1.4.1/tools/evaluator/gpt_eval/README_ZH.html"
+             class="dropdown-item active"
+             role="menuitem"
+             aria-current="true">
+            简体中文
+          </a>
         
       </div>
     </div>
@@ -637,9 +646,9 @@
 
 
   <section id="gpt-eval-openai-api">
-<h1>GPT EVAL：使用 OpenAI API 评测大模型<a class="headerlink" href="#gpt-eval-openai-api" title="Link to this heading">#</a></h1>
+<h1>GPT EVAL：使用 OpenAI API 评测大模型<a class="headerlink" href="#gpt-eval-openai-api" title="链接到此标题。">#</a></h1>
 <section id="id1">
-<h2>快速上手<a class="headerlink" href="#id1" title="Link to this heading">#</a></h2>
+<h2>快速上手<a class="headerlink" href="#id1" title="链接到此标题。">#</a></h2>
 <ol class="arabic">
 <li><p>准备待评测的模型以及对照模型。</p>
 <ul class="simple">
@@ -647,12 +656,12 @@
 <li><p>对照模型：Huggingface, Megatron-LM 模型或 OpenAI 提供的模型</p></li>
 </ul>
 <blockquote>
-<div><p>评测 Megatron-LM 模型需要使用 <a class="reference external" href="https://github.com/datajuicer/data-juicer/blob/v1.4.1/thirdparty"><code class="docutils literal notranslate"><span class="pre">thirdparty</span></code></a> 文件夹提供的定制化 Megatron-LM</p>
+<div><p>评测 Megatron-LM 模型需要使用 <a class="reference external" href="https://github.com/james-hadoop/data-juicer/blob/v1.4.1/thirdparty"><code class="docutils literal notranslate"><span class="pre">thirdparty</span></code></a> 文件夹提供的定制化 Megatron-LM</p>
 </div></blockquote>
 </li>
-<li><p>使用 <a class="reference external" href="https://github.com/datajuicer/data-juicer/blob/v1.4.1/tools/evaluator/gpt_eval/answer_generator.py"><code class="docutils literal notranslate"><span class="pre">answer_generator.py</span></code></a> 在评测数据集上分别生成待评测模型及对照模型的回答。</p>
+<li><p>使用 <a class="reference external" href="https://github.com/james-hadoop/data-juicer/blob/v1.4.1/tools/evaluator/gpt_eval/answer_generator.py"><code class="docutils literal notranslate"><span class="pre">answer_generator.py</span></code></a> 在评测数据集上分别生成待评测模型及对照模型的回答。</p>
 <ol class="arabic">
-<li><p>准备数据集。工具包内已经提供了 Vicuna 评测数据集 (<a class="reference external" href="https://github.com/datajuicer/data-juicer/blob/v1.4.1/tools/evaluator/gpt_eval/config/question.jsonl"><code class="docutils literal notranslate"><span class="pre">config/question.jsonl</span></code></a>)，同时支持用户使用自定义数据集生成回答，自定义数据集要求为单个 jsonl 文件，其中每个 json 对象包含以下3个域：</p>
+<li><p>准备数据集。工具包内已经提供了 Vicuna 评测数据集 (<a class="reference external" href="https://github.com/james-hadoop/data-juicer/blob/v1.4.1/tools/evaluator/gpt_eval/config/question.jsonl"><code class="docutils literal notranslate"><span class="pre">config/question.jsonl</span></code></a>)，同时支持用户使用自定义数据集生成回答，自定义数据集要求为单个 jsonl 文件，其中每个 json 对象包含以下3个域：</p>
 <ul class="simple">
 <li><p>question_id: int 类型，用于标识该问题</p></li>
 <li><p>text: string 类型，问题的具体内容</p></li>
@@ -698,15 +707,15 @@
 </li>
 </ol>
 </li>
-<li><p>通过 <a class="reference external" href="https://github.com/datajuicer/data-juicer/blob/v1.4.1/tools/evaluator/gpt_eval/gpt_evaluator.py"><code class="docutils literal notranslate"><span class="pre">gpt_evaluator.py</span></code></a> 调用 OpenAI API 获得评价结果。</p>
+<li><p>通过 <a class="reference external" href="https://github.com/james-hadoop/data-juicer/blob/v1.4.1/tools/evaluator/gpt_eval/gpt_evaluator.py"><code class="docutils literal notranslate"><span class="pre">gpt_evaluator.py</span></code></a> 调用 OpenAI API 获得评价结果。</p>
 <ol class="arabic">
 <li><p>准备评测依赖项。运行脚本前需准备如下文件：</p>
 <ul class="simple">
 <li><p>question_file: 即上一步中的评测数据文件</p></li>
 <li><p>answer_file: 即上一步得到的待评测模型的回答文件</p></li>
 <li><p>baseline_file: 即上一步得到的对照模型的回答文件</p></li>
-<li><p>prompt_file: prompt 模板文件，工具包内已提供一份样本 (<a class="reference external" href="https://github.com/datajuicer/data-juicer/blob/v1.4.1/tools/evaluator/gpt_eval/config/prompt.jsonl"><code class="docutils literal notranslate"><span class="pre">config/prompt.jsonl</span></code></a>)</p></li>
-<li><p>reviewer_file: reviewer 模板文件(包括评测时使用的模型类型和其他参数)，工具包内已提供一份样本 (<a class="reference external" href="https://github.com/datajuicer/data-juicer/blob/v1.4.1/tools/evaluator/gpt_eval/config/reviewer.json"><code class="docutils literal notranslate"><span class="pre">config/reviewer.json</span></code></a>)</p></li>
+<li><p>prompt_file: prompt 模板文件，工具包内已提供一份样本 (<a class="reference external" href="https://github.com/james-hadoop/data-juicer/blob/v1.4.1/tools/evaluator/gpt_eval/config/prompt.jsonl"><code class="docutils literal notranslate"><span class="pre">config/prompt.jsonl</span></code></a>)</p></li>
+<li><p>reviewer_file: reviewer 模板文件(包括评测时使用的模型类型和其他参数)，工具包内已提供一份样本 (<a class="reference external" href="https://github.com/james-hadoop/data-juicer/blob/v1.4.1/tools/evaluator/gpt_eval/config/reviewer.json"><code class="docutils literal notranslate"><span class="pre">config/reviewer.json</span></code></a>)</p></li>
 </ul>
 </li>
 <li><p>编写配置文件。运行脚本所需的 yaml 文件格式如下：</p>
@@ -834,7 +843,7 @@
         <div class="footer-item">
 
   <p class="sphinx-version">
-    由 <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.3创建。
+    由 <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.0.4创建。
     <br/>
   </p>
 </div>

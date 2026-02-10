@@ -40,13 +40,14 @@
 <link rel="preload" as="script" href="../../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
     <script src="../../../../_static/documentation_options.js?v=8a448e45"></script>
-    <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
-    <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../../_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="../../../../_static/copybutton.js?v=f281be69"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = '_modules/data_juicer/core/data/ray_dataset';</script>
     <script src="../../../../_static/sidebar.js?v=3fc1065c"></script>
     <script src="../../../../_static/switcher-mobile.js?v=07875724"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <link rel="icon" href="../../../../_static/icon.png"/>
     <link rel="index" title="Index" href="../../../../genindex.html" />
     <link rel="search" title="Search" href="../../../../search.html" />
@@ -198,7 +199,7 @@
           
           
           
-          <a href="https://github.com/datajuicer/data-juicer" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
+          <a href="https://github.com/james-hadoop/data-juicer" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
             <span class="sr-only">GitHub</span></a>
         </li>
 </ul></div>
@@ -226,19 +227,23 @@
     <div class="navbar-dropdown-panel" role="menu">
       <div class="dropdown-content">
         
-        <a href="../../../../../../en/main/_modules/data_juicer/core/data/ray_dataset.html"
-           class="dropdown-item active"
-           role="menuitem"
-           aria-current="true">
-          English
-        </a>
+          
+          
+          <a href="../../../../../../en/main/_modules/data_juicer/core/data/ray_dataset.html"
+             class="dropdown-item active"
+             role="menuitem"
+             aria-current="true">
+            English
+          </a>
         
-        <a href="../../../../../../zh_CN/main/_modules/data_juicer/core/data/ray_dataset_ZH.html"
-           class="dropdown-item "
-           role="menuitem"
-           >
-          简体中文
-        </a>
+          
+          
+          <a href="../../../../../../zh_CN/main/_modules/data_juicer/core/data/ray_dataset_ZH.html"
+             class="dropdown-item "
+             role="menuitem"
+             >
+            简体中文
+          </a>
         
       </div>
     </div>
@@ -404,7 +409,7 @@
           
           
           
-          <a href="https://github.com/datajuicer/data-juicer" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
+          <a href="https://github.com/james-hadoop/data-juicer" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
             <span class="sr-only">GitHub</span></a>
         </li>
 </ul></div>
@@ -432,19 +437,23 @@
     <div class="navbar-dropdown-panel" role="menu">
       <div class="dropdown-content">
         
-        <a href="../../../../../../en/main/_modules/data_juicer/core/data/ray_dataset.html"
-           class="dropdown-item active"
-           role="menuitem"
-           aria-current="true">
-          English
-        </a>
+          
+          
+          <a href="../../../../../../en/main/_modules/data_juicer/core/data/ray_dataset.html"
+             class="dropdown-item active"
+             role="menuitem"
+             aria-current="true">
+            English
+          </a>
         
-        <a href="../../../../../../zh_CN/main/_modules/data_juicer/core/data/ray_dataset_ZH.html"
-           class="dropdown-item "
-           role="menuitem"
-           >
-          简体中文
-        </a>
+          
+          
+          <a href="../../../../../../zh_CN/main/_modules/data_juicer/core/data/ray_dataset_ZH.html"
+             class="dropdown-item "
+             role="menuitem"
+             >
+            简体中文
+          </a>
         
       </div>
     </div>
@@ -587,6 +596,7 @@
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">data_juicer.core.data</span><span class="w"> </span><span class="kn">import</span> <span class="n">DJDataset</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">data_juicer.core.data.schema</span><span class="w"> </span><span class="kn">import</span> <span class="n">Schema</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">data_juicer.core.tracer</span><span class="w"> </span><span class="kn">import</span> <span class="n">should_trace_op</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">data_juicer.ops</span><span class="w"> </span><span class="kn">import</span> <span class="n">Deduplicator</span><span class="p">,</span> <span class="n">Filter</span><span class="p">,</span> <span class="n">Mapper</span><span class="p">,</span> <span class="n">Pipeline</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">data_juicer.ops.base_op</span><span class="w"> </span><span class="kn">import</span> <span class="n">DEFAULT_BATCH_SIZE</span><span class="p">,</span> <span class="n">TAGGING_OPS</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">data_juicer.utils.constant</span><span class="w"> </span><span class="kn">import</span> <span class="n">Fields</span>
@@ -610,16 +620,23 @@
 
 <div class="viewcode-block" id="convert_to_absolute_paths">
 <a class="viewcode-back" href="../../../../api/data_juicer.core.data.ray_dataset.html#data_juicer.core.data.ray_dataset.convert_to_absolute_paths">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">convert_to_absolute_paths</span><span class="p">(</span><span class="n">samples</span><span class="p">,</span> <span class="n">dataset_dir</span><span class="p">,</span> <span class="n">path_keys</span><span class="p">):</span>
-    <span class="n">samples</span> <span class="o">=</span> <span class="n">samples</span><span class="o">.</span><span class="n">to_pydict</span><span class="p">()</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">convert_to_absolute_paths</span><span class="p">(</span><span class="n">samples</span><span class="p">:</span> <span class="n">pyarrow</span><span class="o">.</span><span class="n">Table</span><span class="p">,</span> <span class="n">dataset_dir</span><span class="p">,</span> <span class="n">path_keys</span><span class="p">):</span>
     <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">path_keys</span><span class="p">:</span>
-        <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">samples</span><span class="p">[</span><span class="n">key</span><span class="p">])):</span>
-            <span class="n">paths</span> <span class="o">=</span> <span class="n">samples</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="n">idx</span><span class="p">]</span>
-            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">paths</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
-                <span class="n">samples</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="n">idx</span><span class="p">]</span> <span class="o">=</span> <span class="n">get_abs_path</span><span class="p">(</span><span class="n">paths</span><span class="p">,</span> <span class="n">dataset_dir</span><span class="p">)</span>
-            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">paths</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
-                <span class="n">samples</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="n">idx</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">get_abs_path</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">dataset_dir</span><span class="p">)</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">paths</span><span class="p">]</span>
-    <span class="k">return</span> <span class="n">pyarrow</span><span class="o">.</span><span class="n">Table</span><span class="o">.</span><span class="n">from_pydict</span><span class="p">(</span><span class="n">samples</span><span class="p">)</span></div>
+        <span class="n">col_idx</span> <span class="o">=</span> <span class="n">samples</span><span class="o">.</span><span class="n">schema</span><span class="o">.</span><span class="n">get_field_index</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+        <span class="n">cols</span> <span class="o">=</span> <span class="n">samples</span><span class="o">.</span><span class="n">column</span><span class="p">(</span><span class="n">col_idx</span><span class="p">)</span>
+
+        <span class="k">def</span><span class="w"> </span><span class="nf">_process_paths</span><span class="p">():</span>
+            <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">cols</span><span class="p">:</span>
+                <span class="n">path</span> <span class="o">=</span> <span class="n">col</span><span class="o">.</span><span class="n">as_py</span><span class="p">()</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+                    <span class="k">yield</span> <span class="n">get_abs_path</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">dataset_dir</span><span class="p">)</span>
+                <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+                    <span class="k">yield</span> <span class="p">[</span><span class="n">get_abs_path</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">dataset_dir</span><span class="p">)</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">path</span><span class="p">]</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">yield</span> <span class="n">path</span>
+
+        <span class="n">samples</span> <span class="o">=</span> <span class="n">samples</span><span class="o">.</span><span class="n">set_column</span><span class="p">(</span><span class="n">col_idx</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">pyarrow</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">_process_paths</span><span class="p">()))</span>
+    <span class="k">return</span> <span class="n">samples</span></div>
 
 
 
@@ -685,8 +702,20 @@
 <span class="k">class</span><span class="w"> </span><span class="nc">RayDataset</span><span class="p">(</span><span class="n">DJDataset</span><span class="p">):</span>
 <div class="viewcode-block" id="RayDataset.__init__">
 <a class="viewcode-back" href="../../../../api/data_juicer.core.data.ray_dataset.html#data_juicer.core.data.ray_dataset.RayDataset.__init__">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dataset</span><span class="p">:</span> <span class="n">ray</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">Dataset</span><span class="p">,</span> <span class="n">dataset_path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">cfg</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Namespace</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">preprocess_dataset</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="n">dataset_path</span><span class="p">,</span> <span class="n">cfg</span><span class="p">)</span></div>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">dataset</span><span class="p">:</span> <span class="n">ray</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">Dataset</span><span class="p">,</span>
+        <span class="n">dataset_path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">cfg</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Namespace</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">auto_op_parallelism</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">preprocess_dataset</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="n">dataset_path</span><span class="p">,</span> <span class="n">cfg</span><span class="p">)</span>
+
+        <span class="c1"># if auto_op_parallelism is set in both args and cfg, cfg takes precedence</span>
+        <span class="k">if</span> <span class="n">cfg</span> <span class="ow">and</span> <span class="n">cfg</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;auto_op_parallelism&quot;</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_auto_proc</span> <span class="o">=</span> <span class="n">cfg</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;auto_op_parallelism&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_auto_proc</span> <span class="o">=</span> <span class="n">auto_op_parallelism</span></div>
 
 
 <div class="viewcode-block" id="RayDataset.schema">
@@ -757,18 +786,39 @@
 
         <span class="kn">from</span><span class="w"> </span><span class="nn">data_juicer.utils.process_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">calculate_ray_np</span>
 
-        <span class="n">calculate_ray_np</span><span class="p">(</span><span class="n">operators</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_auto_proc</span><span class="p">:</span>
+            <span class="n">calculate_ray_np</span><span class="p">(</span><span class="n">operators</span><span class="p">)</span>
+
+        <span class="c1"># Check if dataset is empty - Ray returns None for columns() on empty datasets</span>
+        <span class="c1"># with unknown schema. If empty, skip processing as there&#39;s nothing to process.</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">row_count</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">count</span><span class="p">()</span>
+        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+            <span class="n">row_count</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="k">if</span> <span class="n">row_count</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="kn">from</span><span class="w"> </span><span class="nn">loguru</span><span class="w"> </span><span class="kn">import</span> <span class="n">logger</span>
+
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Dataset is empty (0 rows), skipping operator processing&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="bp">self</span>
 
         <span class="c1"># Cache columns once at start to avoid breaking pipeline with repeated columns() calls</span>
         <span class="c1"># Ray&#39;s columns() internally does limit(1) which forces execution and breaks streaming</span>
-        <span class="n">cached_columns</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">columns</span><span class="p">())</span>
+        <span class="n">columns_result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">columns</span><span class="p">()</span>
+        <span class="c1"># Handle empty dataset case where columns() returns None</span>
+        <span class="k">if</span> <span class="n">columns_result</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="kn">from</span><span class="w"> </span><span class="nn">loguru</span><span class="w"> </span><span class="kn">import</span> <span class="n">logger</span>
+
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Dataset has unknown schema (likely empty), skipping operator processing&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="bp">self</span>
+        <span class="n">cached_columns</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">columns_result</span><span class="p">)</span>
 
         <span class="k">for</span> <span class="n">op</span> <span class="ow">in</span> <span class="n">operators</span><span class="p">:</span>
-            <span class="n">cached_columns</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_run_single_op</span><span class="p">(</span><span class="n">op</span><span class="p">,</span> <span class="n">cached_columns</span><span class="p">)</span>
+            <span class="n">cached_columns</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_run_single_op</span><span class="p">(</span><span class="n">op</span><span class="p">,</span> <span class="n">cached_columns</span><span class="p">,</span> <span class="n">tracer</span><span class="o">=</span><span class="n">tracer</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span></div>
 
 
-    <span class="k">def</span><span class="w"> </span><span class="nf">_run_single_op</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">op</span><span class="p">,</span> <span class="n">cached_columns</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_run_single_op</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">op</span><span class="p">,</span> <span class="n">cached_columns</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">tracer</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="c1"># Use cached columns to avoid calling self.data.columns() which breaks pipeline</span>
         <span class="k">if</span> <span class="n">cached_columns</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">cached_columns</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">columns</span><span class="p">())</span>
@@ -788,33 +838,45 @@
         <span class="k">try</span><span class="p">:</span>
             <span class="n">batch_size</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">op</span><span class="p">,</span> <span class="s2">&quot;batch_size&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="k">if</span> <span class="n">op</span><span class="o">.</span><span class="n">is_batched_op</span><span class="p">()</span> <span class="k">else</span> <span class="mi">1</span>
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">op</span><span class="p">,</span> <span class="n">Mapper</span><span class="p">):</span>
-                <span class="k">if</span> <span class="n">op</span><span class="o">.</span><span class="n">use_ray_actor</span><span class="p">():</span>
-                    <span class="n">op_kwargs</span> <span class="o">=</span> <span class="n">op</span><span class="o">.</span><span class="n">_op_cfg</span><span class="p">[</span><span class="n">op</span><span class="o">.</span><span class="n">_name</span><span class="p">]</span>
-                    <span class="n">compute</span> <span class="o">=</span> <span class="n">get_compute_strategy</span><span class="p">(</span><span class="n">op</span><span class="o">.</span><span class="vm">__class__</span><span class="p">,</span> <span class="n">concurrency</span><span class="o">=</span><span class="n">op</span><span class="o">.</span><span class="n">num_proc</span><span class="p">)</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">map_batches</span><span class="p">(</span>
-                        <span class="n">op</span><span class="o">.</span><span class="vm">__class__</span><span class="p">,</span>
-                        <span class="n">fn_args</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                        <span class="n">fn_kwargs</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                        <span class="n">fn_constructor_args</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                        <span class="n">fn_constructor_kwargs</span><span class="o">=</span><span class="n">op_kwargs</span><span class="p">,</span>
-                        <span class="n">batch_size</span><span class="o">=</span><span class="n">batch_size</span><span class="p">,</span>
-                        <span class="n">num_cpus</span><span class="o">=</span><span class="n">op</span><span class="o">.</span><span class="n">num_cpus</span><span class="p">,</span>
-                        <span class="n">num_gpus</span><span class="o">=</span><span class="n">op</span><span class="o">.</span><span class="n">num_gpus</span><span class="p">,</span>
-                        <span class="n">compute</span><span class="o">=</span><span class="n">compute</span><span class="p">,</span>
-                        <span class="n">batch_format</span><span class="o">=</span><span class="s2">&quot;pyarrow&quot;</span><span class="p">,</span>
-                        <span class="n">runtime_env</span><span class="o">=</span><span class="n">op</span><span class="o">.</span><span class="n">runtime_env</span><span class="p">,</span>
-                    <span class="p">)</span>
-                <span class="k">else</span><span class="p">:</span>
-                    <span class="n">compute</span> <span class="o">=</span> <span class="n">get_compute_strategy</span><span class="p">(</span><span class="n">op</span><span class="o">.</span><span class="n">process</span><span class="p">,</span> <span class="n">concurrency</span><span class="o">=</span><span class="n">op</span><span class="o">.</span><span class="n">num_proc</span><span class="p">)</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">map_batches</span><span class="p">(</span>
-                        <span class="n">op</span><span class="o">.</span><span class="n">process</span><span class="p">,</span>
-                        <span class="n">batch_size</span><span class="o">=</span><span class="n">batch_size</span><span class="p">,</span>
-                        <span class="n">batch_format</span><span class="o">=</span><span class="s2">&quot;pyarrow&quot;</span><span class="p">,</span>
-                        <span class="n">num_cpus</span><span class="o">=</span><span class="n">op</span><span class="o">.</span><span class="n">num_cpus</span><span class="p">,</span>
-                        <span class="n">num_gpus</span><span class="o">=</span><span class="n">op</span><span class="o">.</span><span class="n">num_gpus</span><span class="p">,</span>
-                        <span class="n">compute</span><span class="o">=</span><span class="n">compute</span><span class="p">,</span>
-                        <span class="n">runtime_env</span><span class="o">=</span><span class="n">op</span><span class="o">.</span><span class="n">runtime_env</span><span class="p">,</span>
-                    <span class="p">)</span>
+                <span class="c1"># Wrap process method with tracer for sample-level collection</span>
+                <span class="n">original_process</span> <span class="o">=</span> <span class="kc">None</span>
+                <span class="k">if</span> <span class="n">tracer</span> <span class="ow">and</span> <span class="n">should_trace_op</span><span class="p">(</span><span class="n">tracer</span><span class="p">,</span> <span class="n">op</span><span class="o">.</span><span class="n">_name</span><span class="p">):</span>
+                    <span class="kn">from</span><span class="w"> </span><span class="nn">data_juicer.ops.base_op</span><span class="w"> </span><span class="kn">import</span> <span class="n">wrap_mapper_with_tracer</span>
+
+                    <span class="n">original_process</span> <span class="o">=</span> <span class="n">op</span><span class="o">.</span><span class="n">process</span>
+                    <span class="n">op</span><span class="o">.</span><span class="n">process</span> <span class="o">=</span> <span class="n">wrap_mapper_with_tracer</span><span class="p">(</span><span class="n">original_process</span><span class="p">,</span> <span class="n">op</span><span class="o">.</span><span class="n">_name</span><span class="p">,</span> <span class="n">op</span><span class="o">.</span><span class="n">text_key</span><span class="p">,</span> <span class="n">tracer</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">op</span><span class="o">.</span><span class="n">use_ray_actor</span><span class="p">():</span>
+                        <span class="n">compute</span> <span class="o">=</span> <span class="n">get_compute_strategy</span><span class="p">(</span><span class="n">op</span><span class="o">.</span><span class="vm">__class__</span><span class="p">,</span> <span class="n">concurrency</span><span class="o">=</span><span class="n">op</span><span class="o">.</span><span class="n">num_proc</span><span class="p">)</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">map_batches</span><span class="p">(</span>
+                            <span class="n">op</span><span class="o">.</span><span class="vm">__class__</span><span class="p">,</span>
+                            <span class="n">fn_args</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                            <span class="n">fn_kwargs</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                            <span class="n">fn_constructor_args</span><span class="o">=</span><span class="n">op</span><span class="o">.</span><span class="n">_init_args</span><span class="p">,</span>
+                            <span class="n">fn_constructor_kwargs</span><span class="o">=</span><span class="n">op</span><span class="o">.</span><span class="n">_init_kwargs</span><span class="p">,</span>
+                            <span class="n">batch_size</span><span class="o">=</span><span class="n">batch_size</span><span class="p">,</span>
+                            <span class="n">num_cpus</span><span class="o">=</span><span class="n">op</span><span class="o">.</span><span class="n">num_cpus</span><span class="p">,</span>
+                            <span class="n">num_gpus</span><span class="o">=</span><span class="n">op</span><span class="o">.</span><span class="n">num_gpus</span><span class="p">,</span>
+                            <span class="n">compute</span><span class="o">=</span><span class="n">compute</span><span class="p">,</span>
+                            <span class="n">batch_format</span><span class="o">=</span><span class="s2">&quot;pyarrow&quot;</span><span class="p">,</span>
+                            <span class="n">runtime_env</span><span class="o">=</span><span class="n">op</span><span class="o">.</span><span class="n">runtime_env</span><span class="p">,</span>
+                        <span class="p">)</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">compute</span> <span class="o">=</span> <span class="n">get_compute_strategy</span><span class="p">(</span><span class="n">op</span><span class="o">.</span><span class="n">process</span><span class="p">,</span> <span class="n">concurrency</span><span class="o">=</span><span class="n">op</span><span class="o">.</span><span class="n">num_proc</span><span class="p">)</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">map_batches</span><span class="p">(</span>
+                            <span class="n">op</span><span class="o">.</span><span class="n">process</span><span class="p">,</span>
+                            <span class="n">batch_size</span><span class="o">=</span><span class="n">batch_size</span><span class="p">,</span>
+                            <span class="n">batch_format</span><span class="o">=</span><span class="s2">&quot;pyarrow&quot;</span><span class="p">,</span>
+                            <span class="n">num_cpus</span><span class="o">=</span><span class="n">op</span><span class="o">.</span><span class="n">num_cpus</span><span class="p">,</span>
+                            <span class="n">num_gpus</span><span class="o">=</span><span class="n">op</span><span class="o">.</span><span class="n">num_gpus</span><span class="p">,</span>
+                            <span class="n">compute</span><span class="o">=</span><span class="n">compute</span><span class="p">,</span>
+                            <span class="n">runtime_env</span><span class="o">=</span><span class="n">op</span><span class="o">.</span><span class="n">runtime_env</span><span class="p">,</span>
+                        <span class="p">)</span>
+                <span class="k">finally</span><span class="p">:</span>
+                    <span class="c1"># Restore original process method</span>
+                    <span class="k">if</span> <span class="n">tracer</span> <span class="ow">and</span> <span class="n">should_trace_op</span><span class="p">(</span><span class="n">tracer</span><span class="p">,</span> <span class="n">op</span><span class="o">.</span><span class="n">_name</span><span class="p">)</span> <span class="ow">and</span> <span class="n">original_process</span><span class="p">:</span>
+                        <span class="n">op</span><span class="o">.</span><span class="n">process</span> <span class="o">=</span> <span class="n">original_process</span>
             <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">op</span><span class="p">,</span> <span class="n">Filter</span><span class="p">):</span>
                 <span class="c1"># Use cached_columns instead of self.data.columns() to avoid breaking pipeline</span>
                 <span class="k">if</span> <span class="n">Fields</span><span class="o">.</span><span class="n">stats</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">cached_columns</span><span class="p">:</span>
@@ -829,14 +891,13 @@
                     <span class="p">)</span>
                     <span class="n">cached_columns</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">Fields</span><span class="o">.</span><span class="n">stats</span><span class="p">)</span>
                 <span class="k">if</span> <span class="n">op</span><span class="o">.</span><span class="n">use_ray_actor</span><span class="p">():</span>
-                    <span class="n">op_kwargs</span> <span class="o">=</span> <span class="n">op</span><span class="o">.</span><span class="n">_op_cfg</span><span class="p">[</span><span class="n">op</span><span class="o">.</span><span class="n">_name</span><span class="p">]</span>
                     <span class="n">compute</span> <span class="o">=</span> <span class="n">get_compute_strategy</span><span class="p">(</span><span class="n">op</span><span class="o">.</span><span class="vm">__class__</span><span class="p">,</span> <span class="n">concurrency</span><span class="o">=</span><span class="n">op</span><span class="o">.</span><span class="n">num_proc</span><span class="p">)</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">map_batches</span><span class="p">(</span>
                         <span class="n">op</span><span class="o">.</span><span class="vm">__class__</span><span class="p">,</span>
                         <span class="n">fn_args</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                         <span class="n">fn_kwargs</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                        <span class="n">fn_constructor_args</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                        <span class="n">fn_constructor_kwargs</span><span class="o">=</span><span class="n">op_kwargs</span><span class="p">,</span>
+                        <span class="n">fn_constructor_args</span><span class="o">=</span><span class="n">op</span><span class="o">.</span><span class="n">_init_args</span><span class="p">,</span>
+                        <span class="n">fn_constructor_kwargs</span><span class="o">=</span><span class="n">op</span><span class="o">.</span><span class="n">_init_kwargs</span><span class="p">,</span>
                         <span class="n">batch_size</span><span class="o">=</span><span class="n">batch_size</span><span class="p">,</span>
                         <span class="n">num_cpus</span><span class="o">=</span><span class="n">op</span><span class="o">.</span><span class="n">num_cpus</span><span class="p">,</span>
                         <span class="n">num_gpus</span><span class="o">=</span><span class="n">op</span><span class="o">.</span><span class="n">num_gpus</span><span class="p">,</span>
@@ -857,26 +918,39 @@
                     <span class="p">)</span>
                 <span class="k">if</span> <span class="n">op</span><span class="o">.</span><span class="n">stats_export_path</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">write_json</span><span class="p">(</span><span class="n">op</span><span class="o">.</span><span class="n">stats_export_path</span><span class="p">,</span> <span class="n">force_ascii</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-                <span class="k">if</span> <span class="n">op</span><span class="o">.</span><span class="n">is_batched_op</span><span class="p">():</span>
-                    <span class="c1"># The core computation have been done in compute_stats,</span>
-                    <span class="c1"># and the filter process only performs simple filtering.</span>
-                    <span class="c1"># cpu and parallelism are not set here</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">map_batches</span><span class="p">(</span>
-                        <span class="n">partial</span><span class="p">(</span><span class="n">filter_batch</span><span class="p">,</span> <span class="n">filter_func</span><span class="o">=</span><span class="n">op</span><span class="o">.</span><span class="n">process</span><span class="p">),</span>
-                        <span class="n">batch_format</span><span class="o">=</span><span class="s2">&quot;pyarrow&quot;</span><span class="p">,</span>
-                        <span class="n">zero_copy_batch</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-                        <span class="n">batch_size</span><span class="o">=</span><span class="n">DEFAULT_BATCH_SIZE</span><span class="p">,</span>
-                        <span class="n">runtime_env</span><span class="o">=</span><span class="n">op</span><span class="o">.</span><span class="n">runtime_env</span><span class="p">,</span>
-                    <span class="p">)</span>
-                <span class="k">else</span><span class="p">:</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
-                        <span class="n">op</span><span class="o">.</span><span class="n">process</span><span class="p">,</span>
-                        <span class="n">runtime_env</span><span class="o">=</span><span class="n">op</span><span class="o">.</span><span class="n">runtime_env</span><span class="p">,</span>
-                    <span class="p">)</span>
+                <span class="c1"># Wrap process method with tracer for sample-level collection</span>
+                <span class="n">original_process</span> <span class="o">=</span> <span class="kc">None</span>
+                <span class="k">if</span> <span class="n">tracer</span> <span class="ow">and</span> <span class="n">should_trace_op</span><span class="p">(</span><span class="n">tracer</span><span class="p">,</span> <span class="n">op</span><span class="o">.</span><span class="n">_name</span><span class="p">):</span>
+                    <span class="kn">from</span><span class="w"> </span><span class="nn">data_juicer.ops.base_op</span><span class="w"> </span><span class="kn">import</span> <span class="n">wrap_filter_with_tracer</span>
+
+                    <span class="n">original_process</span> <span class="o">=</span> <span class="n">op</span><span class="o">.</span><span class="n">process</span>
+                    <span class="n">op</span><span class="o">.</span><span class="n">process</span> <span class="o">=</span> <span class="n">wrap_filter_with_tracer</span><span class="p">(</span><span class="n">original_process</span><span class="p">,</span> <span class="n">op</span><span class="o">.</span><span class="n">_name</span><span class="p">,</span> <span class="n">tracer</span><span class="p">,</span> <span class="n">op</span><span class="o">.</span><span class="n">is_batched_op</span><span class="p">())</span>
+
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">op</span><span class="o">.</span><span class="n">is_batched_op</span><span class="p">():</span>
+                        <span class="c1"># The core computation have been done in compute_stats,</span>
+                        <span class="c1"># and the filter process only performs simple filtering.</span>
+                        <span class="c1"># cpu and parallelism are not set here</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">map_batches</span><span class="p">(</span>
+                            <span class="n">partial</span><span class="p">(</span><span class="n">filter_batch</span><span class="p">,</span> <span class="n">filter_func</span><span class="o">=</span><span class="n">op</span><span class="o">.</span><span class="n">process</span><span class="p">),</span>
+                            <span class="n">batch_format</span><span class="o">=</span><span class="s2">&quot;pyarrow&quot;</span><span class="p">,</span>
+                            <span class="n">zero_copy_batch</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                            <span class="n">batch_size</span><span class="o">=</span><span class="n">DEFAULT_BATCH_SIZE</span><span class="p">,</span>
+                            <span class="n">runtime_env</span><span class="o">=</span><span class="n">op</span><span class="o">.</span><span class="n">runtime_env</span><span class="p">,</span>
+                        <span class="p">)</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+                            <span class="n">op</span><span class="o">.</span><span class="n">process</span><span class="p">,</span>
+                            <span class="n">runtime_env</span><span class="o">=</span><span class="n">op</span><span class="o">.</span><span class="n">runtime_env</span><span class="p">,</span>
+                        <span class="p">)</span>
+                <span class="k">finally</span><span class="p">:</span>
+                    <span class="c1"># Restore original process method</span>
+                    <span class="k">if</span> <span class="n">tracer</span> <span class="ow">and</span> <span class="n">should_trace_op</span><span class="p">(</span><span class="n">tracer</span><span class="p">,</span> <span class="n">op</span><span class="o">.</span><span class="n">_name</span><span class="p">)</span> <span class="ow">and</span> <span class="n">original_process</span><span class="p">:</span>
+                        <span class="n">op</span><span class="o">.</span><span class="n">process</span> <span class="o">=</span> <span class="n">original_process</span>
             <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">op</span><span class="p">,</span> <span class="p">(</span><span class="n">Deduplicator</span><span class="p">,</span> <span class="n">Pipeline</span><span class="p">)):</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">op</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Ray executor only support Filter, Mapper Deduplicator and Pipeline OPs for now&quot;</span><span class="p">)</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Ray executor only support Filter, Mapper, Deduplicator and Pipeline OPs for now&quot;</span><span class="p">)</span>
                 <span class="k">raise</span> <span class="ne">NotImplementedError</span>
         <span class="k">except</span><span class="p">:</span>  <span class="c1"># noqa: E722</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;An error occurred during Op [</span><span class="si">{</span><span class="n">op</span><span class="o">.</span><span class="n">_name</span><span class="si">}</span><span class="s2">].&quot;</span><span class="p">)</span>
@@ -1107,7 +1181,7 @@
         <div class="footer-item">
 
   <p class="sphinx-version">
-    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.0.4.
     <br/>
   </p>
 </div>

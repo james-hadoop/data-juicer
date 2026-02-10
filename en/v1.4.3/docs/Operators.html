@@ -41,13 +41,14 @@
 <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
     <script src="../_static/documentation_options.js?v=8a448e45"></script>
-    <script src="../_static/doctools.js?v=9bcbadda"></script>
-    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="../_static/copybutton.js?v=f281be69"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'docs/Operators';</script>
     <script src="../_static/sidebar.js?v=3fc1065c"></script>
     <script src="../_static/switcher-mobile.js?v=07875724"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <link rel="icon" href="../_static/icon.png"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -201,7 +202,7 @@
           
           
           
-          <a href="https://github.com/datajuicer/data-juicer" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
+          <a href="https://github.com/james-hadoop/data-juicer" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
             <span class="sr-only">GitHub</span></a>
         </li>
 </ul></div>
@@ -229,19 +230,23 @@
     <div class="navbar-dropdown-panel" role="menu">
       <div class="dropdown-content">
         
-        <a href="../../../en/v1.4.3/docs/Operators.html"
-           class="dropdown-item active"
-           role="menuitem"
-           aria-current="true">
-          English
-        </a>
+          
+          
+          <a href="../../../en/v1.4.3/docs/Operators.html"
+             class="dropdown-item active"
+             role="menuitem"
+             aria-current="true">
+            English
+          </a>
         
-        <a href="../../../zh_CN/v1.4.3/docs/Operators.html"
-           class="dropdown-item "
-           role="menuitem"
-           >
-          简体中文
-        </a>
+          
+          
+          <a href="../../../zh_CN/v1.4.3/docs/Operators.html"
+             class="dropdown-item "
+             role="menuitem"
+             >
+            简体中文
+          </a>
         
       </div>
     </div>
@@ -409,7 +414,7 @@
           
           
           
-          <a href="https://github.com/datajuicer/data-juicer" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
+          <a href="https://github.com/james-hadoop/data-juicer" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
             <span class="sr-only">GitHub</span></a>
         </li>
 </ul></div>
@@ -437,19 +442,23 @@
     <div class="navbar-dropdown-panel" role="menu">
       <div class="dropdown-content">
         
-        <a href="../../../en/v1.4.3/docs/Operators.html"
-           class="dropdown-item active"
-           role="menuitem"
-           aria-current="true">
-          English
-        </a>
+          
+          
+          <a href="../../../en/v1.4.3/docs/Operators.html"
+             class="dropdown-item active"
+             role="menuitem"
+             aria-current="true">
+            English
+          </a>
         
-        <a href="../../../zh_CN/v1.4.3/docs/Operators.html"
-           class="dropdown-item "
-           role="menuitem"
-           >
-          简体中文
-        </a>
+          
+          
+          <a href="../../../zh_CN/v1.4.3/docs/Operators.html"
+             class="dropdown-item "
+             role="menuitem"
+             >
+            简体中文
+          </a>
         
       </div>
     </div>
@@ -664,14 +673,14 @@ libraries, or resource links that the operator’s design or implementation is
 based on. We welcome contributions of known or relevant reference sources to
 enrich this section.</p>
 <p>Users can also refer to and run the unit tests (<code class="docutils literal notranslate"><span class="pre">tests/ops/...</span></code>) for
-<a class="reference external" href="https://github.com/datajuicer/data-juicer/blob/v1.4.3/tests/ops">examples of operator-wise usage</a> as well as the effects of each
+<a class="reference external" href="https://github.com/james-hadoop/data-juicer/blob/v1.4.3/tests/ops">examples of operator-wise usage</a> as well as the effects of each
 operator when applied to built-in test data samples. Besides, you can try to
 use agent to automatically route suitable OPs and call them. E.g., refer to
-<a class="reference external" href="https://github.com/datajuicer/data-juicer/blob/v1.4.3/demos/api_service/react_data_filter_process.ipynb">Agentic Filters of DJ</a>, <a class="reference external" href="https://github.com/datajuicer/data-juicer/blob/v1.4.3/demos/api_service/react_data_mapper_process.ipynb">Agentic Mappers of DJ</a></p>
+<a class="reference external" href="https://github.com/james-hadoop/data-juicer/blob/v1.4.3/demos/api_service/react_data_filter_process.ipynb">Agentic Filters of DJ</a>, <a class="reference external" href="https://github.com/james-hadoop/data-juicer/blob/v1.4.3/demos/api_service/react_data_mapper_process.ipynb">Agentic Mappers of DJ</a></p>
 <p>这个页面提供了Data-Juicer中算子的基本描述。算子的API参考，用户可以直接查阅<a class="reference external" href="https://modelscope.github.io/data-juicer/en/main/api.html">API文档</a>。
 要详细了解每个算子，请点击其旁的info链接进入算子详情页，其中包含了算子参数、效果演示，以及相关单元测试和源码的链接。</p>
 <p>此外，表格中的『参考』（Reference）列则用于注明算子设计或实现所依据的研究、库或资料链接，欢迎您提供已知或相关的参考来源，共同完善此部分内容。</p>
-<p>用户还可以查看、运行单元测试 (<code class="docutils literal notranslate"><span class="pre">tests/ops/...</span></code>)，来体验<a class="reference external" href="https://github.com/datajuicer/data-juicer/blob/v1.4.3/tests/ops">各OP的用法示例</a>以及每个OP作用于内置测试数据样本时的效果。例如，参考<a class="reference external" href="https://github.com/datajuicer/data-juicer/blob/v1.4.3/demos/api_service/react_data_filter_process.ipynb">Agentic Filters of DJ</a>, <a class="reference external" href="https://github.com/datajuicer/data-juicer/blob/v1.4.3/demos/api_service/react_data_mapper_process.ipynb">Agentic Mappers of DJ</a></p>
+<p>用户还可以查看、运行单元测试 (<code class="docutils literal notranslate"><span class="pre">tests/ops/...</span></code>)，来体验<a class="reference external" href="https://github.com/james-hadoop/data-juicer/blob/v1.4.3/tests/ops">各OP的用法示例</a>以及每个OP作用于内置测试数据样本时的效果。例如，参考<a class="reference external" href="https://github.com/james-hadoop/data-juicer/blob/v1.4.3/demos/api_service/react_data_filter_process.ipynb">Agentic Filters of DJ</a>, <a class="reference external" href="https://github.com/james-hadoop/data-juicer/blob/v1.4.3/demos/api_service/react_data_mapper_process.ipynb">Agentic Mappers of DJ</a></p>
 <section id="overview">
 <h2>Overview  概览<a class="headerlink" href="#overview" title="Link to this heading">#</a></h2>
 <p>The operators in Data-Juicer are categorized into 7 types.
@@ -1980,7 +1989,7 @@ for Developers</span></a>.</p>
         <div class="footer-item">
 
   <p class="sphinx-version">
-    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.0.4.
     <br/>
   </p>
 </div>

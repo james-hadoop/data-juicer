@@ -40,13 +40,14 @@
 <link rel="preload" as="script" href="../../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
     <script src="../../../../_static/documentation_options.js?v=8a448e45"></script>
-    <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
-    <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../../_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="../../../../_static/copybutton.js?v=f281be69"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = '_modules/data_juicer/ops/filter/image_face_ratio_filter';</script>
     <script src="../../../../_static/sidebar.js?v=3fc1065c"></script>
     <script src="../../../../_static/switcher-mobile.js?v=07875724"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <link rel="icon" href="../../../../_static/icon.png"/>
     <link rel="index" title="Index" href="../../../../genindex.html" />
     <link rel="search" title="Search" href="../../../../search.html" />
@@ -198,7 +199,7 @@
           
           
           
-          <a href="https://github.com/datajuicer/data-juicer" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
+          <a href="https://github.com/james-hadoop/data-juicer" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
             <span class="sr-only">GitHub</span></a>
         </li>
 </ul></div>
@@ -226,19 +227,23 @@
     <div class="navbar-dropdown-panel" role="menu">
       <div class="dropdown-content">
         
-        <a href="../../../../../../en/main/_modules/data_juicer/ops/filter/image_face_ratio_filter.html"
-           class="dropdown-item active"
-           role="menuitem"
-           aria-current="true">
-          English
-        </a>
+          
+          
+          <a href="../../../../../../en/main/_modules/data_juicer/ops/filter/image_face_ratio_filter.html"
+             class="dropdown-item active"
+             role="menuitem"
+             aria-current="true">
+            English
+          </a>
         
-        <a href="../../../../../../zh_CN/main/_modules/data_juicer/ops/filter/image_face_ratio_filter_ZH.html"
-           class="dropdown-item "
-           role="menuitem"
-           >
-          简体中文
-        </a>
+          
+          
+          <a href="../../../../../../zh_CN/main/_modules/data_juicer/ops/filter/image_face_ratio_filter_ZH.html"
+             class="dropdown-item "
+             role="menuitem"
+             >
+            简体中文
+          </a>
         
       </div>
     </div>
@@ -404,7 +409,7 @@
           
           
           
-          <a href="https://github.com/datajuicer/data-juicer" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
+          <a href="https://github.com/james-hadoop/data-juicer" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
             <span class="sr-only">GitHub</span></a>
         </li>
 </ul></div>
@@ -432,19 +437,23 @@
     <div class="navbar-dropdown-panel" role="menu">
       <div class="dropdown-content">
         
-        <a href="../../../../../../en/main/_modules/data_juicer/ops/filter/image_face_ratio_filter.html"
-           class="dropdown-item active"
-           role="menuitem"
-           aria-current="true">
-          English
-        </a>
+          
+          
+          <a href="../../../../../../en/main/_modules/data_juicer/ops/filter/image_face_ratio_filter.html"
+             class="dropdown-item active"
+             role="menuitem"
+             aria-current="true">
+            English
+          </a>
         
-        <a href="../../../../../../zh_CN/main/_modules/data_juicer/ops/filter/image_face_ratio_filter_ZH.html"
-           class="dropdown-item "
-           role="menuitem"
-           >
-          简体中文
-        </a>
+          
+          
+          <a href="../../../../../../zh_CN/main/_modules/data_juicer/ops/filter/image_face_ratio_filter_ZH.html"
+             class="dropdown-item "
+             role="menuitem"
+             >
+            简体中文
+          </a>
         
       </div>
     </div>
@@ -592,7 +601,7 @@
 
 
 <div class="viewcode-block" id="ImageFaceRatioFilter">
-<a class="viewcode-back" href="../../../../api/data_juicer.ops.filter.image_face_ratio_filter.html#data_juicer.ops.filter.image_face_ratio_filter.ImageFaceRatioFilter">[docs]</a>
+<a class="viewcode-back" href="../../../../api/data_juicer.ops.filter.image_face_ratio_filter.html#data_juicer.ops.filter.ImageFaceRatioFilter">[docs]</a>
 <span class="nd">@UNFORKABLE</span><span class="o">.</span><span class="n">register_module</span><span class="p">(</span><span class="n">OP_NAME</span><span class="p">)</span>
 <span class="nd">@OPERATORS</span><span class="o">.</span><span class="n">register_module</span><span class="p">(</span><span class="n">OP_NAME</span><span class="p">)</span>
 <span class="nd">@LOADED_IMAGES</span><span class="o">.</span><span class="n">register_module</span><span class="p">(</span><span class="n">OP_NAME</span><span class="p">)</span>
@@ -615,7 +624,7 @@
     <span class="p">}</span>
 
 <div class="viewcode-block" id="ImageFaceRatioFilter.__init__">
-<a class="viewcode-back" href="../../../../api/data_juicer.ops.filter.image_face_ratio_filter.html#data_juicer.ops.filter.image_face_ratio_filter.ImageFaceRatioFilter.__init__">[docs]</a>
+<a class="viewcode-back" href="../../../../api/data_juicer.ops.filter.image_face_ratio_filter.html#data_juicer.ops.filter.ImageFaceRatioFilter.__init__">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">cv_classifier</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
@@ -659,7 +668,7 @@
 
 
 <div class="viewcode-block" id="ImageFaceRatioFilter.compute_stats_single">
-<a class="viewcode-back" href="../../../../api/data_juicer.ops.filter.image_face_ratio_filter.html#data_juicer.ops.filter.image_face_ratio_filter.ImageFaceRatioFilter.compute_stats_single">[docs]</a>
+<a class="viewcode-back" href="../../../../api/data_juicer.ops.filter.image_face_ratio_filter.html#data_juicer.ops.filter.ImageFaceRatioFilter.compute_stats_single">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">compute_stats_single</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sample</span><span class="p">,</span> <span class="n">context</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="c1"># check if it&#39;s computed already</span>
         <span class="k">if</span> <span class="n">StatsKeys</span><span class="o">.</span><span class="n">face_ratios</span> <span class="ow">in</span> <span class="n">sample</span><span class="p">[</span><span class="n">Fields</span><span class="o">.</span><span class="n">stats</span><span class="p">]:</span>
@@ -696,7 +705,7 @@
 
 
 <div class="viewcode-block" id="ImageFaceRatioFilter.process_single">
-<a class="viewcode-back" href="../../../../api/data_juicer.ops.filter.image_face_ratio_filter.html#data_juicer.ops.filter.image_face_ratio_filter.ImageFaceRatioFilter.process_single">[docs]</a>
+<a class="viewcode-back" href="../../../../api/data_juicer.ops.filter.image_face_ratio_filter.html#data_juicer.ops.filter.ImageFaceRatioFilter.process_single">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">process_single</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sample</span><span class="p">):</span>
         <span class="n">face_ratios</span> <span class="o">=</span> <span class="n">sample</span><span class="p">[</span><span class="n">Fields</span><span class="o">.</span><span class="n">stats</span><span class="p">][</span><span class="n">StatsKeys</span><span class="o">.</span><span class="n">face_ratios</span><span class="p">]</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">face_ratios</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
@@ -769,7 +778,7 @@
         <div class="footer-item">
 
   <p class="sphinx-version">
-    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.0.4.
     <br/>
   </p>
 </div>

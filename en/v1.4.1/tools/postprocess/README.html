@@ -41,13 +41,14 @@
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
     <script src="../../_static/documentation_options.js?v=8a448e45"></script>
-    <script src="../../_static/doctools.js?v=9bcbadda"></script>
-    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="../../_static/copybutton.js?v=f281be69"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'tools/postprocess/README';</script>
     <script src="../../_static/sidebar.js?v=3fc1065c"></script>
     <script src="../../_static/switcher-mobile.js?v=07875724"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <link rel="icon" href="../../_static/icon.png"/>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
@@ -201,7 +202,7 @@
           
           
           
-          <a href="https://github.com/datajuicer/data-juicer" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
+          <a href="https://github.com/james-hadoop/data-juicer" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
             <span class="sr-only">GitHub</span></a>
         </li>
 </ul></div>
@@ -229,19 +230,23 @@
     <div class="navbar-dropdown-panel" role="menu">
       <div class="dropdown-content">
         
-        <a href="../../../../en/v1.4.1/tools/postprocess/README.html"
-           class="dropdown-item active"
-           role="menuitem"
-           aria-current="true">
-          English
-        </a>
+          
+          
+          <a href="../../../../en/v1.4.1/tools/postprocess/README.html"
+             class="dropdown-item active"
+             role="menuitem"
+             aria-current="true">
+            English
+          </a>
         
-        <a href="../../../../zh_CN/v1.4.1/tools/postprocess/README_ZH.html"
-           class="dropdown-item "
-           role="menuitem"
-           >
-          简体中文
-        </a>
+          
+          
+          <a href="../../../../zh_CN/v1.4.1/tools/postprocess/README_ZH.html"
+             class="dropdown-item "
+             role="menuitem"
+             >
+            简体中文
+          </a>
         
       </div>
     </div>
@@ -409,7 +414,7 @@
           
           
           
-          <a href="https://github.com/datajuicer/data-juicer" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
+          <a href="https://github.com/james-hadoop/data-juicer" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
             <span class="sr-only">GitHub</span></a>
         </li>
 </ul></div>
@@ -437,19 +442,23 @@
     <div class="navbar-dropdown-panel" role="menu">
       <div class="dropdown-content">
         
-        <a href="../../../../en/v1.4.1/tools/postprocess/README.html"
-           class="dropdown-item active"
-           role="menuitem"
-           aria-current="true">
-          English
-        </a>
+          
+          
+          <a href="../../../../en/v1.4.1/tools/postprocess/README.html"
+             class="dropdown-item active"
+             role="menuitem"
+             aria-current="true">
+            English
+          </a>
         
-        <a href="../../../../zh_CN/v1.4.1/tools/postprocess/README_ZH.html"
-           class="dropdown-item "
-           role="menuitem"
-           >
-          简体中文
-        </a>
+          
+          
+          <a href="../../../../zh_CN/v1.4.1/tools/postprocess/README_ZH.html"
+             class="dropdown-item "
+             role="menuitem"
+             >
+            简体中文
+          </a>
         
       </div>
     </div>
@@ -640,7 +649,7 @@
 <h2>Usage<a class="headerlink" href="#usage" title="Link to this heading">#</a></h2>
 <section id="count-tokens-for-datasets">
 <h3>Count tokens for datasets<a class="headerlink" href="#count-tokens-for-datasets" title="Link to this heading">#</a></h3>
-<p>Use <a class="reference external" href="https://github.com/datajuicer/data-juicer/blob/v1.4.1/tools/postprocess/count_token.py">count_token.py</a> to count tokens for datasets.</p>
+<p>Use <a class="reference external" href="https://github.com/james-hadoop/data-juicer/blob/v1.4.1/tools/postprocess/count_token.py">count_token.py</a> to count tokens for datasets.</p>
 <div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>tools/postprocess/count_token.py<span class="w">        </span><span class="se">\</span>
 <span class="w">    </span>--data_path<span class="w">            </span>&lt;data_path&gt;<span class="w">         </span><span class="se">\</span>
 <span class="w">    </span>--text_keys<span class="w">            </span>&lt;text_keys&gt;<span class="w">         </span><span class="se">\</span>
@@ -660,7 +669,7 @@ python<span class="w"> </span>tools/postprocess/count_token.py<span class="w"> <
 </section>
 <section id="mix-multiple-datasets-with-optional-weights">
 <h3>Mix multiple datasets with optional weights<a class="headerlink" href="#mix-multiple-datasets-with-optional-weights" title="Link to this heading">#</a></h3>
-<p>Use <a class="reference external" href="https://github.com/datajuicer/data-juicer/blob/v1.4.1/tools/postprocess/data_mixture.py">data_mixture.py</a> to mix multiple datasets.</p>
+<p>Use <a class="reference external" href="https://github.com/james-hadoop/data-juicer/blob/v1.4.1/tools/postprocess/data_mixture.py">data_mixture.py</a> to mix multiple datasets.</p>
 <p>This script will randomly select samples from every dataset and mix these samples and export to a new_dataset.</p>
 <div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>tools/postprocess/data_mixture.py<span class="w">        </span><span class="se">\</span>
 <span class="w">    </span>--data_path<span class="w">             </span>&lt;data_path&gt;<span class="w">         </span><span class="se">\</span>
@@ -683,7 +692,7 @@ python<span class="w"> </span>tools/postprocess/data_mixture.py<span class="w"> 
 </section>
 <section id="deserialize-meta-fields-in-jsonl-file">
 <h3>Deserialize meta fields in jsonl file<a class="headerlink" href="#deserialize-meta-fields-in-jsonl-file" title="Link to this heading">#</a></h3>
-<p>This tool is usually used with <a class="reference external" href="https://github.com/datajuicer/data-juicer/blob/v1.4.1/tools/preprocess/serialize_meta.py">serialize_meta.py</a> to deserialize the specified field into the original format.</p>
+<p>This tool is usually used with <a class="reference external" href="https://github.com/james-hadoop/data-juicer/blob/v1.4.1/tools/preprocess/serialize_meta.py">serialize_meta.py</a> to deserialize the specified field into the original format.</p>
 <div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>tools/postprocess/deserialize_meta.py<span class="w">           </span><span class="se">\</span>
 <span class="w">    </span>--src_dir<span class="w">           </span>&lt;src_dir&gt;<span class="w">         </span><span class="se">\</span>
 <span class="w">    </span>--target_dir<span class="w">        </span>&lt;target_dir&gt;<span class="w">      </span><span class="se">\</span>
@@ -811,7 +820,7 @@ python<span class="w"> </span>tools/postprocess/deserialize_meta.py<span class="
         <div class="footer-item">
 
   <p class="sphinx-version">
-    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.0.4.
     <br/>
   </p>
 </div>

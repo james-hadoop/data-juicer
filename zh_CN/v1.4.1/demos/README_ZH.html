@@ -41,14 +41,15 @@
 <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
     <script src="../_static/documentation_options.js?v=91bfbbb6"></script>
-    <script src="../_static/doctools.js?v=9bcbadda"></script>
-    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="../_static/copybutton.js?v=f281be69"></script>
-    <script src="../_static/translations.js?v=beaddf03"></script>
+    <script src="../_static/translations.js?v=540d3cec"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'demos/README_ZH';</script>
     <script src="../_static/sidebar.js?v=3fc1065c"></script>
     <script src="../_static/switcher-mobile.js?v=07875724"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <link rel="icon" href="../_static/icon.png"/>
     <link rel="index" title="索引" href="../genindex.html" />
     <link rel="search" title="搜索" href="../search.html" />
@@ -202,7 +203,7 @@
           
           
           
-          <a href="https://github.com/datajuicer/data-juicer" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
+          <a href="https://github.com/james-hadoop/data-juicer" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
             <span class="sr-only">GitHub</span></a>
         </li>
 </ul></div>
@@ -230,19 +231,23 @@
     <div class="navbar-dropdown-panel" role="menu">
       <div class="dropdown-content">
         
-        <a href="../../../en/v1.4.1/demos/README.html"
-           class="dropdown-item "
-           role="menuitem"
-           >
-          English
-        </a>
+          
+          
+          <a href="../../../en/v1.4.1/demos/README.html"
+             class="dropdown-item "
+             role="menuitem"
+             >
+            English
+          </a>
         
-        <a href="../../../zh_CN/v1.4.1/demos/README_ZH.html"
-           class="dropdown-item "
-           role="menuitem"
-           >
-          简体中文
-        </a>
+          
+          
+          <a href="../../../zh_CN/v1.4.1/demos/README_ZH.html"
+             class="dropdown-item active"
+             role="menuitem"
+             aria-current="true">
+            简体中文
+          </a>
         
       </div>
     </div>
@@ -410,7 +415,7 @@
           
           
           
-          <a href="https://github.com/datajuicer/data-juicer" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
+          <a href="https://github.com/james-hadoop/data-juicer" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
             <span class="sr-only">GitHub</span></a>
         </li>
 </ul></div>
@@ -438,19 +443,23 @@
     <div class="navbar-dropdown-panel" role="menu">
       <div class="dropdown-content">
         
-        <a href="../../../en/v1.4.1/demos/README.html"
-           class="dropdown-item "
-           role="menuitem"
-           >
-          English
-        </a>
+          
+          
+          <a href="../../../en/v1.4.1/demos/README.html"
+             class="dropdown-item "
+             role="menuitem"
+             >
+            English
+          </a>
         
-        <a href="../../../zh_CN/v1.4.1/demos/README_ZH.html"
-           class="dropdown-item "
-           role="menuitem"
-           >
-          简体中文
-        </a>
+          
+          
+          <a href="../../../zh_CN/v1.4.1/demos/README_ZH.html"
+             class="dropdown-item active"
+             role="menuitem"
+             aria-current="true">
+            简体中文
+          </a>
         
       </div>
     </div>
@@ -637,10 +646,10 @@
 
 
   <section id="id1">
-<h1>演示<a class="headerlink" href="#id1" title="Link to this heading">#</a></h1>
+<h1>演示<a class="headerlink" href="#id1" title="链接到此标题。">#</a></h1>
 <p>此文件夹包含一些演示样例，帮助用户轻松体验 Data-Juicer 的各种功能和工具。</p>
 <section id="id2">
-<h2>用法<a class="headerlink" href="#id2" title="Link to this heading">#</a></h2>
+<h2>用法<a class="headerlink" href="#id2" title="链接到此标题。">#</a></h2>
 <p>使用 <code class="docutils literal notranslate"><span class="pre">demos</span></code> 子目录下的 <code class="docutils literal notranslate"><span class="pre">app.py</span></code> 来执行演示样例。</p>
 <div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span><span class="w"> </span>&lt;subdir_of_demos&gt;
 streamlit<span class="w"> </span>run<span class="w"> </span>app.py
@@ -648,7 +657,7 @@ streamlit<span class="w"> </span>run<span class="w"> </span>app.py
 </div>
 </section>
 <section id="id3">
-<h2>可用的演示<a class="headerlink" href="#id3" title="Link to this heading">#</a></h2>
+<h2>可用的演示<a class="headerlink" href="#id3" title="链接到此标题。">#</a></h2>
 <ul class="simple">
 <li><p>数据集样例 (<code class="docutils literal notranslate"><span class="pre">data</span></code>)</p>
 <ul>
@@ -816,7 +825,7 @@ streamlit<span class="w"> </span>run<span class="w"> </span>app.py
         <div class="footer-item">
 
   <p class="sphinx-version">
-    由 <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.3创建。
+    由 <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.0.4创建。
     <br/>
   </p>
 </div>

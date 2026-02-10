@@ -41,13 +41,14 @@
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
     <script src="_static/documentation_options.js?v=8a448e45"></script>
-    <script src="_static/doctools.js?v=9bcbadda"></script>
-    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="_static/copybutton.js?v=f281be69"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'README';</script>
     <script src="_static/sidebar.js?v=3fc1065c"></script>
     <script src="_static/switcher-mobile.js?v=07875724"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <link rel="icon" href="_static/icon.png"/>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -199,7 +200,7 @@
           
           
           
-          <a href="https://github.com/datajuicer/data-juicer" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
+          <a href="https://github.com/james-hadoop/data-juicer" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
             <span class="sr-only">GitHub</span></a>
         </li>
 </ul></div>
@@ -227,19 +228,23 @@
     <div class="navbar-dropdown-panel" role="menu">
       <div class="dropdown-content">
         
-        <a href="./../../en/v1.4.3/README.html"
-           class="dropdown-item active"
-           role="menuitem"
-           aria-current="true">
-          English
-        </a>
+          
+          
+          <a href="./../../en/v1.4.3/README.html"
+             class="dropdown-item active"
+             role="menuitem"
+             aria-current="true">
+            English
+          </a>
         
-        <a href="./../../zh_CN/v1.4.3/README_ZH.html"
-           class="dropdown-item "
-           role="menuitem"
-           >
-          简体中文
-        </a>
+          
+          
+          <a href="./../../zh_CN/v1.4.3/README_ZH.html"
+             class="dropdown-item "
+             role="menuitem"
+             >
+            简体中文
+          </a>
         
       </div>
     </div>
@@ -409,7 +414,7 @@
           
           
           
-          <a href="https://github.com/datajuicer/data-juicer" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
+          <a href="https://github.com/james-hadoop/data-juicer" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
             <span class="sr-only">GitHub</span></a>
         </li>
 </ul></div>
@@ -437,19 +442,23 @@
     <div class="navbar-dropdown-panel" role="menu">
       <div class="dropdown-content">
         
-        <a href="./../../en/v1.4.3/README.html"
-           class="dropdown-item active"
-           role="menuitem"
-           aria-current="true">
-          English
-        </a>
+          
+          
+          <a href="./../../en/v1.4.3/README.html"
+             class="dropdown-item active"
+             role="menuitem"
+             aria-current="true">
+            English
+          </a>
         
-        <a href="./../../zh_CN/v1.4.3/README_ZH.html"
-           class="dropdown-item "
-           role="menuitem"
-           >
-          简体中文
-        </a>
+          
+          
+          <a href="./../../zh_CN/v1.4.3/README_ZH.html"
+             class="dropdown-item "
+             role="menuitem"
+             >
+            简体中文
+          </a>
         
       </div>
     </div>
@@ -657,7 +666,7 @@ Empowering users with a systematic library of 100+ core <a class="reference inte
 dedicated toolkits, designed to
 function independently of specific multimodal LLM datasets and processing pipelines. Supporting data analysis, cleaning, and synthesis in pre-training, post-tuning, en, zh, and more scenarios.</p></li>
 <li><p><strong>User-Friendly &amp; Extensible</strong>:
-Designed for simplicity and flexibility, with easy-start <a class="reference internal" href="docs/tutorial/QuickStart.html"><span class="std std-doc">guides</span></a>, and <a class="reference internal" href="docs/tutorial/DJ-Cookbook.html"><span class="std std-doc">DJ-Cookbook</span></a> containing fruitful demo usages. Feel free to <a class="reference external" href="https://github.com/datajuicer/data-juicer/blob/v1.4.3/docs/DeveloperGuide.md#build-your-own-ops">implement your own OPs</a> for customizable data processing.</p>
+Designed for simplicity and flexibility, with easy-start <a class="reference internal" href="docs/tutorial/QuickStart.html"><span class="std std-doc">guides</span></a>, and <a class="reference internal" href="docs/tutorial/DJ-Cookbook.html"><span class="std std-doc">DJ-Cookbook</span></a> containing fruitful demo usages. Feel free to <a class="reference external" href="https://github.com/james-hadoop/data-juicer/blob/v1.4.3/docs/DeveloperGuide.md#build-your-own-ops">implement your own OPs</a> for customizable data processing.</p>
 <p>Data-Juicer now uses AI to automatically rewrite and optimize operator docstrings, generating detailed operator documentation to help users quickly understand the functionality and usage of each operator.<br />
 For details about the implementation of this documentation enhancement workflow, please visit the <a class="reference external" href="https://github.com/modelscope/data-juicer/tree/dj_agents/demos/op_doc_enhance_workflow">demos/op_doc_enhance_workflow folder under the <code class="docutils literal notranslate"><span class="pre">dj_agents</span></code> branch</a>.</p>
 </li>
@@ -743,7 +752,7 @@ through the <a class="reference internal" href="docs/Sandbox.html"><span class="
 <li><p><strong>Used by &amp; Valuable Feedback from:</strong> <a class="reference external" href="https://github.com/agentscope-ai/agentscope">AgentScope</a>, Alibaba Group, Ant Group, BYD Auto, Bytedance, CAS, <a class="reference external" href="https://github.com/modelscope/DiffSynth-Studio">DiffSynth-Studio</a>, <a class="reference external" href="https://github.com/aigc-apps/EasyAnimate">EasyAnimate</a>, <a class="reference external" href="https://github.com/modelscope/evalscope">Eval-Scope</a>, <a class="reference external" href="http://JD.com">JD.com</a>, <a class="reference external" href="https://github.com/hiyouga/LLaMA-Factory">LLaMA-Factory</a>, Nanjing University, OPPO, Peking University, <a class="reference external" href="https://github.com/modelscope/RM-Gallery">RM-Gallery</a>, RUC, Tsinghua University, <a class="reference external" href="https://github.com/modelscope/Trinity-RFT">Trinity-RFT</a>, UCAS, Xiaohongshu, Xiaomi, Ximalaya, Zhejiang University, …</p></li>
 <li><p><strong>Inspired by:</strong> Data-Juicer also thanks pioneering open-source projects such as <a class="reference external" href="https://github.com/apache/arrow">Apache Arrow</a>, <a class="reference external" href="https://huggingface.co/bigscience/bloom">BLOOM</a>, <a class="reference external" href="https://github.com/togethercomputer/RedPajama-Data/tree/rp_v1">RedPajama-Data</a>, <a class="reference external" href="https://github.com/ray-project/ray">Ray</a>, <a class="reference external" href="https://github.com/huggingface/datasets">Hugging Face Datasets</a>, …</p></li>
 </ul>
-<p>We look forward to your feedback and collaboration, including partnership inquiries or proposals for new sub-projects related to Data-Juicer. Feel free to contact via issues, PRs, <a class="reference external" href="https://join.slack.com/t/data-juicer/shared_invite/zt-23zxltg9d-Z4d3EJuhZbCLGwtnLWWUDg?spm=a2c22.12281976.0.0.7a8253f30mgpjw">Slack</a> channel, <a class="reference external" href="https://qr.dingtalk.com/action/joingroup?code=v1,k1,YFIXM2leDEk7gJP5aMC95AfYT+Oo/EP/ihnaIEhMyJM=&amp;amp;_dt_no_comment=1&amp;amp;origin=11">DingDing</a> group, and <a class="reference external" href="https://github.com/datajuicer/data-juicer/blob/v1.4.3/mailto:datajuicer&#64;outlook.com">e-mails</a>.</p>
+<p>We look forward to your feedback and collaboration, including partnership inquiries or proposals for new sub-projects related to Data-Juicer. Feel free to contact via issues, PRs, <a class="reference external" href="https://join.slack.com/t/data-juicer/shared_invite/zt-23zxltg9d-Z4d3EJuhZbCLGwtnLWWUDg?spm=a2c22.12281976.0.0.7a8253f30mgpjw">Slack</a> channel, <a class="reference external" href="https://qr.dingtalk.com/action/joingroup?code=v1,k1,YFIXM2leDEk7gJP5aMC95AfYT+Oo/EP/ihnaIEhMyJM=&amp;amp;_dt_no_comment=1&amp;amp;origin=11">DingDing</a> group, and <a class="reference external" href="https://github.com/james-hadoop/data-juicer/blob/v1.4.3/mailto:datajuicer&#64;outlook.com">e-mails</a>.</p>
 </section>
 <section id="references">
 <h2>References<a class="headerlink" href="#references" title="Link to this heading">#</a></h2>
@@ -868,7 +877,7 @@ through the <a class="reference internal" href="docs/Sandbox.html"><span class="
         <div class="footer-item">
 
   <p class="sphinx-version">
-    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.0.4.
     <br/>
   </p>
 </div>

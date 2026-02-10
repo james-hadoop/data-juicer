@@ -41,14 +41,15 @@
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
     <script src="../../_static/documentation_options.js?v=91bfbbb6"></script>
-    <script src="../../_static/doctools.js?v=9bcbadda"></script>
-    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="../../_static/copybutton.js?v=f281be69"></script>
-    <script src="../../_static/translations.js?v=beaddf03"></script>
+    <script src="../../_static/translations.js?v=540d3cec"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'docs/tutorial/Installation_ZH';</script>
     <script src="../../_static/sidebar.js?v=3fc1065c"></script>
     <script src="../../_static/switcher-mobile.js?v=07875724"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <link rel="icon" href="../../_static/icon.png"/>
     <link rel="index" title="索引" href="../../genindex.html" />
     <link rel="search" title="搜索" href="../../search.html" />
@@ -202,7 +203,7 @@
           
           
           
-          <a href="https://github.com/datajuicer/data-juicer" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
+          <a href="https://github.com/james-hadoop/data-juicer" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
             <span class="sr-only">GitHub</span></a>
         </li>
 </ul></div>
@@ -230,19 +231,23 @@
     <div class="navbar-dropdown-panel" role="menu">
       <div class="dropdown-content">
         
-        <a href="../../../../en/v1.4.0/docs/tutorial/Installation.html"
-           class="dropdown-item "
-           role="menuitem"
-           >
-          English
-        </a>
+          
+          
+          <a href="../../../../en/v1.4.0/docs/tutorial/Installation.html"
+             class="dropdown-item "
+             role="menuitem"
+             >
+            English
+          </a>
         
-        <a href="../../../../zh_CN/v1.4.0/docs/tutorial/Installation_ZH.html"
-           class="dropdown-item "
-           role="menuitem"
-           >
-          简体中文
-        </a>
+          
+          
+          <a href="../../../../zh_CN/v1.4.0/docs/tutorial/Installation_ZH.html"
+             class="dropdown-item active"
+             role="menuitem"
+             aria-current="true">
+            简体中文
+          </a>
         
       </div>
     </div>
@@ -410,7 +415,7 @@
           
           
           
-          <a href="https://github.com/datajuicer/data-juicer" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
+          <a href="https://github.com/james-hadoop/data-juicer" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
             <span class="sr-only">GitHub</span></a>
         </li>
 </ul></div>
@@ -438,19 +443,23 @@
     <div class="navbar-dropdown-panel" role="menu">
       <div class="dropdown-content">
         
-        <a href="../../../../en/v1.4.0/docs/tutorial/Installation.html"
-           class="dropdown-item "
-           role="menuitem"
-           >
-          English
-        </a>
+          
+          
+          <a href="../../../../en/v1.4.0/docs/tutorial/Installation.html"
+             class="dropdown-item "
+             role="menuitem"
+             >
+            English
+          </a>
         
-        <a href="../../../../zh_CN/v1.4.0/docs/tutorial/Installation_ZH.html"
-           class="dropdown-item "
-           role="menuitem"
-           >
-          简体中文
-        </a>
+          
+          
+          <a href="../../../../zh_CN/v1.4.0/docs/tutorial/Installation_ZH.html"
+             class="dropdown-item active"
+             role="menuitem"
+             aria-current="true">
+            简体中文
+          </a>
         
       </div>
     </div>
@@ -637,9 +646,9 @@
 
 
   <section id="id1">
-<h1>安装<a class="headerlink" href="#id1" title="Link to this heading">#</a></h1>
+<h1>安装<a class="headerlink" href="#id1" title="链接到此标题。">#</a></h1>
 <section id="id2">
-<h2>前置条件<a class="headerlink" href="#id2" title="Link to this heading">#</a></h2>
+<h2>前置条件<a class="headerlink" href="#id2" title="链接到此标题。">#</a></h2>
 <ul class="simple">
 <li><p>Python &gt;= 3.10</p></li>
 <li><p>Git (用于源码安装)</p></li>
@@ -647,7 +656,7 @@
 </ul>
 </section>
 <section id="id3">
-<h2>基础安装<a class="headerlink" href="#id3" title="Link to this heading">#</a></h2>
+<h2>基础安装<a class="headerlink" href="#id3" title="链接到此标题。">#</a></h2>
 <p>Data-Juicer 现已上架 PyPI。最小安装包含核心数据处理能力：</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>py-data-juicer
 </pre></div>
@@ -661,8 +670,8 @@
 </ul>
 </section>
 <section id="id4">
-<h2>场景化安装<a class="headerlink" href="#id4" title="Link to this heading">#</a></h2>
-<p>组件详情请参考 <a class="reference external" href="https://github.com/datajuicer/data-juicer/blob/v1.4.0/pyproject.toml">pyproject.toml</a>。</p>
+<h2>场景化安装<a class="headerlink" href="#id4" title="链接到此标题。">#</a></h2>
+<p>组件详情请参考 <a class="reference external" href="https://github.com/james-hadoop/data-juicer/blob/v1.4.0/pyproject.toml">pyproject.toml</a>。</p>
 <p><strong>核心 ML &amp; DL</strong></p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># 通用 ML/DL 能力</span>
 pip<span class="w"> </span>install<span class="w"> </span><span class="s2">&quot;py-data-juicer[generic]&quot;</span>
@@ -696,7 +705,7 @@ pip<span class="w"> </span>install<span class="w"> </span><span class="s2">&quot
 </div>
 </section>
 <section id="id5">
-<h2>常见安装模式<a class="headerlink" href="#id5" title="Link to this heading">#</a></h2>
+<h2>常见安装模式<a class="headerlink" href="#id5" title="链接到此标题。">#</a></h2>
 <p><strong>1. 文本处理设置</strong></p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span><span class="s2">&quot;py-data-juicer[generic,nlp]&quot;</span>
 </pre></div>
@@ -732,7 +741,7 @@ uv<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </s
 </div>
 </section>
 <section id="id6">
-<h2>特定算子安装<a class="headerlink" href="#id6" title="Link to this heading">#</a></h2>
+<h2>特定算子安装<a class="headerlink" href="#id6" title="链接到此标题。">#</a></h2>
 <p>除了基于场景的安装外，我们还提供基于算子和基于菜谱的安装方式。</p>
 <ul class="simple">
 <li><p>安装特定算子的依赖</p></li>
@@ -753,7 +762,7 @@ dj-install<span class="w"> </span>--config<span class="w"> </span>path_to_your_d
 </ul>
 </section>
 <section id="docker">
-<h2>使用 Docker 安装<a class="headerlink" href="#docker" title="Link to this heading">#</a></h2>
+<h2>使用 Docker 安装<a class="headerlink" href="#docker" title="链接到此标题。">#</a></h2>
 <ul>
 <li><p>您可以</p>
 <ul>
@@ -768,7 +777,7 @@ dj-install<span class="w"> </span>--config<span class="w"> </span>path_to_your_d
 </pre></div>
 </div>
 </li>
-<li><p>或运行以下命令构建包含最新 <code class="docutils literal notranslate"><span class="pre">data-juicer</span></code> 的 docker 镜像，使用提供的 <a class="reference external" href="https://github.com/datajuicer/data-juicer/blob/v1.4.0/Dockerfile">Dockerfile</a>：</p>
+<li><p>或运行以下命令构建包含最新 <code class="docutils literal notranslate"><span class="pre">data-juicer</span></code> 的 docker 镜像，使用提供的 <a class="reference external" href="https://github.com/james-hadoop/data-juicer/blob/v1.4.0/Dockerfile">Dockerfile</a>：</p>
 <div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>docker<span class="w"> </span>build<span class="w"> </span>-t<span class="w"> </span>datajuicer/data-juicer:&lt;version_tag&gt;<span class="w"> </span>.
 </pre></div>
 </div>
@@ -779,7 +788,7 @@ dj-install<span class="w"> </span>--config<span class="w"> </span>path_to_your_d
 </ul>
 </section>
 <section id="id7">
-<h2>注意事项和故障排除<a class="headerlink" href="#id7" title="Link to this heading">#</a></h2>
+<h2>注意事项和故障排除<a class="headerlink" href="#id7" title="链接到此标题。">#</a></h2>
 <ol class="arabic simple" start="0">
 <li><p><strong>安装检查</strong></p></li>
 </ol>
@@ -926,7 +935,7 @@ dj-install<span class="w"> </span>--config<span class="w"> </span>path_to_your_d
         <div class="footer-item">
 
   <p class="sphinx-version">
-    由 <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.3创建。
+    由 <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.0.4创建。
     <br/>
   </p>
 </div>

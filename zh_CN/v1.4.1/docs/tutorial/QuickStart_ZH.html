@@ -41,14 +41,15 @@
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
     <script src="../../_static/documentation_options.js?v=91bfbbb6"></script>
-    <script src="../../_static/doctools.js?v=9bcbadda"></script>
-    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="../../_static/copybutton.js?v=f281be69"></script>
-    <script src="../../_static/translations.js?v=beaddf03"></script>
+    <script src="../../_static/translations.js?v=540d3cec"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'docs/tutorial/QuickStart_ZH';</script>
     <script src="../../_static/sidebar.js?v=3fc1065c"></script>
     <script src="../../_static/switcher-mobile.js?v=07875724"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <link rel="icon" href="../../_static/icon.png"/>
     <link rel="index" title="索引" href="../../genindex.html" />
     <link rel="search" title="搜索" href="../../search.html" />
@@ -202,7 +203,7 @@
           
           
           
-          <a href="https://github.com/datajuicer/data-juicer" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
+          <a href="https://github.com/james-hadoop/data-juicer" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
             <span class="sr-only">GitHub</span></a>
         </li>
 </ul></div>
@@ -230,19 +231,23 @@
     <div class="navbar-dropdown-panel" role="menu">
       <div class="dropdown-content">
         
-        <a href="../../../../en/v1.4.1/docs/tutorial/QuickStart.html"
-           class="dropdown-item "
-           role="menuitem"
-           >
-          English
-        </a>
+          
+          
+          <a href="../../../../en/v1.4.1/docs/tutorial/QuickStart.html"
+             class="dropdown-item "
+             role="menuitem"
+             >
+            English
+          </a>
         
-        <a href="../../../../zh_CN/v1.4.1/docs/tutorial/QuickStart_ZH.html"
-           class="dropdown-item "
-           role="menuitem"
-           >
-          简体中文
-        </a>
+          
+          
+          <a href="../../../../zh_CN/v1.4.1/docs/tutorial/QuickStart_ZH.html"
+             class="dropdown-item active"
+             role="menuitem"
+             aria-current="true">
+            简体中文
+          </a>
         
       </div>
     </div>
@@ -410,7 +415,7 @@
           
           
           
-          <a href="https://github.com/datajuicer/data-juicer" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
+          <a href="https://github.com/james-hadoop/data-juicer" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
             <span class="sr-only">GitHub</span></a>
         </li>
 </ul></div>
@@ -438,19 +443,23 @@
     <div class="navbar-dropdown-panel" role="menu">
       <div class="dropdown-content">
         
-        <a href="../../../../en/v1.4.1/docs/tutorial/QuickStart.html"
-           class="dropdown-item "
-           role="menuitem"
-           >
-          English
-        </a>
+          
+          
+          <a href="../../../../en/v1.4.1/docs/tutorial/QuickStart.html"
+             class="dropdown-item "
+             role="menuitem"
+             >
+            English
+          </a>
         
-        <a href="../../../../zh_CN/v1.4.1/docs/tutorial/QuickStart_ZH.html"
-           class="dropdown-item "
-           role="menuitem"
-           >
-          简体中文
-        </a>
+          
+          
+          <a href="../../../../zh_CN/v1.4.1/docs/tutorial/QuickStart_ZH.html"
+             class="dropdown-item active"
+             role="menuitem"
+             aria-current="true">
+            简体中文
+          </a>
         
       </div>
     </div>
@@ -637,9 +646,9 @@
 
 
   <section id="id1">
-<h1>快速上手<a class="headerlink" href="#id1" title="Link to this heading">#</a></h1>
+<h1>快速上手<a class="headerlink" href="#id1" title="链接到此标题。">#</a></h1>
 <section id="id2">
-<h2>数据集配置<a class="headerlink" href="#id2" title="Link to this heading">#</a></h2>
+<h2>数据集配置<a class="headerlink" href="#id2" title="链接到此标题。">#</a></h2>
 <p>DJ 支持多种数据集输入类型，包括本地文件、远程数据集（如 huggingface）；还支持数据验证和数据混合。</p>
 <p>配置输入文件的两种方法</p>
 <ul class="simple">
@@ -660,7 +669,7 @@
 <p>更多详细信息，请参阅 <a class="reference internal" href="../DatasetCfg_ZH.html"><span class="std std-doc">数据集配置指南</span></a>。</p>
 </section>
 <section id="id3">
-<h2>数据处理<a class="headerlink" href="#id3" title="Link to this heading">#</a></h2>
+<h2>数据处理<a class="headerlink" href="#id3" title="链接到此标题。">#</a></h2>
 <ul class="simple">
 <li><p>以配置文件路径作为参数来运行 <code class="docutils literal notranslate"><span class="pre">process_data.py</span></code> 或者 <code class="docutils literal notranslate"><span class="pre">dj-process</span></code> 命令行工具来处理数据集。</p></li>
 </ul>
@@ -699,7 +708,7 @@ dj-process<span class="w"> </span>--config<span class="w"> </span>configs/demo/p
 </div>
 </section>
 <section id="id4">
-<h2>分布式数据处理<a class="headerlink" href="#id4" title="Link to this heading">#</a></h2>
+<h2>分布式数据处理<a class="headerlink" href="#id4" title="链接到此标题。">#</a></h2>
 <p>Data-Juicer 现在基于<a class="reference external" href="https://www.ray.io/">RAY</a>实现了多机分布式数据处理。
 对应Demo可以通过如下命令运行：</p>
 <div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span class="c1"># 运行文字数据处理</span>
@@ -720,7 +729,7 @@ python<span class="w"> </span>tools/process_data.py<span class="w"> </span>--con
 </div></blockquote>
 </section>
 <section id="id5">
-<h2>数据分析<a class="headerlink" href="#id5" title="Link to this heading">#</a></h2>
+<h2>数据分析<a class="headerlink" href="#id5" title="链接到此标题。">#</a></h2>
 <ul class="simple">
 <li><p>以配置文件路径为参数运行 <code class="docutils literal notranslate"><span class="pre">analyze_data.py</span></code> 或者 <code class="docutils literal notranslate"><span class="pre">dj-analyze</span></code> 命令行工具来分析数据集。</p></li>
 <li><p>分析器会产出算子为整个数据集计算的 stats 的整体分布情况，每类 stats 的详细分布，以及不同算子的 stats 之间的相关性分析。</p></li>
@@ -751,7 +760,7 @@ python<span class="w"> </span>tools/analyze_data.py<span class="w"> </span>--con
 </div>
 </section>
 <section id="id6">
-<h2>数据可视化<a class="headerlink" href="#id6" title="Link to this heading">#</a></h2>
+<h2>数据可视化<a class="headerlink" href="#id6" title="链接到此标题。">#</a></h2>
 <ul class="simple">
 <li><p>运行 <code class="docutils literal notranslate"><span class="pre">app.py</span></code> 来在浏览器中可视化您的数据集。</p></li>
 <li><p><strong>注意</strong>：只可用于从源码安装的方法。</p></li>
@@ -761,7 +770,7 @@ python<span class="w"> </span>tools/analyze_data.py<span class="w"> </span>--con
 </div>
 </section>
 <section id="id7">
-<h2>构建配置文件<a class="headerlink" href="#id7" title="Link to this heading">#</a></h2>
+<h2>构建配置文件<a class="headerlink" href="#id7" title="链接到此标题。">#</a></h2>
 <ul class="simple">
 <li><p>配置文件包含一系列全局参数和用于数据处理的算子列表。您需要设置:</p>
 <ul>
@@ -771,8 +780,8 @@ python<span class="w"> </span>tools/analyze_data.py<span class="w"> </span>--con
 </li>
 <li><p>您可以通过如下方式构建自己的配置文件:</p>
 <ul>
-<li><p>➖：修改我们的样例配置文件 <a class="reference external" href="https://github.com/datajuicer/data-juicer/blob/v1.4.1/configs/config_all.yaml"><code class="docutils literal notranslate"><span class="pre">config_all.yaml</span></code></a>。该文件包含了<strong>所有</strong>算子以及算子对应的默认参数。您只需要<strong>移除</strong>不需要的算子并重新设置部分算子的参数即可。</p></li>
-<li><p>➕：从头开始构建自己的配置文件。您可以参考我们提供的样例配置文件 <a class="reference external" href="https://github.com/datajuicer/data-juicer/blob/v1.4.1/configs/config_all.yaml"><code class="docutils literal notranslate"><span class="pre">config_all.yaml</span></code></a>，<a class="reference internal" href="../Operators.html"><span class="std std-doc">算子文档</span></a>，以及 <a class="reference external" href="https://github.com/datajuicer/data-juicer/blob/v1.4.1/docs/DeveloperGuide_ZH.md#2-%E6%9E%84%E5%BB%BA%E8%87%AA%E5%B7%B1%E7%9A%84%E7%AE%97%E5%AD%90">开发者指南</a>.</p></li>
+<li><p>➖：修改我们的样例配置文件 <a class="reference external" href="https://github.com/james-hadoop/data-juicer/blob/v1.4.1/configs/config_all.yaml"><code class="docutils literal notranslate"><span class="pre">config_all.yaml</span></code></a>。该文件包含了<strong>所有</strong>算子以及算子对应的默认参数。您只需要<strong>移除</strong>不需要的算子并重新设置部分算子的参数即可。</p></li>
+<li><p>➕：从头开始构建自己的配置文件。您可以参考我们提供的样例配置文件 <a class="reference external" href="https://github.com/james-hadoop/data-juicer/blob/v1.4.1/configs/config_all.yaml"><code class="docutils literal notranslate"><span class="pre">config_all.yaml</span></code></a>，<a class="reference internal" href="../Operators.html"><span class="std std-doc">算子文档</span></a>，以及 <a class="reference external" href="https://github.com/james-hadoop/data-juicer/blob/v1.4.1/docs/DeveloperGuide_ZH.md#2-%E6%9E%84%E5%BB%BA%E8%87%AA%E5%B7%B1%E7%9A%84%E7%AE%97%E5%AD%90">开发者指南</a>.</p></li>
 <li><p>除了使用 yaml 文件外，您还可以在命令行上指定一个或多个参数，这些参数将覆盖 yaml 文件中的值。</p></li>
 </ul>
 </li>
@@ -787,7 +796,7 @@ python<span class="w"> </span>tools/analyze_data.py<span class="w"> </span>--con
 </ul>
 </section>
 <section id="id8">
-<h2>沙盒实验室<a class="headerlink" href="#id8" title="Link to this heading">#</a></h2>
+<h2>沙盒实验室<a class="headerlink" href="#id8" title="链接到此标题。">#</a></h2>
 <p>数据沙盒实验室 (DJ-Sandbox) 为用户提供了持续生产数据菜谱的最佳实践，其具有低开销、可迁移、有指导性等特点。</p>
 <ul class="simple">
 <li><p>用户在沙盒中可以基于一些小规模数据集、模型对数据菜谱进行快速实验、迭代、优化，再迁移到更大尺度上，大规模生产高质量数据以服务大模型。</p></li>
@@ -799,7 +808,7 @@ python<span class="w"> </span>tools/analyze_data.py<span class="w"> </span>--con
 </div>
 </section>
 <section id="id9">
-<h2>预处理原始数据（可选）<a class="headerlink" href="#id9" title="Link to this heading">#</a></h2>
+<h2>预处理原始数据（可选）<a class="headerlink" href="#id9" title="链接到此标题。">#</a></h2>
 <ul class="simple">
 <li><p>我们的 Formatter 目前支持一些常见的输入数据集格式：</p>
 <ul>
@@ -814,7 +823,7 @@ python<span class="w"> </span>tools/analyze_data.py<span class="w"> </span>--con
 </ul>
 </li>
 <li><p>Data-Juicer 不可能处理所有类型的数据，欢迎提 Issues/PRs，贡献对新数据类型的处理能力！</p></li>
-<li><p>因此我们在 <a class="reference external" href="https://github.com/datajuicer/data-juicer/blob/v1.4.1/tools/preprocess"><code class="docutils literal notranslate"><span class="pre">tools/preprocess</span></code></a> 中提供了一些<strong>常见的预处理工具</strong>，用于预处理这些类型各异的数据。</p>
+<li><p>因此我们在 <a class="reference external" href="https://github.com/james-hadoop/data-juicer/blob/v1.4.1/tools/preprocess"><code class="docutils literal notranslate"><span class="pre">tools/preprocess</span></code></a> 中提供了一些<strong>常见的预处理工具</strong>，用于预处理这些类型各异的数据。</p>
 <ul>
 <li><p>欢迎您为社区贡献新的预处理工具。</p></li>
 <li><p>我们<strong>强烈建议</strong>将复杂的数据预处理为 jsonl 或 parquet 文件。</p></li>
@@ -823,7 +832,7 @@ python<span class="w"> </span>tools/analyze_data.py<span class="w"> </span>--con
 </ul>
 </section>
 <section id="docker">
-<h2>对于 Docker 用户<a class="headerlink" href="#docker" title="Link to this heading">#</a></h2>
+<h2>对于 Docker 用户<a class="headerlink" href="#docker" title="链接到此标题。">#</a></h2>
 <ul class="simple">
 <li><p>如果您构建或者拉取了 <code class="docutils literal notranslate"><span class="pre">data-juicer</span></code> 的 docker 镜像，您可以使用这个 docker 镜像来运行上面提到的这些命令或者工具。</p></li>
 <li><p>直接运行：</p></li>
@@ -972,7 +981,7 @@ docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </spa
         <div class="footer-item">
 
   <p class="sphinx-version">
-    由 <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.3创建。
+    由 <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.0.4创建。
     <br/>
   </p>
 </div>

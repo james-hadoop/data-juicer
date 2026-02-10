@@ -41,13 +41,14 @@
 <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
     <script src="../_static/documentation_options.js?v=8a448e45"></script>
-    <script src="../_static/doctools.js?v=9bcbadda"></script>
-    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="../_static/copybutton.js?v=f281be69"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'api/data_juicer.tools.op_search';</script>
     <script src="../_static/sidebar.js?v=3fc1065c"></script>
     <script src="../_static/switcher-mobile.js?v=07875724"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <link rel="icon" href="../_static/icon.png"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -199,7 +200,7 @@
           
           
           
-          <a href="https://github.com/datajuicer/data-juicer" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
+          <a href="https://github.com/james-hadoop/data-juicer" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
             <span class="sr-only">GitHub</span></a>
         </li>
 </ul></div>
@@ -227,19 +228,23 @@
     <div class="navbar-dropdown-panel" role="menu">
       <div class="dropdown-content">
         
-        <a href="../../../en/main/api/data_juicer.tools.op_search.html"
-           class="dropdown-item active"
-           role="menuitem"
-           aria-current="true">
-          English
-        </a>
+          
+          
+          <a href="../../../en/main/api/data_juicer.tools.op_search.html"
+             class="dropdown-item active"
+             role="menuitem"
+             aria-current="true">
+            English
+          </a>
         
-        <a href="../../../zh_CN/main/api/data_juicer.tools.op_search.html"
-           class="dropdown-item "
-           role="menuitem"
-           >
-          简体中文
-        </a>
+          
+          
+          <a href="../../../zh_CN/main/api/data_juicer.tools.op_search.html"
+             class="dropdown-item "
+             role="menuitem"
+             >
+            简体中文
+          </a>
         
       </div>
     </div>
@@ -409,7 +414,7 @@
           
           
           
-          <a href="https://github.com/datajuicer/data-juicer" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
+          <a href="https://github.com/james-hadoop/data-juicer" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
             <span class="sr-only">GitHub</span></a>
         </li>
 </ul></div>
@@ -437,19 +442,23 @@
     <div class="navbar-dropdown-panel" role="menu">
       <div class="dropdown-content">
         
-        <a href="../../../en/main/api/data_juicer.tools.op_search.html"
-           class="dropdown-item active"
-           role="menuitem"
-           aria-current="true">
-          English
-        </a>
+          
+          
+          <a href="../../../en/main/api/data_juicer.tools.op_search.html"
+             class="dropdown-item active"
+             role="menuitem"
+             aria-current="true">
+            English
+          </a>
         
-        <a href="../../../zh_CN/main/api/data_juicer.tools.op_search.html"
-           class="dropdown-item "
-           role="menuitem"
-           >
-          简体中文
-        </a>
+          
+          
+          <a href="../../../zh_CN/main/api/data_juicer.tools.op_search.html"
+             class="dropdown-item "
+             role="menuitem"
+             >
+            简体中文
+          </a>
         
       </div>
     </div>
@@ -577,21 +586,15 @@
   <section id="module-data_juicer.tools.op_search">
 <span id="data-juicer-tools-op-search-module"></span><h1>data_juicer.tools.op_search module<a class="headerlink" href="#module-data_juicer.tools.op_search" title="Link to this heading">#</a></h1>
 <p>Operator Searcher - A tool for filtering Data-Juicer operators by tags</p>
-<dl class="py class">
-<dt class="sig sig-object py" id="data_juicer.tools.op_search.OPRecord">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">data_juicer.tools.op_search.</span></span><span class="sig-name descname"><span class="pre">OPRecord</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">op_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">desc</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tags</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sig</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Signature</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">param_desc</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer/tools/op_search.html#OPRecord"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#data_juicer.tools.op_search.OPRecord" title="Link to this definition">#</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<p>A record class for storing operator metadata</p>
-<dl class="py method">
-<dt class="sig sig-object py" id="data_juicer.tools.op_search.OPRecord.__init__">
-<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">op_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">desc</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tags</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sig</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Signature</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">param_desc</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer/tools/op_search.html#OPRecord.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#data_juicer.tools.op_search.OPRecord.__init__" title="Link to this definition">#</a></dt>
+<dl class="py function">
+<dt class="sig sig-object py" id="data_juicer.tools.op_search.get_source_path">
+<span class="sig-prename descclassname"><span class="pre">data_juicer.tools.op_search.</span></span><span class="sig-name descname"><span class="pre">get_source_path</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cls</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer/tools/op_search.html#get_source_path"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#data_juicer.tools.op_search.get_source_path" title="Link to this definition">#</a></dt>
 <dd></dd></dl>
 
-<dl class="py method">
-<dt class="sig sig-object py" id="data_juicer.tools.op_search.OPRecord.to_dict">
-<span class="sig-name descname"><span class="pre">to_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer/tools/op_search.html#OPRecord.to_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#data_juicer.tools.op_search.OPRecord.to_dict" title="Link to this definition">#</a></dt>
-<dd></dd></dl>
-
+<dl class="py function">
+<dt class="sig sig-object py" id="data_juicer.tools.op_search.find_test_by_searching_content">
+<span class="sig-prename descclassname"><span class="pre">data_juicer.tools.op_search.</span></span><span class="sig-name descname"><span class="pre">find_test_by_searching_content</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tests_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">test_class_name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer/tools/op_search.html#find_test_by_searching_content"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#data_juicer.tools.op_search.find_test_by_searching_content" title="Link to this definition">#</a></dt>
+<dd><p>Fallback: brute-force search for test files containing the test class name.</p>
 </dd></dl>
 
 <dl class="py function">
@@ -606,15 +609,15 @@ will be returned instead.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="data_juicer.tools.op_search.analyze_resource_tag">
-<span class="sig-prename descclassname"><span class="pre">data_juicer.tools.op_search.</span></span><span class="sig-name descname"><span class="pre">analyze_resource_tag</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">code</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer/tools/op_search.html#analyze_resource_tag"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#data_juicer.tools.op_search.analyze_resource_tag" title="Link to this definition">#</a></dt>
-<dd><p>Analyze the resource tag for the given code content string. Should be one
+<span class="sig-prename descclassname"><span class="pre">data_juicer.tools.op_search.</span></span><span class="sig-name descname"><span class="pre">analyze_resource_tag</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cls</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer/tools/op_search.html#analyze_resource_tag"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#data_juicer.tools.op_search.analyze_resource_tag" title="Link to this definition">#</a></dt>
+<dd><p>Analyze resource tags by reading the class attribute_accelerator. Should be one
 of the “Resource Tags” in <cite>tagging_mappings.json</cite>. It makes the choice
 according to their assigning statement to attribute <cite>_accelerator</cite>.</p>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="data_juicer.tools.op_search.analyze_model_tags">
-<span class="sig-prename descclassname"><span class="pre">data_juicer.tools.op_search.</span></span><span class="sig-name descname"><span class="pre">analyze_model_tags</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">code</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer/tools/op_search.html#analyze_model_tags"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#data_juicer.tools.op_search.analyze_model_tags" title="Link to this definition">#</a></dt>
+<span class="sig-prename descclassname"><span class="pre">data_juicer.tools.op_search.</span></span><span class="sig-name descname"><span class="pre">analyze_model_tags</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cls</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer/tools/op_search.html#analyze_model_tags"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#data_juicer.tools.op_search.analyze_model_tags" title="Link to this definition">#</a></dt>
 <dd><p>Analyze the model tag for the given code content string. SHOULD be one of
 the “Model Tags” in <cite>tagging_mappings.json</cite>. It makes the choice by finding
 the <cite>model_type</cite> arg in <cite>prepare_model</cite> method invocation.</p>
@@ -639,8 +642,25 @@ the <cite>model_type</cite> arg in <cite>prepare_model</cite> method invocation.
 </dd></dl>
 
 <dl class="py class">
+<dt class="sig sig-object py" id="data_juicer.tools.op_search.OPRecord">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">data_juicer.tools.op_search.</span></span><span class="sig-name descname"><span class="pre">OPRecord</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">op_cls</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">op_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer/tools/op_search.html#OPRecord"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#data_juicer.tools.op_search.OPRecord" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>A record class for storing operator metadata</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="data_juicer.tools.op_search.OPRecord.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">op_cls</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">op_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer/tools/op_search.html#OPRecord.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#data_juicer.tools.op_search.OPRecord.__init__" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="data_juicer.tools.op_search.OPRecord.to_dict">
+<span class="sig-name descname"><span class="pre">to_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer/tools/op_search.html#OPRecord.to_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#data_juicer.tools.op_search.OPRecord.to_dict" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
 <dt class="sig sig-object py" id="data_juicer.tools.op_search.OPSearcher">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">data_juicer.tools.op_search.</span></span><span class="sig-name descname"><span class="pre">OPSearcher</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">specified_op_list</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">include_formatter</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer/tools/op_search.html#OPSearcher"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#data_juicer.tools.op_search.OPSearcher" title="Link to this definition">#</a></dt>
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">data_juicer.tools.op_search.</span></span><span class="sig-name descname"><span class="pre">OPSearcher</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">specified_op_list</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">include_formatter</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer/tools/op_search.html#OPSearcher"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#data_juicer.tools.op_search.OPSearcher" title="Link to this definition">#</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Operator search engine</p>
 <dl class="py method">
@@ -660,7 +680,7 @@ the <cite>model_type</cite> arg in <cite>prepare_model</cite> method invocation.
 
 <dl class="py property">
 <dt class="sig sig-object py" id="data_juicer.tools.op_search.OPSearcher.records_map">
-<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">records_map</span></span><a class="headerlink" href="#data_juicer.tools.op_search.OPSearcher.records_map" title="Link to this definition">#</a></dt>
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">records_map</span></span><a class="headerlink" href="#data_juicer.tools.op_search.OPSearcher.records_map" title="Link to this definition">#</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -701,17 +721,19 @@ the <cite>model_type</cite> arg in <cite>prepare_model</cite> method invocation.
   </div>
   <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.tools.op_search.OPRecord"><code class="docutils literal notranslate"><span class="pre">OPRecord</span></code></a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.tools.op_search.OPRecord.__init__"><code class="docutils literal notranslate"><span class="pre">OPRecord.__init__()</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.tools.op_search.OPRecord.to_dict"><code class="docutils literal notranslate"><span class="pre">OPRecord.to_dict()</span></code></a></li>
-</ul>
-</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.tools.op_search.get_source_path"><code class="docutils literal notranslate"><span class="pre">get_source_path()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.tools.op_search.find_test_by_searching_content"><code class="docutils literal notranslate"><span class="pre">find_test_by_searching_content()</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.tools.op_search.analyze_modality_tag"><code class="docutils literal notranslate"><span class="pre">analyze_modality_tag()</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.tools.op_search.analyze_resource_tag"><code class="docutils literal notranslate"><span class="pre">analyze_resource_tag()</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.tools.op_search.analyze_model_tags"><code class="docutils literal notranslate"><span class="pre">analyze_model_tags()</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.tools.op_search.analyze_tag_with_inheritance"><code class="docutils literal notranslate"><span class="pre">analyze_tag_with_inheritance()</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.tools.op_search.analyze_tag_from_cls"><code class="docutils literal notranslate"><span class="pre">analyze_tag_from_cls()</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.tools.op_search.extract_param_docstring"><code class="docutils literal notranslate"><span class="pre">extract_param_docstring()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.tools.op_search.OPRecord"><code class="docutils literal notranslate"><span class="pre">OPRecord</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.tools.op_search.OPRecord.__init__"><code class="docutils literal notranslate"><span class="pre">OPRecord.__init__()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.tools.op_search.OPRecord.to_dict"><code class="docutils literal notranslate"><span class="pre">OPRecord.to_dict()</span></code></a></li>
+</ul>
+</li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.tools.op_search.OPSearcher"><code class="docutils literal notranslate"><span class="pre">OPSearcher</span></code></a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.tools.op_search.OPSearcher.__init__"><code class="docutils literal notranslate"><span class="pre">OPSearcher.__init__()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data_juicer.tools.op_search.OPSearcher.search"><code class="docutils literal notranslate"><span class="pre">OPSearcher.search()</span></code></a></li>
@@ -771,7 +793,7 @@ the <cite>model_type</cite> arg in <cite>prepare_model</cite> method invocation.
         <div class="footer-item">
 
   <p class="sphinx-version">
-    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.0.4.
     <br/>
   </p>
 </div>
