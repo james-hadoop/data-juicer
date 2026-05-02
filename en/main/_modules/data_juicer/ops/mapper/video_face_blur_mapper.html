@@ -584,7 +584,6 @@
   <h1>Source code for data_juicer.ops.mapper.video_face_blur_mapper</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
 
-<span class="kn">import</span><span class="w"> </span><span class="nn">av</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">PIL</span><span class="w"> </span><span class="kn">import</span> <span class="n">ImageFilter</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">data_juicer.utils.constant</span><span class="w"> </span><span class="kn">import</span> <span class="n">Fields</span>
@@ -602,7 +601,7 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">..base_op</span><span class="w"> </span><span class="kn">import</span> <span class="n">OPERATORS</span><span class="p">,</span> <span class="n">UNFORKABLE</span><span class="p">,</span> <span class="n">Mapper</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">..op_fusion</span><span class="w"> </span><span class="kn">import</span> <span class="n">LOADED_VIDEOS</span>
 
-<span class="n">cv2</span> <span class="o">=</span> <span class="n">LazyLoader</span><span class="p">(</span><span class="s2">&quot;cv2&quot;</span><span class="p">,</span> <span class="s2">&quot;opencv-python&quot;</span><span class="p">)</span>
+<span class="n">cv2</span> <span class="o">=</span> <span class="n">LazyLoader</span><span class="p">(</span><span class="s2">&quot;cv2&quot;</span><span class="p">,</span> <span class="s2">&quot;opencv-contrib-python&quot;</span><span class="p">)</span>
 
 <span class="n">OP_NAME</span> <span class="o">=</span> <span class="s2">&quot;video_face_blur_mapper&quot;</span>
 
@@ -677,10 +676,8 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">blur_type</span> <span class="o">=</span> <span class="n">blur_type</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">radius</span> <span class="o">=</span> <span class="n">radius</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">extra_kwargs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_default_kwargs</span>
-        <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">extra_kwargs</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">extra_kwargs</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">extra_kwargs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_default_kwargs</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">extra_kwargs</span><span class="o">.</span><span class="n">update</span><span class="p">((</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">k</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">extra_kwargs</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">model_key</span> <span class="o">=</span> <span class="n">prepare_model</span><span class="p">(</span><span class="n">model_type</span><span class="o">=</span><span class="s2">&quot;opencv_classifier&quot;</span><span class="p">,</span> <span class="n">model_path</span><span class="o">=</span><span class="n">cv_classifier</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">save_dir</span> <span class="o">=</span> <span class="n">save_dir</span></div>
@@ -701,6 +698,10 @@
         <span class="n">sample</span><span class="p">,</span> <span class="n">videos</span> <span class="o">=</span> <span class="n">load_data_with_context</span><span class="p">(</span><span class="n">sample</span><span class="p">,</span> <span class="n">context</span><span class="p">,</span> <span class="n">loaded_video_keys</span><span class="p">,</span> <span class="n">load_video</span><span class="p">)</span>
 
         <span class="n">model</span> <span class="o">=</span> <span class="n">get_model</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_key</span><span class="p">)</span>
+
+        <span class="kn">from</span><span class="w"> </span><span class="nn">data_juicer.utils.video_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">setup_av</span>
+
+        <span class="n">av</span> <span class="o">=</span> <span class="n">LazyLoader</span><span class="p">(</span><span class="s2">&quot;av&quot;</span><span class="p">,</span> <span class="n">post_import</span><span class="o">=</span><span class="n">setup_av</span><span class="p">)</span>
 
         <span class="k">def</span><span class="w"> </span><span class="nf">_blur_func</span><span class="p">(</span><span class="n">frame</span><span class="p">):</span>
             <span class="n">image</span> <span class="o">=</span> <span class="n">frame</span><span class="o">.</span><span class="n">to_image</span><span class="p">()</span>
