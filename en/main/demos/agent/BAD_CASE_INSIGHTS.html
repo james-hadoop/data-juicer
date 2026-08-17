@@ -554,6 +554,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../docs/Distributed.html">Distributed Data Processing in Data-Juicer</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../docs/Export.html">Dataset Export</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../docs/JobManagement.html">Job Management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../docs/OperatorPlugins.html">Operator Plugins</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../docs/PartitionAndCheckpoint.html">Partitioned Processing with Checkpointing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../docs/Tracing.html">Data Tracing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../docs/awesome_llm_data.html">Awesome Data-Model Co-Development of MLLMs </a></li>
@@ -581,7 +582,9 @@
 <li class="toctree-l1"><a class="reference internal" href="minimal_configs/README.html">Agent 流水线最小可运行配置（便于逐项调试）</a></li>
 <li class="toctree-l1"><a class="reference internal" href="scripts/README.html">Agent pipeline 后分析脚本</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../ego_hand_action_annotation/README.html">VLA Visualization Demo</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../elastic_sharding/README.html">Elastic Multi-Node Sharding on Shared Storage</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../process_video_on_ray/data/Note.html">Note for dataset path</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../video_humanvbench_simple/README.html">HumanVBench Operators Demo</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">tools</span></p>
 <ul class="nav bd-sidenav">
@@ -601,6 +604,7 @@
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">thirdparty</span></p>
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="../../thirdparty/LLM_ecosystems/README.html">LLM Ecosystems</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../thirdparty/humanvbench_models/README.html">HumanVBench Models Setup</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../thirdparty/models/README.html">Third-party Model Library</a></li>
 </ul>
 </div>
@@ -883,8 +887,8 @@
 <section id="jq">
 <h2>jq 快速筛选<a class="headerlink" href="#jq" title="Link to this heading">#</a></h2>
 <p>Data-Juicer 导出里 <strong><code class="docutils literal notranslate"><span class="pre">meta</span></code> 字段名为 <code class="docutils literal notranslate"><span class="pre">__dj__meta__</span></code></strong>（见 <code class="docutils literal notranslate"><span class="pre">data_juicer.utils.constant.Fields</span></code>）。若配置 <strong><code class="docutils literal notranslate"><span class="pre">keep_stats_in_res_ds:</span> <span class="pre">true</span></code></strong>（本仓库 agent 菜谱已默认），主 <code class="docutils literal notranslate"><span class="pre">processed.jsonl</span></code> 每行自带该字段；否则 meta 仅在同级 <strong><code class="docutils literal notranslate"><span class="pre">processed_stats.jsonl</span></code></strong>，可用 <code class="docutils literal notranslate"><span class="pre">demos/agent/scripts/dj_export_row.py</span></code> 的合并逻辑或后处理脚本（<code class="docutils literal notranslate"><span class="pre">verify</span></code> / <code class="docutils literal notranslate"><span class="pre">analyze</span></code> / <code class="docutils literal notranslate"><span class="pre">slice</span></code> / <code class="docutils literal notranslate"><span class="pre">compute_percentile</span></code> 已自动按行合并 <code class="docutils literal notranslate"><span class="pre">_stats</span></code> 文件）。</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>jq<span class="w"> </span><span class="s1">&#39;select(.&quot;__dj__meta__&quot;.agent_bad_case_tier==&quot;high_precision&quot; and .&quot;__dj__meta__&quot;.agent_request_model==&quot;qwen3-max&quot;)&#39;</span><span class="w"> </span>processed.jsonl<span class="w"> </span><span class="p">|</span><span class="w"> </span>head
-jq<span class="w"> </span>-c<span class="w"> </span><span class="s1">&#39;.&quot;__dj__meta__&quot;.agent_insight_llm.headline, .&quot;__dj__meta__&quot;.agent_bad_case_signals&#39;</span><span class="w"> </span>processed.jsonl<span class="w"> </span><span class="p">|</span><span class="w"> </span>head
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>jq<span class="w"> </span><span class="s1">'select(."__dj__meta__".agent_bad_case_tier=="high_precision" and ."__dj__meta__".agent_request_model=="qwen3-max")'</span><span class="w"> </span>processed.jsonl<span class="w"> </span><span class="p">|</span><span class="w"> </span>head
+jq<span class="w"> </span>-c<span class="w"> </span><span class="s1">'."__dj__meta__".agent_insight_llm.headline, ."__dj__meta__".agent_bad_case_signals'</span><span class="w"> </span>processed.jsonl<span class="w"> </span><span class="p">|</span><span class="w"> </span>head
 </pre></div>
 </div>
 </section>
