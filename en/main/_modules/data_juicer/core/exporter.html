@@ -103,6 +103,7 @@
 <li class="toctree-l2"><a class="reference internal" href="../../../docs/tutorial/QuickStart.html">Quick Start</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../docs/Operators.html">Operator Schemas 算子提要</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../docs/DatasetCfg.html">Dataset Configuration Guide</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../docs/Juicer.html">Juicer: Natural-Language Data Refinement Model</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../docs/BadDataExhibition.html">“Bad” Data Exhibition</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../docs/Cache.html">Cache Management</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../docs/DJ_SORA.html">DJ-SORA</a></li>
@@ -403,6 +404,7 @@
   <h1>Source code for data_juicer.core.exporter</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="kn">import</span> <span class="n">date</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">multiprocessing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Pool</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">urllib.parse</span><span class="w"> </span><span class="kn">import</span> <span class="n">urlparse</span>
 
@@ -587,7 +589,15 @@
 <span class="sd">        :param export_path: the path to export datasets.</span>
 <span class="sd">        :return: the suffix of export_path.</span>
 <span class="sd">        """</span>
-        <span class="n">suffix</span> <span class="o">=</span> <span class="n">export_path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">"."</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+        <span class="n">parts</span> <span class="o">=</span> <span class="n">export_path</span><span class="o">.</span><span class="n">rsplit</span><span class="p">(</span><span class="s2">"."</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">parts</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">2</span> <span class="ow">or</span> <span class="s2">"/"</span> <span class="ow">in</span> <span class="n">parts</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">"Cannot determine file format from export_path "</span>
+                <span class="sa">f</span><span class="s2">"[</span><span class="si">{</span><span class="n">export_path</span><span class="si">}</span><span class="s2">] because it has no file extension. "</span>
+                <span class="sa">f</span><span class="s2">"Please add a suffix (e.g. .jsonl, .json, .parquet) "</span>
+                <span class="sa">f</span><span class="s2">"or specify export_type explicitly."</span>
+            <span class="p">)</span>
+        <span class="n">suffix</span> <span class="o">=</span> <span class="n">parts</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
         <span class="k">return</span> <span class="n">suffix</span>
 
     <span class="nd">@staticmethod</span>
@@ -801,6 +811,8 @@
             <span class="k">return</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">Exporter</span><span class="o">.</span><span class="n">_row_to_json_serializable</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">obj</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
             <span class="k">return</span> <span class="p">[</span><span class="n">Exporter</span><span class="o">.</span><span class="n">_row_to_json_serializable</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">obj</span><span class="p">]</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">date</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">obj</span><span class="o">.</span><span class="n">isoformat</span><span class="p">()</span>
         <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="s2">"item"</span><span class="p">):</span>  <span class="c1"># numpy scalar</span>
             <span class="k">return</span> <span class="n">obj</span><span class="o">.</span><span class="n">item</span><span class="p">()</span>
         <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="s2">"tolist"</span><span class="p">):</span>
