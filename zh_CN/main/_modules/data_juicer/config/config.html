@@ -1187,6 +1187,108 @@
         <span class="p">),</span>
     <span class="p">)</span>
     <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">"--partition.max_gpu_workers_per_device"</span><span class="p">,</span>
+        <span class="nb">type</span><span class="o">=</span><span class="n">PositiveInt</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="p">(</span>
+            <span class="s2">"Maximum number of auto-probed GPU model workers scheduled on one physical GPU. "</span>
+            <span class="s2">"The measured memory fraction is retained separately; the default of 5 prevents "</span>
+            <span class="s2">"tiny models from overloading one GPU with excessive actors."</span>
+        <span class="p">),</span>
+    <span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">"--partition.max_concurrent_gpu_probes"</span><span class="p">,</span>
+        <span class="nb">type</span><span class="o">=</span><span class="n">Union</span><span class="p">[</span><span class="n">PositiveInt</span><span class="p">,</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">"auto"</span><span class="p">]],</span>
+        <span class="n">default</span><span class="o">=</span><span class="s2">"auto"</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="p">(</span>
+            <span class="s2">"Maximum number of dependency-safe GPU preflight tasks running concurrently. "</span>
+            <span class="s2">"The default 'auto' probes one target at a time, because concurrent probes "</span>
+            <span class="s2">"load several models from shared storage at once and storage bandwidth is not "</span>
+            <span class="s2">"a Ray resource. Set a positive integer to opt into parallel probing when "</span>
+            <span class="s2">"checkpoints are local or the I/O headroom is known; every probe reserves one "</span>
+            <span class="s2">"full GPU, so the cap is also bounded by the available GPU and CPU slots."</span>
+        <span class="p">),</span>
+    <span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">"--partition.gpu_preflight_enabled"</span><span class="p">,</span>
+        <span class="nb">type</span><span class="o">=</span><span class="nb">bool</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="p">(</span>
+            <span class="s2">"Whether to profile CUDA Mapper/Filter operators before formal partitioned "</span>
+            <span class="s2">"execution. Disable only when GPU resources and actor counts are configured "</span>
+            <span class="s2">"explicitly."</span>
+        <span class="p">),</span>
+    <span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">"--partition.gpu_probe_timeout_seconds"</span><span class="p">,</span>
+        <span class="nb">type</span><span class="o">=</span><span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="p">(</span>
+            <span class="s2">"Optional timeout in seconds for each dependency-safe GPU preflight task. "</span>
+            <span class="s2">"The default None disables termination while 30-second progress heartbeats "</span>
+            <span class="s2">"remain enabled."</span>
+        <span class="p">),</span>
+    <span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">"--partition.gpu_probe_warmup_batches"</span><span class="p">,</span>
+        <span class="nb">type</span><span class="o">=</span><span class="n">NonNegativeInt</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">"Number of unmeasured warmup batches before GPU steady-state throughput sampling."</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">"--partition.gpu_probe_steady_batches"</span><span class="p">,</span>
+        <span class="nb">type</span><span class="o">=</span><span class="n">PositiveInt</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">"Number of batches used to estimate steady-state GPU operator throughput."</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">"--partition.gpu_probe_sample_offset"</span><span class="p">,</span>
+        <span class="nb">type</span><span class="o">=</span><span class="n">NonNegativeInt</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="p">(</span>
+            <span class="s2">"Number of leading dataset rows skipped when collecting the GPU preflight sample. "</span>
+            <span class="s2">"Use it when the first rows are not representative; the skipped prefix is streamed, "</span>
+            <span class="s2">"not materialized, for dataset types that support row iteration."</span>
+        <span class="p">),</span>
+    <span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">"--partition.gpu_probe_sample_shuffle"</span><span class="p">,</span>
+        <span class="nb">type</span><span class="o">=</span><span class="nb">bool</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="p">(</span>
+            <span class="s2">"Whether to randomize dataset block order before taking the GPU preflight sample. "</span>
+            <span class="s2">"Reads a random block instead of the first one, which avoids biased memory and "</span>
+            <span class="s2">"throughput measurements on datasets ordered by size or source."</span>
+        <span class="p">),</span>
+    <span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">"--partition.gpu_probe_sample_seed"</span><span class="p">,</span>
+        <span class="nb">type</span><span class="o">=</span><span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span>
+        <span class="n">default</span><span class="o">=</span><span class="mi">42</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="p">(</span>
+            <span class="s2">"Seed for the shuffled GPU preflight sample, keeping repeated runs and cached probe "</span>
+            <span class="s2">"reports comparable. Set null for a different sample on every run."</span>
+        <span class="p">),</span>
+    <span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">"--partition.execution_group_size"</span><span class="p">,</span>
+        <span class="nb">type</span><span class="o">=</span><span class="n">Union</span><span class="p">[</span><span class="n">PositiveInt</span><span class="p">,</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">"auto"</span><span class="p">]],</span>
+        <span class="n">default</span><span class="o">=</span><span class="s2">"auto"</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="p">(</span>
+            <span class="s2">"Number of logical checkpoint partitions processed by one GPU actor-pool lifecycle. "</span>
+            <span class="s2">"'auto' uses preflight initialization and throughput measurements."</span>
+        <span class="p">),</span>
+    <span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">"--partition.max_initialization_overhead_ratio"</span><span class="p">,</span>
+        <span class="nb">type</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="p">(</span>
+            <span class="s2">"Maximum estimated fraction of execution-group time spent initializing GPU models; "</span>
+            <span class="s2">"must be between 0 and 1."</span>
+        <span class="p">),</span>
+    <span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
         <span class="s2">"--partition.target_size_mb"</span><span class="p">,</span>
         <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span>
         <span class="n">default</span><span class="o">=</span><span class="mi">256</span><span class="p">,</span>
@@ -1622,7 +1724,12 @@
         <span class="s2">"auto_op_parallelism"</span><span class="p">:</span> <span class="n">cfg</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"auto_op_parallelism"</span><span class="p">,</span> <span class="kc">True</span><span class="p">),</span>
         <span class="s2">"work_dir"</span><span class="p">:</span> <span class="n">cfg</span><span class="o">.</span><span class="n">work_dir</span><span class="p">,</span>
     <span class="p">}</span>
-    <span class="k">if</span> <span class="ow">not</span> <span class="n">is_ray_mode</span><span class="p">():</span>
+    <span class="c1"># ``np`` controls local multiprocessing.  A partitioned Ray pipeline</span>
+    <span class="c1"># uses it for data-loading and partition sizing, while operator actor</span>
+    <span class="c1"># parallelism is resolved after GPU preflight from the Ray cluster.</span>
+    <span class="c1"># Injecting it here would turn the default ``np`` into an explicit actor</span>
+    <span class="c1"># budget and disable that automatic planning.</span>
+    <span class="k">if</span> <span class="n">cfg</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"executor_type"</span><span class="p">,</span> <span class="s2">"default"</span><span class="p">)</span> <span class="o">!=</span> <span class="s2">"ray_partitioned"</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">is_ray_mode</span><span class="p">():</span>
         <span class="n">op_attrs</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s2">"num_proc"</span><span class="p">:</span> <span class="n">cfg</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"np"</span><span class="p">,</span> <span class="kc">None</span><span class="p">)})</span>
     <span class="n">cfg</span><span class="o">.</span><span class="n">process</span> <span class="o">=</span> <span class="n">update_op_attr</span><span class="p">(</span><span class="n">cfg</span><span class="o">.</span><span class="n">process</span><span class="p">,</span> <span class="n">op_attrs</span><span class="p">)</span>
 

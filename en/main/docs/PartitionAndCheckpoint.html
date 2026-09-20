@@ -462,6 +462,7 @@
 <h2>Directory Structure<a class="headerlink" href="#directory-structure" title="Link to this heading">¶</a></h2>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>{work_dir}/{job_id}/
 ├── job_summary.json              # Job metadata (created on completion)
+├── gpu_probe_results.json         # Auto-probed GPU operator resources
 ├── events_{timestamp}.jsonl      # Machine-readable event log
 ├── dag_execution_plan.json       # DAG execution plan
 ├── checkpoints/                  # Checkpoint data
@@ -482,7 +483,20 @@
 <span class="nt">partition</span><span class="p">:</span>
 <span class="w">  </span><span class="nt">mode</span><span class="p">:</span><span class="w"> </span><span class="s">"auto"</span>
 <span class="w">  </span><span class="nt">max_concurrent_partitions</span><span class="p">:</span><span class="w"> </span><span class="s">"auto"</span><span class="w">  </span><span class="c1"># Resource-aware driver concurrency</span>
-<span class="w">  </span><span class="nt">target_size_mb</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">256</span><span class="w">    </span><span class="c1"># Target size in MB used for auto-mode planning</span>
+<span class="w">  </span><span class="nt">max_gpu_workers_per_device</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">5</span><span class="w">       </span><span class="c1"># Conservative model-replica cap per GPU</span>
+<span class="w">  </span><span class="nt">max_concurrent_gpu_probes</span><span class="p">:</span><span class="w"> </span><span class="s">"auto"</span><span class="w">   </span><span class="c1"># Probe one target at a time; set an integer to opt into parallel probes</span>
+<span class="w">  </span><span class="nt">gpu_preflight_enabled</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span><span class="w">          </span><span class="c1"># false skips preflight and uses explicit resources/actor counts</span>
+<span class="w">  </span><span class="nt">gpu_probe_timeout_seconds</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">null</span><span class="w">     </span><span class="c1"># Optional per-probe timeout; null disables termination</span>
+<span class="w">  </span><span class="nt">gpu_probe_warmup_batches</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1</span><span class="w">         </span><span class="c1"># Warmup batches before steady-state timing</span>
+<span class="w">  </span><span class="nt">gpu_probe_steady_batches</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">3</span><span class="w">         </span><span class="c1"># Batches used for steady-state throughput</span>
+<span class="w">  </span><span class="nt">gpu_probe_sample_offset</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0</span><span class="w">          </span><span class="c1"># Leading rows skipped when sampling for preflight</span>
+<span class="w">  </span><span class="nt">gpu_probe_sample_shuffle</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span><span class="w">     </span><span class="c1"># true randomizes block order before sampling</span>
+<span class="w">  </span><span class="nt">gpu_probe_sample_seed</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">42</span><span class="w">           </span><span class="c1"># Seed for the shuffled sample; null re-samples, and never reuses the report</span>
+<span class="w">  </span><span class="nt">execution_group_size</span><span class="p">:</span><span class="w"> </span><span class="s">"auto"</span><span class="w">       </span><span class="c1"># Logical partitions sharing one GPU actor lifecycle</span>
+<span class="w">  </span><span class="nt">max_initialization_overhead_ratio</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0.1</span><span class="w">  </span><span class="c1"># Allowed model-init share per execution group</span>
+<span class="w">  </span><span class="nt">target_size_mb</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">256</span><span class="w">    </span><span class="c1"># Target partition size (128, 256, 512, or 1024)</span>
+<span class="w">  </span><span class="nt">size</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">5000</span><span class="w">             </span><span class="c1"># Fallback if auto-analysis fails</span>
+<span class="w">  </span><span class="nt">max_size_mb</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">256</span><span class="w">       </span><span class="c1"># Fallback max size</span>
 </pre></div>
 </div>
 <p><strong>Manual mode</strong> - specify exact partition count:</p>
@@ -492,19 +506,135 @@
 <span class="w">  </span><span class="nt">max_concurrent_partitions</span><span class="p">:</span><span class="w"> </span><span class="s">"auto"</span>
 </pre></div>
 </div>
-<p>To choose a target number of samples per partition, set <code class="docutils literal notranslate"><span class="pre">size</span></code> instead of <code class="docutils literal notranslate"><span class="pre">num_of_partitions</span></code>. Choose one of these settings in manual mode. Data-Juicer rounds the partition count to the nearest whole number, with at least one partition. The last partition holds the remaining rows: for 12,000 rows and <code class="docutils literal notranslate"><span class="pre">size:</span> <span class="pre">5000</span></code>, the two partitions contain 5,000 and 7,000 rows.</p>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">partition</span><span class="p">:</span>
-<span class="w">  </span><span class="nt">mode</span><span class="p">:</span><span class="w"> </span><span class="s">"manual"</span>
-<span class="w">  </span><span class="nt">size</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">5000</span>
+<p>Partitions are cut at exact row boundaries, so every partition holds the same
+row count give or take one row. This is deliberately not Ray’s
+<code class="docutils literal notranslate"><span class="pre">Dataset.split(n)</span></code>, which distributes whole blocks: a dataset with fewer blocks
+than <code class="docutils literal notranslate"><span class="pre">num_of_partitions</span></code> would otherwise produce empty trailing partitions (ten
+rows in one block split four ways gives <code class="docutils literal notranslate"><span class="pre">[10,</span> <span class="pre">0,</span> <span class="pre">0,</span> <span class="pre">0]</span></code>), and unevenly sized
+blocks would skew partitions even when there are enough of them. Empty
+partitions are not free – each one still builds an operator graph, consumes an
+actor lifecycle and writes a checkpoint – and skew breaks the uniform
+partition-size assumption behind execution-group sizing. A partition count
+larger than the row count therefore fails the job before any actor starts,
+rather than being lowered silently: the count is what a resume is validated
+against, so it must be the one that was asked for.</p>
+<p>Logical partitions and GPU execution concurrency are independent. Logical
+partitions define checkpoint/recovery granularity and the per-partition data
+bound. Preflight throughput and cluster resources determine GPU actor counts.
+An execution group sends several logical partitions through one Ray actor-pool
+lifecycle while still writing a separate checkpoint for every logical
+partition. <code class="docutils literal notranslate"><span class="pre">execution_group_size:</span> <span class="pre">&quot;auto&quot;</span></code> uses measured initialization time,
+throughput, data volume, and <code class="docutils literal notranslate"><span class="pre">max_initialization_overhead_ratio</span></code>; a positive
+integer overrides it. Resume safely falls back to serial per-partition
+execution because partitions may be at different checkpoint boundaries.</p>
+<p>The automatic actor planner starts with one actor per profiled GPU stage and
+adds actors to the current pipeline bottleneck. Every addition must fit the
+cluster CPU budget, Ray GPU scheduling fractions, measured per-device GPU
+memory, the per-device actor cap, and useful-batch limits. If the cluster
+cannot host the one-actor-per-stage minimum, execution fails before the formal
+job instead of increasing partitions or oversubscribing GPU memory.</p>
+<section id="gpu-memory-preflight">
+<h4>GPU memory preflight<a class="headerlink" href="#gpu-memory-preflight" title="Link to this heading">¶</a></h4>
+<p>For a fixed-resource control run, set <code class="docutils literal notranslate"><span class="pre">gpu_preflight_enabled:</span> <span class="pre">false</span></code>. The
+executor will not sample input rows, create disposable probe actors, or write
+<code class="docutils literal notranslate"><span class="pre">gpu_probe_results.json</span></code>. Configure CUDA <code class="docutils literal notranslate"><span class="pre">num_gpus</span></code>, <code class="docutils literal notranslate"><span class="pre">memory</span></code>, and fixed
+<code class="docutils literal notranslate"><span class="pre">num_proc</span></code> values explicitly, and normally disable <code class="docutils literal notranslate"><span class="pre">auto_op_parallelism</span></code> too.</p>
+<p>In <code class="docutils literal notranslate"><span class="pre">ray_partitioned</span></code> mode (including manual partitioning), ordinary single-GPU
+CUDA Mapper/Filter operators are profiled before the formal experiment. An op
+without <code class="docutils literal notranslate"><span class="pre">memory</span></code>/<code class="docutils literal notranslate"><span class="pre">num_gpus</span></code> also receives resource estimates. Explicit values
+still win, but throughput is measured for automatic <code class="docutils literal notranslate"><span class="pre">num_proc</span></code> planning:</p>
+<ol class="arabic simple">
+<li><p>The executor takes a fixed prefix of the input. Its size is the largest
+<code class="docutils literal notranslate"><span class="pre">batch_size</span></code> among operators that still need probing. A dataset ordered by
+length, resolution or source makes that prefix unrepresentative and biases
+both measured memory and throughput. <code class="docutils literal notranslate"><span class="pre">gpu_probe_sample_shuffle:</span> <span class="pre">true</span></code>
+randomizes block order first, so the sample comes from a random block instead
+of the first one; only block references are reordered, keeping the preflight
+cost proportional to the sample rather than to the dataset. Alternatively,
+<code class="docutils literal notranslate"><span class="pre">gpu_probe_sample_offset</span></code> skips a known-unrepresentative prefix. The two are
+alternatives rather than a combination: a successful shuffle has already left
+the head, so the offset is reported as ignored. Changing either option
+invalidates <code class="docutils literal notranslate"><span class="pre">gpu_probe_results.json</span></code>, because measurements from a different
+part of the dataset are not comparable. A shuffle without
+<code class="docutils literal notranslate"><span class="pre">gpu_probe_sample_seed</span></code> samples different rows on every run, so its report is
+written for observability but never reused as a cache.</p></li>
+<li><p>Operators may declare <code class="docutils literal notranslate"><span class="pre">input_columns</span></code> and <code class="docutils literal notranslate"><span class="pre">output_columns</span></code>, including
+nested paths such as <code class="docutils literal notranslate"><span class="pre">__dj__meta__.quality_score</span></code>. The executor builds a
+conservative data-dependency graph from these contracts.</p></li>
+<li><p>Targets proven independent, with only compatible CPU Mapper/Filter
+ancestors, can run concurrently. Each disposable Ray worker receives the
+lightweight source rows, replays its required CPU ancestors locally, and
+reserves one full GPU for the target. Large intermediate NumPy values are
+therefore not round-tripped through the driver. The default
+<code class="docutils literal notranslate"><span class="pre">max_concurrent_gpu_probes:</span> <span class="pre">&quot;auto&quot;</span></code> probes one target at a time: concurrent
+probes initialize several models at once, and neither checkpoint storage nor
+host-memory bandwidth is a Ray resource, so nothing automatic can tell whether
+the node can sustain them. Set a positive integer to opt into parallel probing
+when checkpoints are local or the I/O headroom is known; the value is still
+bounded by the dependency-safe GPU and CPU slots.
+Workers log dependency replay and measured-target timing. The driver logs
+each completion immediately and emits a progress heartbeat every 30 seconds.
+<code class="docutils literal notranslate"><span class="pre">gpu_probe_timeout_seconds</span></code> can fail a stalled target with its operator name;
+the default <code class="docutils literal notranslate"><span class="pre">null</span></code> keeps timeout termination disabled.</p></li>
+<li><p>Missing contracts, GPU-to-GPU dependencies, runtime-environment conflicts,
+and dataset-level operations conservatively fall back to the original
+ordered recipe replay. If an earlier filter leaves too few rows, surviving
+rows are cycled to fill one target batch.</p></li>
+<li><p>The disposable worker constructs the target only once and separately
+records model initialization, warmup, and multiple steady-state batches.
+It reports steady input throughput and output ratio. Defaults are one
+warmup batch and three measured batches. Replay and measurement use the
+recipe’s <code class="docutils literal notranslate"><span class="pre">skip_op_error</span></code>, so a few invalid rows are skipped exactly as in the
+formal run instead of aborting the job at preflight. Because one measured
+batch is repeated, a batch that returns nothing is not a usable measurement:
+a Mapper that returns no rows always fails preflight with its operator name
+(with <code class="docutils literal notranslate"><span class="pre">skip_op_error</span></code> the whole batch took the error path, without it the
+operator returned empty where it should have raised), while a
+Filter that keeps nothing only warns that its throughput is worst-case.
+Preflight no longer sets the <code class="docutils literal notranslate"><span class="pre">DATA_JUICER_GPU_PREFLIGHT_OP</span></code> marker, because
+operators that reacted to it with extra CUDA synchronizations could turn a
+normal model transfer into a multi-minute stall; custom operators must not
+depend on observing that variable.</p></li>
+<li><p>A probe does not poll CUDA from a background thread during model
+initialization, avoiding <code class="docutils literal notranslate"><span class="pre">cudaMemGetInfo</span></code> contention with large
+<code class="docutils literal notranslate"><span class="pre">model.to(cuda)</span></code> transfers on the same CUDA context. The disposable worker
+lets the operator initialize CUDA as a formal actor would, then combines
+PyTorch’s allocator peak with final persistent device usage (which also
+covers non-PyTorch runtimes such as Paddle). The measured value receives
+10% headroom and becomes <code class="docutils literal notranslate"><span class="pre">memory_fraction</span></code>. Ray’s scheduling <code class="docutils literal notranslate"><span class="pre">num_gpus</span></code> is <code class="docutils literal notranslate"><span class="pre">max(memory_fraction,</span> <span class="pre">1</span> <span class="pre">/</span> <span class="pre">max_gpu_workers_per_device)</span></code>; the default allows at most five
+auto-probed model actors per physical GPU.</p></li>
+<li><p>Resource values, phased timing, throughput, output ratio, probe mode,
+replayed dependencies, and where the sample actually came from are saved in
+<code class="docutils literal notranslate"><span class="pre">{work_dir}/gpu_probe_results.json</span></code>. A resume
+reuses entries when the operator configuration, GPU model/capacity, and
+timing-batch settings, per-device worker cap, and sampling policy match, and
+re-probes otherwise. The source YAML is not overwritten.</p></li>
+</ol>
+<p>For example, independent image taggers sharing a CPU resize can opt into the
+parallel path without changing their Python classes:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">process</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">bucket_resize_mapper</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">input_columns</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">images</span><span class="p p-Indicator">]</span>
+<span class="w">      </span><span class="nt">output_columns</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">_bucket_img</span><span class="p p-Indicator">]</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">image_quality_mapper</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">input_columns</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">images</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">_bucket_img</span><span class="p p-Indicator">]</span>
+<span class="w">      </span><span class="nt">output_columns</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">__dj__meta__.quality_score</span><span class="p p-Indicator">]</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">image_rotation_mapper</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">input_columns</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">images</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">_bucket_img</span><span class="p p-Indicator">]</span>
+<span class="w">      </span><span class="nt">output_columns</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">__dj__meta__.rotation_*</span><span class="p p-Indicator">]</span>
 </pre></div>
 </div>
-<p>In auto mode, start with <code class="docutils literal notranslate"><span class="pre">target_size_mb:</span> <span class="pre">256</span></code> and adjust it to tune partition sizes. This is a planning target, so actual memory use and output file sizes can differ. You can also set <code class="docutils literal notranslate"><span class="pre">partition.size</span></code> as a sample-count fallback for automatic planning.</p>
-<p><code class="docutils literal notranslate"><span class="pre">max_concurrent_partitions:</span> <span class="pre">&quot;auto&quot;</span></code> is the default. It is resolved after
-operator resource planning: GPU pipelines use the tightest CPU/GPU worker
-capacity reported by the Ray cluster, while CPU-only pipelines use a
-conservative outer-pipeline cap of 4. The actual concurrency is also bounded by
-the partition count and any explicit global actor <code class="docutils literal notranslate"><span class="pre">num_proc</span></code> budget. Set a
-positive integer to override the automatic limit.</p>
+<p><code class="docutils literal notranslate"><span class="pre">None</span></code>/omitted metadata means unknown, not empty. Existing recipes therefore
+retain ordered probing until their operators declare a complete contract.</p>
+<p>An explicit <code class="docutils literal notranslate"><span class="pre">memory</span></code> or <code class="docutils literal notranslate"><span class="pre">num_gpus</span></code> wins over the measurement, except that a
+<code class="docutils literal notranslate"><span class="pre">num_gpus</span></code> below the measured memory fraction is raised to it with a warning:
+Ray packs actors by <code class="docutils literal notranslate"><span class="pre">num_gpus</span></code> alone, so a smaller request would let it place
+more actors on a device than its memory allows. Preflight currently supports
+ordinary Mapper/Filter operators that fit on one GPU.
+GPU <code class="docutils literal notranslate"><span class="pre">Pipeline</span></code> operators, a <code class="docutils literal notranslate"><span class="pre">Pipeline</span></code> before a pending target, and multi-GPU
+operators require explicit resources. Empty input, probe errors, OOM, and an
+invalid zero peak fail before formal partition workers start.</p>
+</section>
 </section>
 <section id="checkpointing">
 <h3>Checkpointing<a class="headerlink" href="#checkpointing" title="Link to this heading">¶</a></h3>
@@ -856,7 +986,10 @@ tail<span class="w"> </span>-f<span class="w"> </span>./outputs/<span class="o">
 <li><a class="reference internal" href="#overview">Overview</a></li>
 <li><a class="reference internal" href="#directory-structure">Directory Structure</a></li>
 <li><a class="reference internal" href="#configuration">Configuration</a><ul>
-<li><a class="reference internal" href="#partition-modes">Partition Modes</a></li>
+<li><a class="reference internal" href="#partition-modes">Partition Modes</a><ul>
+<li><a class="reference internal" href="#gpu-memory-preflight">GPU memory preflight</a></li>
+</ul>
+</li>
 <li><a class="reference internal" href="#checkpointing">Checkpointing</a></li>
 <li><a class="reference internal" href="#checkpoints-and-temporary-files">Checkpoints and Temporary Files</a></li>
 </ul>

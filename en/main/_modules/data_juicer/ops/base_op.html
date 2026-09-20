@@ -774,6 +774,15 @@
     <span class="c1"># executor modes this operator supports: "default", "ray", "ray_partitioned"</span>
     <span class="n">_supported_exec_modes</span> <span class="o">=</span> <span class="p">(</span><span class="s2">"default"</span><span class="p">,)</span>
 
+    <span class="c1"># Optional data-flow contract used by dependency-aware optimizers.  ``None``</span>
+    <span class="c1"># means that the operator has not declared its reads/writes; an explicitly</span>
+    <span class="c1"># empty collection means that it reads/writes no dataset columns.  Nested</span>
+    <span class="c1"># paths such as ``__dj__meta__.quality_score`` are supported by consumers.</span>
+    <span class="c1"># Keep these conservative by default so existing and third-party operators</span>
+    <span class="c1"># are never assumed independent merely because metadata is absent.</span>
+    <span class="n">_input_columns</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">_output_columns</span> <span class="o">=</span> <span class="kc">None</span>
+
     <span class="c1"># extra requirements for this operator. Should be:</span>
     <span class="c1">#   1. a list of packages</span>
     <span class="c1">#   2. a string of the path to the requirements.txt file</span>
@@ -800,6 +809,8 @@
         <span class="s2">"history_key"</span><span class="p">:</span> <span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="s2">"history"</span><span class="p">),</span>
         <span class="s2">"index_key"</span><span class="p">:</span> <span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span>
         <span class="s2">"work_dir"</span><span class="p">:</span> <span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span>
+        <span class="s2">"input_columns"</span><span class="p">:</span> <span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span>
+        <span class="s2">"output_columns"</span><span class="p">:</span> <span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span>
         <span class="c1"># Behavior control</span>
         <span class="s2">"skip_op_error"</span><span class="p">:</span> <span class="p">(</span><span class="nb">bool</span><span class="p">,</span> <span class="kc">False</span><span class="p">),</span>
         <span class="s2">"auto_op_parallelism"</span><span class="p">:</span> <span class="p">(</span><span class="nb">bool</span><span class="p">,</span> <span class="kc">True</span><span class="p">),</span>
@@ -896,6 +907,8 @@
 <span class="sd">        :param index_key: the key name of field that stores index</span>
 <span class="sd">        :param batch_size: the batch size for processing</span>
 <span class="sd">        :param work_dir: the working directory for this operator</span>
+<span class="sd">        :param input_columns: optional input-column contract for dependency-aware planning</span>
+<span class="sd">        :param output_columns: optional output-column contract for dependency-aware planning</span>
 <span class="sd">        :param skip_op_error: whether to skip the error when processing samples</span>
 
 <span class="sd">        # Ray related parameters</span>
@@ -930,6 +943,18 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">index_key</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"index_key"</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">work_dir</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"work_dir"</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+
+        <span class="c1"># A recipe can provide the same dependency contract as class-level</span>
+        <span class="c1"># declarations without requiring changes to a custom operator module.</span>
+        <span class="c1"># Preserve a class declaration when the corresponding recipe option is</span>
+        <span class="c1"># omitted.  Strings represent one column rather than an iterable of</span>
+        <span class="c1"># characters.</span>
+        <span class="k">if</span> <span class="s2">"input_columns"</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s2">"input_columns"</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_input_columns</span> <span class="o">=</span> <span class="p">[</span><span class="n">value</span><span class="p">]</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="k">else</span> <span class="n">value</span>
+        <span class="k">if</span> <span class="s2">"output_columns"</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s2">"output_columns"</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_output_columns</span> <span class="o">=</span> <span class="p">[</span><span class="n">value</span><span class="p">]</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="k">else</span> <span class="n">value</span>
 
         <span class="c1"># for unittest, do not skip the error.</span>
         <span class="c1"># It would be set to be True in config init.</span>

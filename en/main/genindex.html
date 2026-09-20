@@ -553,6 +553,8 @@
 </li>
         <li><a href="api/data_juicer.core.executor.html#data_juicer.core.executor.ExecutorBase.__init__">(data_juicer.core.executor.ExecutorBase method)</a>
 </li>
+        <li><a href="api/data_juicer.core.executor.gpu_memory_probe.html#data_juicer.core.executor.gpu_memory_probe.GPUMemoryProbe.__init__">(data_juicer.core.executor.gpu_memory_probe.GPUMemoryProbe method)</a>
+</li>
         <li><a href="api/data_juicer.core.executor.partition_size_optimizer.html#data_juicer.core.executor.partition_size_optimizer.ClusterResources.__init__">(data_juicer.core.executor.partition_size_optimizer.ClusterResources method)</a>
 </li>
         <li><a href="api/data_juicer.core.executor.partition_size_optimizer.html#data_juicer.core.executor.partition_size_optimizer.DataCharacteristics.__init__">(data_juicer.core.executor.partition_size_optimizer.DataCharacteristics method)</a>
@@ -2308,6 +2310,8 @@
 </li>
       <li><a href="api/data_juicer.core.executor.partition_size_optimizer.html#data_juicer.core.executor.partition_size_optimizer.PartitionSizeOptimizer.calculate_resource_aware_partition_size">calculate_resource_aware_partition_size() (data_juicer.core.executor.partition_size_optimizer.PartitionSizeOptimizer method)</a>
 </li>
+      <li><a href="api/data_juicer.core.executor.gpu_memory_probe.html#data_juicer.core.executor.gpu_memory_probe.calculate_resource_plan">calculate_resource_plan() (in module data_juicer.core.executor.gpu_memory_probe)</a>
+</li>
       <li><a href="api/data_juicer.utils.job.html#data_juicer.utils.job.ProcessingSnapshotAnalyzer.calculate_statistics">calculate_statistics() (data_juicer.utils.job.ProcessingSnapshotAnalyzer method)</a>
 
       <ul>
@@ -3356,6 +3360,13 @@
 
       <ul>
         <li><a href="api/data_juicer.core.executor.factory.html#module-data_juicer.core.executor.factory">module</a>
+</li>
+      </ul></li>
+      <li>
+    data_juicer.core.executor.gpu_memory_probe
+
+      <ul>
+        <li><a href="api/data_juicer.core.executor.gpu_memory_probe.html#module-data_juicer.core.executor.gpu_memory_probe">module</a>
 </li>
       </ul></li>
       <li>
@@ -7063,6 +7074,8 @@
 </li>
       <li><a href="api/data_juicer.utils.logger_utils.html#data_juicer.utils.logger_utils.StreamToLoguru.fileno">fileno() (data_juicer.utils.logger_utils.StreamToLoguru method)</a>
 </li>
+      <li><a href="api/data_juicer.core.executor.gpu_memory_probe.html#data_juicer.core.executor.gpu_memory_probe.fill_to_batch">fill_to_batch() (in module data_juicer.core.executor.gpu_memory_probe)</a>
+</li>
       <li><a href="api/data_juicer.ops.html#data_juicer.ops.Filter">Filter (class in data_juicer.ops)</a>
 
       <ul>
@@ -7501,14 +7514,14 @@
         <li><a href="api/data_juicer.config.config.html#data_juicer.config.config.get_init_configs">(in module data_juicer.config.config)</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/data_juicer.ops.base_op.html#data_juicer.ops.base_op.Filter.get_keep_boolean">get_keep_boolean() (data_juicer.ops.base_op.Filter method)</a>
 
       <ul>
         <li><a href="api/data_juicer.ops.html#data_juicer.ops.Filter.get_keep_boolean">(data_juicer.ops.Filter method)</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/data_juicer.tools.quality_classifier.qc_utils.html#data_juicer.tools.quality_classifier.qc_utils.get_keep_method_udf">get_keep_method_udf() (in module data_juicer.tools.quality_classifier.qc_utils)</a>
 </li>
       <li><a href="api/data_juicer.utils.mm_utils.html#data_juicer.utils.mm_utils.get_key_frame_seconds">get_key_frame_seconds() (in module data_juicer.utils.mm_utils)</a>
@@ -7679,9 +7692,13 @@
 </li>
       <li><a href="api/data_juicer.core.executor.partition_size_optimizer.html#data_juicer.core.executor.partition_size_optimizer.LocalResources.gpu_count">gpu_count (data_juicer.core.executor.partition_size_optimizer.LocalResources attribute)</a>
 </li>
+      <li><a href="api/data_juicer.utils.ray_cluster_utils.html#data_juicer.utils.ray_cluster_utils.ClusterTopology.gpu_devices_per_node">gpu_devices_per_node (data_juicer.utils.ray_cluster_utils.ClusterTopology attribute)</a>
+</li>
       <li><a href="api/data_juicer.core.executor.partition_size_optimizer.html#data_juicer.core.executor.partition_size_optimizer.LocalResources.gpu_memory_gb">gpu_memory_gb (data_juicer.core.executor.partition_size_optimizer.LocalResources attribute)</a>
 </li>
       <li><a href="api/data_juicer.core.executor.partition_size_optimizer.html#data_juicer.core.executor.partition_size_optimizer.ClusterResources.gpu_resources">gpu_resources (data_juicer.core.executor.partition_size_optimizer.ClusterResources attribute)</a>
+</li>
+      <li><a href="api/data_juicer.core.executor.gpu_memory_probe.html#data_juicer.core.executor.gpu_memory_probe.GPUMemoryProbe">GPUMemoryProbe (class in data_juicer.core.executor.gpu_memory_probe)</a>
 </li>
       <li><a href="api/data_juicer.ops.deduplicator.ray_bts_minhash_deduplicator.html#data_juicer.ops.deduplicator.ray_bts_minhash_deduplicator.GPUMinHashActor">GPUMinHashActor (class in data_juicer.ops.deduplicator.ray_bts_minhash_deduplicator)</a>
 </li>
@@ -8913,6 +8930,8 @@
 </li>
         <li><a href="api/data_juicer.core.executor.factory.html#module-data_juicer.core.executor.factory">data_juicer.core.executor.factory</a>
 </li>
+        <li><a href="api/data_juicer.core.executor.gpu_memory_probe.html#module-data_juicer.core.executor.gpu_memory_probe">data_juicer.core.executor.gpu_memory_probe</a>
+</li>
         <li><a href="api/data_juicer.core.executor.partition_size_optimizer.html#module-data_juicer.core.executor.partition_size_optimizer">data_juicer.core.executor.partition_size_optimizer</a>
 </li>
         <li><a href="api/data_juicer.core.executor.pipeline_dag.html#module-data_juicer.core.executor.pipeline_dag">data_juicer.core.executor.pipeline_dag</a>
@@ -9670,6 +9689,10 @@
       </ul></li>
       <li><a href="api/data_juicer.config.config.html#data_juicer.config.config.namespace_to_arg_list">namespace_to_arg_list() (in module data_juicer.config.config)</a>
 </li>
+      <li><a href="api/data_juicer.core.executor.gpu_memory_probe.html#data_juicer.core.executor.gpu_memory_probe.needs_gpu_probe">needs_gpu_probe() (in module data_juicer.core.executor.gpu_memory_probe)</a>
+</li>
+      <li><a href="api/data_juicer.core.executor.gpu_memory_probe.html#data_juicer.core.executor.gpu_memory_probe.needs_gpu_profile">needs_gpu_profile() (in module data_juicer.core.executor.gpu_memory_probe)</a>
+</li>
       <li><a href="api/data_juicer.utils.common_utils.html#data_juicer.utils.common_utils.nested_access">nested_access() (in module data_juicer.utils.common_utils)</a>
 </li>
       <li><a href="api/data_juicer.core.data.dj_dataset.html#data_juicer.core.data.dj_dataset.nested_obj_factory">nested_obj_factory() (in module data_juicer.core.data.dj_dataset)</a>
@@ -9704,14 +9727,14 @@
         <li><a href="api/data_juicer.ops.mapper.nlpaug_en_mapper.html#data_juicer.ops.mapper.nlpaug_en_mapper.NlpaugEnMapper">(class in data_juicer.ops.mapper.nlpaug_en_mapper)</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/data_juicer.ops.mapper.html#data_juicer.ops.mapper.NlpcdaZhMapper">NlpcdaZhMapper (class in data_juicer.ops.mapper)</a>
 
       <ul>
         <li><a href="api/data_juicer.ops.mapper.nlpcda_zh_mapper.html#data_juicer.ops.mapper.nlpcda_zh_mapper.NlpcdaZhMapper">(class in data_juicer.ops.mapper.nlpcda_zh_mapper)</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/data_juicer.ops.common.dwpose_func.html#data_juicer.ops.common.dwpose_func.nms">nms() (in module data_juicer.ops.common.dwpose_func)</a>
 </li>
       <li><a href="api/data_juicer.ops.common.hawor_func_vit.html#data_juicer.ops.common.hawor_func_vit.ViT.no_weight_decay">no_weight_decay() (data_juicer.ops.common.hawor_func_vit.ViT method)</a>
@@ -10218,6 +10241,8 @@
 </li>
       <li><a href="api/data_juicer.core.preflight.html#data_juicer.core.preflight.PipelineRuntimeError">PipelineRuntimeError</a>
 </li>
+      <li><a href="api/data_juicer.core.executor.gpu_memory_probe.html#data_juicer.core.executor.gpu_memory_probe.plan_parallel_probe_jobs">plan_parallel_probe_jobs() (in module data_juicer.core.executor.gpu_memory_probe)</a>
+</li>
       <li><a href="api/data_juicer.utils.constant.html#data_juicer.utils.constant.CameraCalibrationKeys.points">points (data_juicer.utils.constant.CameraCalibrationKeys attribute)</a>
 </li>
       <li><a href="api/data_juicer.utils.constant.html#data_juicer.utils.constant.MetaKeys.pose_estimation_tags">pose_estimation_tags (data_juicer.utils.constant.MetaKeys attribute)</a>
@@ -10390,6 +10415,8 @@
         <li><a href="api/data_juicer.ops.html#data_juicer.ops.OPEnvManager.print_the_current_states">(data_juicer.ops.OPEnvManager method)</a>
 </li>
       </ul></li>
+      <li><a href="api/data_juicer.core.executor.gpu_memory_probe.html#data_juicer.core.executor.gpu_memory_probe.probe_sample_count">probe_sample_count() (in module data_juicer.core.executor.gpu_memory_probe)</a>
+</li>
       <li><a href="api/data_juicer.core.html#data_juicer.core.Adapter.probe_small_batch">probe_small_batch() (data_juicer.core.Adapter method)</a>
 
       <ul>
@@ -11676,14 +11703,14 @@
         <li><a href="api/data_juicer.ops.mapper.remove_non_chinese_character_mapper.html#data_juicer.ops.mapper.remove_non_chinese_character_mapper.RemoveNonChineseCharacterlMapper">(class in data_juicer.ops.mapper.remove_non_chinese_character_mapper)</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/data_juicer.ops.mapper.html#data_juicer.ops.mapper.RemoveRepeatSentencesMapper">RemoveRepeatSentencesMapper (class in data_juicer.ops.mapper)</a>
 
       <ul>
         <li><a href="api/data_juicer.ops.mapper.remove_repeat_sentences_mapper.html#data_juicer.ops.mapper.remove_repeat_sentences_mapper.RemoveRepeatSentencesMapper">(class in data_juicer.ops.mapper.remove_repeat_sentences_mapper)</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/data_juicer.ops.mapper.html#data_juicer.ops.mapper.RemoveSpecificCharsMapper">RemoveSpecificCharsMapper (class in data_juicer.ops.mapper)</a>
 
       <ul>
@@ -11749,6 +11776,8 @@
 </li>
       </ul></li>
       <li><a href="api/data_juicer.utils.lazy_loader.html#data_juicer.utils.lazy_loader.LazyLoader.reset_dependencies_cache">reset_dependencies_cache() (data_juicer.utils.lazy_loader.LazyLoader class method)</a>
+</li>
+      <li><a href="api/data_juicer.core.executor.gpu_memory_probe.html#data_juicer.core.executor.gpu_memory_probe.GPUMemoryProbe.resolve">resolve() (data_juicer.core.executor.gpu_memory_probe.GPUMemoryProbe method)</a>
 </li>
       <li><a href="api/data_juicer.utils.ckpt_utils.html#data_juicer.utils.ckpt_utils.RayCheckpointManager.resolve_checkpoint_filename">resolve_checkpoint_filename() (data_juicer.utils.ckpt_utils.RayCheckpointManager method)</a>
 </li>
@@ -11979,6 +12008,8 @@
       <li><a href="api/data_juicer.core.executor.dag_execution_strategies.html#data_juicer.core.executor.dag_execution_strategies.ScatterGatherNode">ScatterGatherNode (class in data_juicer.core.executor.dag_execution_strategies)</a>
 </li>
       <li><a href="api/data_juicer.utils.ASD_mapper_utils.html#data_juicer.utils.ASD_mapper_utils.scene_detect">scene_detect() (in module data_juicer.utils.ASD_mapper_utils)</a>
+</li>
+      <li><a href="api/data_juicer.core.executor.gpu_memory_probe.html#data_juicer.core.executor.gpu_memory_probe.scheduling_num_gpus">scheduling_num_gpus() (in module data_juicer.core.executor.gpu_memory_probe)</a>
 </li>
       <li><a href="api/data_juicer.core.data.schema.html#data_juicer.core.data.schema.Schema">Schema (class in data_juicer.core.data.schema)</a>
 </li>

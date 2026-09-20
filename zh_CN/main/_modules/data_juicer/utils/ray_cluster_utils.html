@@ -483,6 +483,9 @@
     <span class="n">total_gpus</span><span class="p">:</span> <span class="nb">float</span>
     <span class="n">available_cpus</span><span class="p">:</span> <span class="nb">float</span>
     <span class="n">available_gpus</span><span class="p">:</span> <span class="nb">float</span>
+    <span class="c1"># Exact node capacities are needed for a multi-GPU actor: Ray cannot</span>
+    <span class="c1"># combine devices from different nodes for one actor's reservation.</span>
+    <span class="n">gpu_devices_per_node</span><span class="p">:</span> <span class="nb">tuple</span> <span class="o">=</span> <span class="p">()</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">gpus_per_node</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
@@ -526,6 +529,9 @@
             <span class="n">total_gpus</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">cluster_resources</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"GPU"</span><span class="p">,</span> <span class="mi">0</span><span class="p">)),</span>
             <span class="n">available_cpus</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">available_resources</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"CPU"</span><span class="p">,</span> <span class="mi">0</span><span class="p">)),</span>
             <span class="n">available_gpus</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">available_resources</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"GPU"</span><span class="p">,</span> <span class="mi">0</span><span class="p">)),</span>
+            <span class="n">gpu_devices_per_node</span><span class="o">=</span><span class="nb">tuple</span><span class="p">(</span>
+                <span class="nb">int</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"Resources"</span><span class="p">,</span> <span class="p">{})</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"GPU"</span><span class="p">,</span> <span class="mi">0</span><span class="p">)))</span> <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">nodes</span> <span class="k">if</span> <span class="n">node</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"Alive"</span><span class="p">)</span>
+            <span class="p">),</span>
         <span class="p">)</span>
     <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
         <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Could not detect Ray cluster topology, using single-node fallback: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>

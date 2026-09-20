@@ -470,6 +470,7 @@
 <h2>目录结构<a class="headerlink" href="#id3" title="链接到此标题。">¶</a></h2>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>{work_dir}/{job_id}/
 ├── job_summary.json              # 作业元数据（完成时创建）
+├── gpu_probe_results.json         # 自动探测的 GPU Operator 资源
 ├── events_{timestamp}.jsonl      # 机器可读事件日志
 ├── dag_execution_plan.json       # DAG 执行计划
 ├── checkpoints/                  # 检查点数据
@@ -490,7 +491,20 @@
 <span class="nt">partition</span><span class="p">:</span>
 <span class="w">  </span><span class="nt">mode</span><span class="p">:</span><span class="w"> </span><span class="s">"auto"</span>
 <span class="w">  </span><span class="nt">max_concurrent_partitions</span><span class="p">:</span><span class="w"> </span><span class="s">"auto"</span><span class="w">  </span><span class="c1"># 资源感知的 Driver 并发上限</span>
-<span class="w">  </span><span class="nt">target_size_mb</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">256</span><span class="w">    </span><span class="c1"># 自动模式规划使用的目标大小（MB）</span>
+<span class="w">  </span><span class="nt">max_gpu_workers_per_device</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">5</span><span class="w">       </span><span class="c1"># 每张 GPU 的保守模型副本上限</span>
+<span class="w">  </span><span class="nt">max_concurrent_gpu_probes</span><span class="p">:</span><span class="w"> </span><span class="s">"auto"</span><span class="w">   </span><span class="c1"># 默认逐个探测，设置正整数才开启并发探测</span>
+<span class="w">  </span><span class="nt">gpu_preflight_enabled</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span><span class="w">          </span><span class="c1"># false 时跳过 preflight，直接使用显式资源和 Actor 数</span>
+<span class="w">  </span><span class="nt">gpu_probe_timeout_seconds</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">null</span><span class="w">     </span><span class="c1"># 可选的单任务超时；null 表示不主动终止</span>
+<span class="w">  </span><span class="nt">gpu_probe_warmup_batches</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1</span><span class="w">         </span><span class="c1"># 稳态测速前的 warmup batch 数</span>
+<span class="w">  </span><span class="nt">gpu_probe_steady_batches</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">3</span><span class="w">         </span><span class="c1"># 用于稳态吞吐估计的 batch 数</span>
+<span class="w">  </span><span class="nt">gpu_probe_sample_offset</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0</span><span class="w">          </span><span class="c1"># preflight 取样时跳过的开头行数</span>
+<span class="w">  </span><span class="nt">gpu_probe_sample_shuffle</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span><span class="w">     </span><span class="c1"># true 时先随机化 block 顺序再取样</span>
+<span class="w">  </span><span class="nt">gpu_probe_sample_seed</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">42</span><span class="w">           </span><span class="c1"># 随机取样的种子；null 表示每次运行都重新取样，因此永不复用报告</span>
+<span class="w">  </span><span class="nt">execution_group_size</span><span class="p">:</span><span class="w"> </span><span class="s">"auto"</span><span class="w">       </span><span class="c1"># 共用一次 GPU Actor 生命周期的逻辑分区数</span>
+<span class="w">  </span><span class="nt">max_initialization_overhead_ratio</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0.1</span><span class="w">  </span><span class="c1"># 每个执行组允许的模型初始化时间占比</span>
+<span class="w">  </span><span class="nt">target_size_mb</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">256</span><span class="w">    </span><span class="c1"># 目标分区大小（128、256、512 或 1024）</span>
+<span class="w">  </span><span class="nt">size</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">5000</span><span class="w">             </span><span class="c1"># 自动分析失败时的回退值</span>
+<span class="w">  </span><span class="nt">max_size_mb</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">256</span><span class="w">       </span><span class="c1"># 回退最大大小</span>
 </pre></div>
 </div>
 <p><strong>手动模式</strong> - 指定确切的分区数量：</p>
@@ -500,14 +514,39 @@
 <span class="w">  </span><span class="nt">max_concurrent_partitions</span><span class="p">:</span><span class="w"> </span><span class="s">"auto"</span>
 </pre></div>
 </div>
-<p>如果希望按每个分区的目标样本数切分，使用 <code class="docutils literal notranslate"><span class="pre">size</span></code>。手动模式下，<code class="docutils literal notranslate"><span class="pre">size</span></code> 和 <code class="docutils literal notranslate"><span class="pre">num_of_partitions</span></code> 只能选择一个。Data-Juicer 将分区数量四舍五入为整数，至少保留一个分区，最后一个分区容纳剩余数据。例如，12,000 条数据配合 <code class="docutils literal notranslate"><span class="pre">size:</span> <span class="pre">5000</span></code> 会得到两个分区，分别包含 5,000 和 7,000 条数据。</p>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">partition</span><span class="p">:</span>
-<span class="w">  </span><span class="nt">mode</span><span class="p">:</span><span class="w"> </span><span class="s">"manual"</span>
-<span class="w">  </span><span class="nt">size</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">5000</span>
+<p>分区按精确行号边界切分，各分区行数最多相差一行。这里特意没有使用 Ray 的 <code class="docutils literal notranslate"><span class="pre">Dataset.split(n)</span></code>：它按整块（block）分配，当数据块数少于 <code class="docutils literal notranslate"><span class="pre">num_of_partitions</span></code> 时会产生空的尾部分区（单块 10 行切 4 份会得到 <code class="docutils literal notranslate"><span class="pre">[10,</span> <span class="pre">0,</span> <span class="pre">0,</span> <span class="pre">0]</span></code>），块大小不均时即使块数足够也会造成分区严重倾斜。空分区并非零成本——每个空分区仍会构建算子图、占用一次 Actor 生命周期并写出 checkpoint；而倾斜会破坏 execution group 定容所依赖的“各分区行数均匀”假设。当分区数超过总行数时，会在任何 Actor 启动前直接报错，而不是静默下调：分区数是续跑校验的依据，必须与请求值一致。</p>
+<p>逻辑分区数与 GPU 执行并发现在相互独立：逻辑分区只决定 checkpoint 粒度、恢复边界和单分区数据上限；GPU Actor 数由 preflight 的稳态吞吐和集群资源统一规划。多个逻辑分区会组成 execution group，共用一次 Ray Actor pool 生命周期，但在每个 checkpoint 点仍按原逻辑分区分别落盘。<code class="docutils literal notranslate"><span class="pre">execution_group_size:</span> <span class="pre">&quot;auto&quot;</span></code> 会根据模型初始化时间、稳态吞吐、数据量和 <code class="docutils literal notranslate"><span class="pre">max_initialization_overhead_ratio</span></code> 选择组大小；显式正整数可覆盖该选择。续跑时可能存在不同 checkpoint 位置，因此会安全回退到逐分区串行执行。</p>
+<p>自动 Actor 规划先给每个待规划 GPU 阶段分配一个 Actor，然后反复给当前 pipeline 瓶颈阶段增加 Actor。每次增加都必须同时满足集群 CPU、Ray GPU 调度份额、每张卡的实测显存份额、每卡 Actor 上限以及有效 batch 数上限。若连“每阶段一个 Actor”的最低方案都无法放入集群，会在正式任务启动前直接报错，不会通过增加分区或超配显存来规避。</p>
+<section id="gpu">
+<h4>GPU 显存预探测<a class="headerlink" href="#gpu" title="链接到此标题。">¶</a></h4>
+<p>若希望运行固定资源的对照实验，可设置 <code class="docutils literal notranslate"><span class="pre">gpu_preflight_enabled:</span> <span class="pre">false</span></code>。此时不会读取小样本、初始化一次性探测 Actor 或生成 <code class="docutils literal notranslate"><span class="pre">gpu_probe_results.json</span></code>；CUDA 算子的 <code class="docutils literal notranslate"><span class="pre">num_gpus</span></code>、<code class="docutils literal notranslate"><span class="pre">memory</span></code> 和固定 <code class="docutils literal notranslate"><span class="pre">num_proc</span></code> 应由 recipe 显式给出，并建议同时关闭 <code class="docutils literal notranslate"><span class="pre">auto_op_parallelism</span></code>。</p>
+<p>在 <code class="docutils literal notranslate"><span class="pre">ray_partitioned</span></code> 模式下（包括手动分区），普通单卡 CUDA Mapper/Filter 会在正式实验启动前完成小样本 preflight。未配置 <code class="docutils literal notranslate"><span class="pre">memory</span></code>/<code class="docutils literal notranslate"><span class="pre">num_gpus</span></code> 的算子同时获得资源估计；显式值保持优先，但仍会测量吞吐用于自动 <code class="docutils literal notranslate"><span class="pre">num_proc</span></code> 规划：</p>
+<ol class="arabic simple">
+<li><p>只读取输入开头的固定样本，数量为所有待探测 GPU Operator 的最大 <code class="docutils literal notranslate"><span class="pre">batch_size</span></code>；若数据按长度、分辨率或来源排序，开头样本不具代表性，实测显存和吞吐都会有偏差。设置 <code class="docutils literal notranslate"><span class="pre">gpu_probe_sample_shuffle:</span> <span class="pre">true</span></code> 会先随机化 block 顺序，从随机 block 而不是第一个 block 取样；该操作只重排 block 引用，preflight 开销仍与样本量成正比，而不是与数据集规模成正比。也可以用 <code class="docutils literal notranslate"><span class="pre">gpu_probe_sample_offset</span></code> 跳过已知不具代表性的开头。两者是二选一而不是叠加：shuffle 成功后样本已经离开开头，此时 offset 会被忽略并给出告警。修改任一选项都会使 <code class="docutils literal notranslate"><span class="pre">gpu_probe_results.json</span></code> 失效，因为来自数据集不同位置的测量结果不可比较；未设置 <code class="docutils literal notranslate"><span class="pre">gpu_probe_sample_seed</span></code> 的 shuffle 每次取样都不同，其报告只用于观测，不会被当作缓存复用；</p></li>
+<li><p>Operator 可以通过 <code class="docutils literal notranslate"><span class="pre">input_columns</span></code> 和 <code class="docutils literal notranslate"><span class="pre">output_columns</span></code> 声明读写字段，支持 <code class="docutils literal notranslate"><span class="pre">__dj__meta__.quality_score</span></code> 这样的嵌套路径；执行器据此构建保守的数据依赖 DAG；</p></li>
+<li><p>能证明相互独立、且祖先只包含兼容 CPU Mapper/Filter 的目标可以并行探测。每个一次性 Ray worker 接收轻量原始样本，在 worker 内重放所需 CPU 祖先，并为目标独占一张 GPU；因此不会再把大型 NumPy 中间值经 Driver 往返。<code class="docutils literal notranslate"><span class="pre">max_concurrent_gpu_probes:</span> <span class="pre">&quot;auto&quot;</span></code> 默认逐个探测：并发探测意味着同时初始化多个模型，而 checkpoint 存储和主机内存带宽都不是 Ray 资源，自动策略无法判断节点是否扛得住。checkpoint 在本地或已知 I/O 有余量时，可以设置正整数开启并发；该值仍受依赖安全的 GPU/CPU 槽位约束；
+worker 会分别记录依赖重放和目标测量耗时，Driver 在每个任务完成时立即记录，并每 30 秒输出一次存活任务心跳；可通过 <code class="docutils literal notranslate"><span class="pre">gpu_probe_timeout_seconds</span></code> 让卡住的目标带算子名超时失败，默认 <code class="docutils literal notranslate"><span class="pre">null</span></code> 不主动终止；</p></li>
+<li><p>缺少字段契约、存在 GPU-to-GPU 依赖、runtime environment 不兼容或包含 Dataset 级 Operator 时，安全回退到原有 recipe 有序重放。若前序 Filter 导致样本不足，则循环补齐目标的一个 batch；</p></li>
+<li><p>在同一个一次性 worker 内只初始化一次算子，分别记录模型初始化、warmup 和多个稳态 batch 的耗时，并统计稳态输入吞吐与输出比例；默认 warmup 1 个 batch、测量 3 个 batch。依赖重放和目标测量都沿用 recipe 的 <code class="docutils literal notranslate"><span class="pre">skip_op_error</span></code>，少量非法样本会像正式运行一样被跳过，而不是在 preflight 阶段直接终止任务；但由于测量只重复同一个 batch，若该 batch 完全没有输出，则测量结果不可用：Mapper 返回空一定会带算子名让 preflight 失败（<code class="docutils literal notranslate"><span class="pre">skip_op_error</span></code> 开启时说明整批走了错误路径，关闭时说明算子本该抛异常却返回了空），Filter 全部过滤则只告警说明吞吐为最坏情况。preflight 不再设置 <code class="docutils literal notranslate"><span class="pre">DATA_JUICER_GPU_PREFLIGHT_OP</span></code> 标记（曾有算子据此增加 CUDA 同步，把一次正常的模型搬运拖成数分钟停顿），自定义算子不应再依赖读取该环境变量；</p></li>
+<li><p>probe 不会在模型初始化期间从后台线程轮询 CUDA，以免 <code class="docutils literal notranslate"><span class="pre">cudaMemGetInfo</span></code> 与大量参数的 <code class="docutils literal notranslate"><span class="pre">model.to(cuda)</span></code> 竞争同一 CUDA context。一次性 worker 会像正式 Actor 一样让 Operator 自行初始化 CUDA，调用完成后合并 PyTorch allocator 的全过程峰值和设备持久占用（后者也覆盖 Paddle 等非 PyTorch runtime），再增加 10% 余量得到 <code class="docutils literal notranslate"><span class="pre">memory_fraction</span></code>；缺省资源时 Ray 使用的 <code class="docutils literal notranslate"><span class="pre">num_gpus</span></code> 为 <code class="docutils literal notranslate"><span class="pre">max(memory_fraction,</span> <span class="pre">1</span> <span class="pre">/</span> <span class="pre">max_gpu_workers_per_device)</span></code>，默认每张卡最多调度 5 个自动探测的模型 Actor；</p></li>
+<li><p>将测量值、调度值、分阶段耗时、吞吐、输出比例、探测模式、重放依赖以及样本实际来源保存到 <code class="docutils literal notranslate"><span class="pre">{work_dir}/gpu_probe_results.json</span></code>。Operator 配置、GPU 型号/容量、测速 batch 数、每卡 worker 上限或取样策略变化时会重新探测。原始 YAML 不会被覆盖。</p></li>
+</ol>
+<p>例如，共享一个 CPU resize 的多个独立图像打标算子可以只在 recipe 中声明字段契约，无需修改 Python 类：</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">process</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">bucket_resize_mapper</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">input_columns</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">images</span><span class="p p-Indicator">]</span>
+<span class="w">      </span><span class="nt">output_columns</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">_bucket_img</span><span class="p p-Indicator">]</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">image_quality_mapper</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">input_columns</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">images</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">_bucket_img</span><span class="p p-Indicator">]</span>
+<span class="w">      </span><span class="nt">output_columns</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">__dj__meta__.quality_score</span><span class="p p-Indicator">]</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">image_rotation_mapper</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">input_columns</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">images</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">_bucket_img</span><span class="p p-Indicator">]</span>
+<span class="w">      </span><span class="nt">output_columns</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">__dj__meta__.rotation_*</span><span class="p p-Indicator">]</span>
 </pre></div>
 </div>
-<p>自动模式下，可以从 <code class="docutils literal notranslate"><span class="pre">target_size_mb:</span> <span class="pre">256</span></code> 开始调整分区大小。它是规划目标，实际内存占用和输出文件大小可能有所不同。也可以设置 <code class="docutils literal notranslate"><span class="pre">partition.size</span></code>，作为自动规划无法给出样本数建议时的回退值。</p>
-<p><code class="docutils literal notranslate"><span class="pre">max_concurrent_partitions:</span> <span class="pre">&quot;auto&quot;</span></code> 是默认值。该值会在 Operator 资源规划完成后解析：含 GPU Operator 的 pipeline 根据 Ray 集群可容纳的最小 CPU/GPU worker 数确定，纯 CPU pipeline 的外层并发保守限制为 4。实际并发还会受到 Partition 数量和显式全局 Actor <code class="docutils literal notranslate"><span class="pre">num_proc</span></code> 预算的限制。需要手动调优时，可将其设置为正整数来覆盖自动值。</p>
+<p>省略字段契约表示“未知”，而不是“没有读写字段”；因此旧 recipe 会继续使用有序探测，直到相关 Operator 补齐契约。</p>
+<p>显式配置的 <code class="docutils literal notranslate"><span class="pre">memory</span></code> 或 <code class="docutils literal notranslate"><span class="pre">num_gpus</span></code> 优先于实测值，但当显式 <code class="docutils literal notranslate"><span class="pre">num_gpus</span></code> 低于实测显存份额时会被抬升到该份额并给出告警：Ray 只按 <code class="docutils literal notranslate"><span class="pre">num_gpus</span></code> 打包 Actor，更小的请求会让它在单卡上放入超出显存容量的 Actor。当前 preflight 仅支持能装入单张 GPU 的普通 Mapper/Filter；GPU <code class="docutils literal notranslate"><span class="pre">Pipeline</span></code>、待探测 Operator 之前的 <code class="docutils literal notranslate"><span class="pre">Pipeline</span></code>，以及需要多张 GPU 的 Operator 必须显式配置资源和并发。空输入、探测异常、OOM 或无有效显存峰值都会在正式 partition worker 启动前终止任务。</p>
+</section>
 </section>
 <section id="id6">
 <h3>检查点<a class="headerlink" href="#id6" title="链接到此标题。">¶</a></h3>
@@ -848,7 +887,10 @@ tail<span class="w"> </span>-f<span class="w"> </span>./outputs/<span class="o">
 <li><a class="reference internal" href="#id2">概述</a></li>
 <li><a class="reference internal" href="#id3">目录结构</a></li>
 <li><a class="reference internal" href="#id4">配置</a><ul>
-<li><a class="reference internal" href="#id5">分区模式</a></li>
+<li><a class="reference internal" href="#id5">分区模式</a><ul>
+<li><a class="reference internal" href="#gpu">GPU 显存预探测</a></li>
+</ul>
+</li>
 <li><a class="reference internal" href="#id6">检查点</a></li>
 <li><a class="reference internal" href="#id7">检查点与临时文件</a></li>
 </ul>

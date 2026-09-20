@@ -456,7 +456,7 @@
 <span id="data-juicer-core-executor-ray-executor-partitioned-module"></span><h1>data_juicer.core.executor.ray_executor_partitioned module<a class="headerlink" href="#module-data_juicer.core.executor.ray_executor_partitioned" title="链接到此标题。">¶</a></h1>
 <p>Simplified Partitioned Ray Executor for Large Dataset Processing</p>
 <p>This module implements a streamlined partitioned execution strategy for Ray mode that:
-2. Splits the dataset into manageable partitions using Ray's .split() method
+2. Splits the dataset into manageable partitions at exact row boundaries
 3. Processes each partition independently with Ray tasks
 4. Merges results back into a single dataset for export
 5. Supports convergence points for global operations (like deduplicators)</p>
@@ -628,10 +628,10 @@ on resume produces identical partitions.</p>
 <dt class="sig sig-object py" id="data_juicer.core.executor.ray_executor_partitioned.PartitionedRayExecutor">
 <span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">data_juicer.core.executor.ray_executor_partitioned.</span></span><span class="sig-name descname"><span class="pre">PartitionedRayExecutor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cfg</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Namespace</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/data_juicer/core/executor/ray_executor_partitioned.html#PartitionedRayExecutor"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#data_juicer.core.executor.ray_executor_partitioned.PartitionedRayExecutor" title="链接到此定义。">¶</a></dt>
 <dd><p>基类：<a class="reference internal" href="data_juicer.core.executor.base.html#data_juicer.core.executor.base.ExecutorBase" title="data_juicer.core.executor.base.ExecutorBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">ExecutorBase</span></code></a>, <a class="reference internal" href="data_juicer.core.executor.dag_execution_mixin.html#data_juicer.core.executor.dag_execution_mixin.DAGExecutionMixin" title="data_juicer.core.executor.dag_execution_mixin.DAGExecutionMixin"><code class="xref py py-class docutils literal notranslate"><span class="pre">DAGExecutionMixin</span></code></a>, <a class="reference internal" href="data_juicer.core.executor.event_logging_mixin.html#data_juicer.core.executor.event_logging_mixin.EventLoggingMixin" title="data_juicer.core.executor.event_logging_mixin.EventLoggingMixin"><code class="xref py py-class docutils literal notranslate"><span class="pre">EventLoggingMixin</span></code></a></p>
-<p>Simplified Ray executor with dataset partitioning using .split().</p>
+<p>Simplified Ray executor with row-balanced dataset partitioning.</p>
 <p>Features:
 - Single DatasetBuilder loads the full dataset
-- Uses Ray's .split() method for partitioning
+- Splits at exact row boundaries so partitions stay balanced and non-empty
 - Processes partitions in parallel with Ray tasks
 - Supports convergence points for global operations
 - Merges results back into a single dataset</p>
